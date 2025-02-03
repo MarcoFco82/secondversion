@@ -393,23 +393,21 @@ export default function Home() {
                   style={{ textDecoration: "none", color: "#3b424c" }}
                 >
                   LinkedIn
-                </a>
+
+                  </a>
               </td>
             </tr>
             <tr>
-
             </tr>
             <tr>
-              
             </tr>
             <tr>
-              
             </tr>
             <tr>
-              
             </tr>
             <tr>
-              
+            </tr>
+            <tr>
             </tr>
           </tbody>
         </table>
@@ -440,11 +438,12 @@ export default function Home() {
     Sitio desarrollado con Next.js y asistencia de ChatGPT y DeepSeek
   </div>
 
-  <footer style={{ backgroundColor: '#3b424c', padding: '60px 0', textAlign: 'center' }}>
+  <footer style={{ backgroundColor: '#3b424c', padding: '50px 0', textAlign: 'center' }}>
     {/* Aquí puedes agregar cualquier contenido gráfico del banner */}
   </footer>
 </div>
 
+      
 
       {/* Modal */}
       {isModalOpen && (
