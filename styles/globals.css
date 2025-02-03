@@ -1,0 +1,241 @@
+/* globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Carme&family=DIN+Condensed:wght@700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Carme', sans-serif; /* Fuente predeterminada */
+  background-color: #e8e8e8; /* Fondo claro */
+  color: #3b424c; /* Color oscuro para texto */
+  overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+}
+
+/* Estilo general para h1 */
+h1 {
+  font-family: 'DIN Condensed', sans-serif; /* Fuente para títulos */
+  font-size: 12rem; /* Tamaño predeterminado */
+  line-height: 0.75; /* Empalme entre líneas */
+  margin: 0; /* Sin margen extra */
+  position: relative; /* Para animaciones */
+  text-transform: uppercase; /* Convierte texto a mayúsculas */
+  opacity: 0; /* Oculto inicialmente para animación */
+  transition: transform 1s ease, opacity 1s ease; /* Transiciones para entrada/salida */
+}
+
+/* Títulos impares: entran de derecha a izquierda */
+.title-odd {
+  animation: slideInRight 2s ease-in-out forwards;
+  text-align: left;
+  margin-left: 5%;
+}
+
+.title-odd.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.title-odd.hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Títulos pares: entran de izquierda a derecha */
+.title-even {
+  animation: slideInLeft 2s ease-in-out forwards;
+  text-align: right;
+  margin-right: 5%;
+}
+
+.title-even.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.title-even.hidden {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* Párrafos generales */
+p {
+  font-size: 1.2rem; /* Tamaño del texto */
+  line-height: 1.5; /* Altura de línea */
+  margin: 1rem 0; /* Espaciado entre elementos */
+  opacity: 0; /* Oculto inicialmente para animación */
+}
+
+/* Párrafos debajo de títulos impares: entran de izquierda a derecha */
+.paragraph-odd {
+  animation: slideInLeft 1s ease-in-out forwards;
+  text-align: right;
+  margin-right: 5%;
+}
+
+/* Párrafos debajo de títulos pares: entran de derecha a izquierda */
+.paragraph-even {
+  animation: slideInRight 1s ease-in-out forwards;
+  text-align: left;
+  margin-left: 5%;
+}
+
+/* Animaciones */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Contenedor de la tabla */
+.tableContainer {
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+/* Estilos de la tabla */
+.experienceTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  opacity: 0;
+  animation: slideInRight 1s ease-in-out forwards;
+}
+
+.centeredContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px; /* Añade un poco de padding para evitar que el contenido toque los bordes */
+}
+
+.tableWrapper {
+  max-width: 1200px; /* Ancho máximo del contenido */
+  width: 100%; /* Ocupa el 100% del espacio disponible */
+}
+
+.experienceTable th,
+.experienceTable td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.experienceTable th {
+  background-color: #3b424c;
+  color: #e8e8e8;
+  font-family: 'DIN Condensed', sans-serif;
+  text-transform: uppercase;
+}
+
+.experienceTable td {
+  font-family: 'Carme', sans-serif;
+}
+
+.experienceTable ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+.experienceTable ul li {
+  margin-bottom: 0.5rem;
+}
+
+.media {
+  max-width: 100px;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Animaciones */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+table {
+  border-spacing: 20px; /* Espaciado horizontal y vertical entre celdas */
+}
+
+.alignLeft {
+  text-align: left;
+  padding-left: 0;
+}
+
+td ul {
+  text-align: left;
+  padding-left: 20px; /* Ajusta según sea necesario */
+  list-style-position: outside; /* Para que los bullets no queden alineados con el texto */
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
