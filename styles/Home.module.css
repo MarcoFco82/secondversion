@@ -27,13 +27,21 @@
 
 .title {
   font-family: 'DIN Condensed', sans-serif;
-  font-size: clamp(2rem, 10vw, 12rem); /* Se ajusta entre 2rem y 12rem según el ancho de la pantalla */
+  font-size: clamp(1.5rem, 8vw, 4rem); /* Reducir valores para móvil */
   margin: 20px 0;
   opacity: 0; /* Oculto inicialmente */
   transform: translateX(100px);
   transition: opacity 1.0s ease-out, transform 1.0s ease-out;
   white-space: nowrap; /* Evita que las palabras se rompan en varias líneas */
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2.5rem; /* Tamaño fijo para móviles pequeños */
+    margin-left: 5% !important;
+    margin-right: 5% !important;
+  }
 }
 
 

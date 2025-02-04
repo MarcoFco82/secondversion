@@ -13,10 +13,19 @@
     display: inline-block;
     padding-left: 100%; /* Inicia el texto fuera de la pantalla */
     animation: scrollText 25s linear infinite; /* Animación de desplazamiento */
-    font-size: 1.5rem;
+    font-size: clamp(0.8rem, 3vw, 1.5rem); /* Escala progresiva */
     font-weight: bold;
     color: hsl(0, 0%, 25%); /* Texto blanco para contrastar con el fondo */
+    white-space: normal; /* Permitir saltos de línea */
+    padding: 8px 0; /* Reducir espaciado vertical */
   }
+
+  /* Animación más lenta para móvil */
+@media (max-width: 480px) {
+  .bannerText {
+    animation: scrollText 35s linear infinite;
+  }
+}
   
   @keyframes scrollText {
     from {
