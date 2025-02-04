@@ -10,16 +10,29 @@ body {
   overflow-x: hidden; /* Oculta el desbordamiento horizontal */
 }
 
-/* Estilo general para h1 */
+/* globals.css */
 h1 {
-  font-family: 'DIN Condensed', sans-serif; /* Fuente para títulos */
-  font-size: 12rem; /* Tamaño predeterminado */
-  line-height: 0.75; /* Empalme entre líneas */
-  margin: 0; /* Sin margen extra */
-  position: relative; /* Para animaciones */
-  text-transform: uppercase; /* Convierte texto a mayúsculas */
-  opacity: 0; /* Oculto inicialmente para animación */
-  transition: transform 1s ease, opacity 1s ease; /* Transiciones para entrada/salida */
+  font-family: 'DIN Condensed', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 12rem); /* Tamaño responsivo */
+  line-height: 1; /* Ajuste para móvil */
+  margin: 0 auto; /* Centrar horizontalmente */
+  padding: 0 20px; /* Evitar que toque bordes */
+  text-transform: uppercase;
+  text-align: center; /* Centrar texto siempre */
+  width: 100%; /* Ocupar ancho completo */
+  white-space: normal; /* Permitir saltos de línea */
+  box-sizing: border-box; /* Incluir padding en el ancho */
+}
+
+/* Eliminar márgenes laterales en móvil */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem !important; /* Tamaño fijo para móvil */
+    line-height: 1.2 !important; /* Mejor legibilidad */
+    padding: 0 15px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* Títulos impares: entran de derecha a izquierda */
