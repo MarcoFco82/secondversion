@@ -22,6 +22,8 @@
   align-items: center;
   justify-content: flex-start; /* Cambiado de "start" a "flex-start" */
   height: 200vh;
+  max-width: 100vw; /* Ocupar ancho completo */
+  overflow-x: hidden; /* Evitar desbordamiento horizontal */
   background-color: #e8e8e8;
 }
 
