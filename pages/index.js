@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'; // Importa useState
-import Banner from '../components/Banner'; // Importa el componente Banner
+//import Banner from '../components/Banner'; // Importa el componente Banner
 import styles from '../styles/Home.module.css'; // Importa los estilos de la página Home
 
 const formatYouTubeUrl = (url) => {
@@ -30,6 +30,7 @@ export default function Home() {
       bannerText: "SR. MOTION GRAPHICS DESIGNER - VIDEO PRODUCTION - GRAPHIC DESIGN - POST-PRODUCTION - WEB DESIGN",
     },
   ];
+  
 
   const containerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
@@ -77,7 +78,9 @@ export default function Home() {
 
         return (
           <div key={index}>
-            <Banner text={item.bannerText} />
+            
+            
+            
 
             <h1 className={isOdd ? "title-odd" : "title-even"}>
               {words[0]} <br /> {words[1]}
