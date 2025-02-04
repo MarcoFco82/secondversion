@@ -199,24 +199,6 @@ table {
   border-spacing: 20px; /* Espaciado horizontal y vertical entre celdas */
 }
 
-@media (max-width: 768px) {
-  .tableWrapper {
-    max-width: 95% !important; /* Ocupar más espacio */
-    overflow-x: auto; /* Scroll horizontal si es necesario */
-  }
-
-  .experienceTable th, 
-  .experienceTable td {
-    padding: 8px !important; /* Espaciado reducido */
-    font-size: 12px !important; /* Tamaño legible */
-    min-width: 120px; /* Evitar que las celdas se compriman */
-  }
-
-  .experienceTable ul {
-    margin-left: 0.5rem !important; /* Reducir sangría */
-  }
-}
-
 .alignLeft {
   text-align: left;
   padding-left: 0;
