@@ -433,7 +433,7 @@ export default function Home() {
     padding: '5px 0', 
     position: 'absolute', 
     top: '-20px', 
-    width: '100%' 
+    width: '100vw', // Forzar ancho completo
   }}>
     Sitio desarrollado con Next.js y asistencia de ChatGPT y DeepSeek
   </div>
