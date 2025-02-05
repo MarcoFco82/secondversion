@@ -263,13 +263,27 @@ export default function Home() {
       </div>
 
       {/* Main Div 4 */}
-      <div className="main-section">
-        <h1 className="title-right">REDES<br></br> SOCIALES</h1>
-        <div className="hyperlinks">
-          <a href="#link1" className="din-link">Behance</a>
-          <a href="#link2" className="din-link">Linkedin</a>
-        </div>
-      </div>
+<div className="main-section">
+  <h1 className="title-right">REDES<br />SOCIALES</h1>
+  <div className="hyperlinks">
+    <a
+      href="https://www.behance.net/marcofrancisco"
+      className="din-link"
+      target="_blank" // Abre en una nueva pestaña
+      rel="noopener noreferrer" // Mejora la seguridad
+    >
+      Behance
+    </a>
+    <a
+      href="https://www.linkedin.com/in/marcofranciscoramos/"
+      className="din-link"
+      target="_blank" // Abre en una nueva pestaña
+      rel="noopener noreferrer" // Mejora la seguridad
+    >
+      Linkedin
+    </a>
+  </div>
+</div>
 
       {/* Footer */}
       <footer className="footer">

@@ -36,16 +36,20 @@ body {
 
 .title-left {
   font-family: 'DIN Condensed', sans-serif;
-  font-size: 8rem;
   text-align: left;
   line-height: 0.75;
   margin-bottom: 2rem;
+  /* Tamaño base para pantallas grandes */
+  font-size: 8rem;
+
+  /* Escalado responsivo usando unidades relativas */
+  font-size: clamp(2rem, 10vw, 8rem);
 }
 
 .text-right {
   text-align: right;
-  font-size: 1.3rem;
   margin-bottom: 2rem;
+  font-size: clamp(0.5rem, 3vw, 1.3rem); /* Escalado responsivo */
 }
 
 .video-container {
@@ -108,36 +112,58 @@ body {
 
 .title-right {
   font-family: 'DIN Condensed', sans-serif;
-  font-size: 8rem;
   text-align: right;
   line-height: 0.75;
   margin-bottom: 2rem;
+  /* Tamaño base para pantallas grandes */
+  font-size: 8rem;
+
+  /* Escalado responsivo usando unidades relativas */
+  font-size: clamp(2rem, 10vw, 8rem);
 }
 
 .text-left {
   text-align: left;
-  font-size: 1.3rem;
   margin-bottom: 2rem;
+  font-size: clamp(0.5rem, 3vw, 1.3rem); /* Escalado responsivo */
 }
 
 .table-container {
   margin-top: 2rem;
-  overflow-x: auto;
-  border: 0;
+  overflow-x: auto; /* Permite el desplazamiento horizontal en móviles */
+  width: 100%; /* Asegura que ocupe el ancho disponible */
+  -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en dispositivos táctiles */
+  border: 0; /* Elimina bordes adicionales */
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.7rem;
-  border: 0;
+  border-collapse: collapse; /* Elimina el espacio entre celdas */
+  font-size: clamp(0.4rem, 2vw, 0.7rem); /* Fuente responsiva */
+  border: 0; /* Elimina bordes adicionales */
+  min-width: 600px; /* Ancho mínimo para mantener la estructura */
 }
 
 td {
-  padding: 0.8rem;
+  padding: 0.5rem;
   border: 1px solid #3b424c;
   vertical-align: middle;
   border: 0;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: scroll; /* Fuerza el desplazamiento horizontal */
+  }
+
+  table {
+    font-size: 0.6rem; /* Tamaño de fuente más pequeño en móviles */
+  }
+
+  td {
+    padding: 0.3rem; /* Reducir el padding en móviles */
+  }
 }
 
 .centered {
