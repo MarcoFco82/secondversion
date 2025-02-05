@@ -1,254 +1,238 @@
-/* globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Carme&family=DIN+Condensed:wght@700&display=swap');
-
-body {
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Carme', sans-serif; /* Fuente predeterminada */
-  background-color: #e8e8e8; /* Fondo claro */
-  color: #3b424c; /* Color oscuro para texto */
-  overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+  box-sizing: border-box;
 }
 
-/* globals.css */
-h1 {
+body {
+  background-color: #e8e8e8;
+  color: #3b424c;
+  font-family: 'Arial', sans-serif;
+}
+
+.banner {
+  background-color: #ffa742;
+  padding: 3px 0;
+  overflow: hidden;
+}
+
+.marquee {
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
   font-family: 'DIN Condensed', sans-serif;
-  font-size: clamp(3.5rem, 10vw, 12rem); /* Tamaño responsivo */
-  line-height: 1; /* Ajuste para móvil */
-  margin: 0 auto; /* Centrar horizontalmente */
-  padding: 0 20px; /* Evitar que toque bordes */
-  text-transform: uppercase;
-  text-align: center; /* Centrar texto siempre */
-  width: 100%; /* Ocupar ancho completo */
-  white-space: normal; /* Permitir saltos de línea */
-  box-sizing: border-box; /* Incluir padding en el ancho */
+  font-size: 2rem;
 }
 
-/* Eliminar márgenes laterales en móvil */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.5rem !important; /* Tamaño fijo para móvil */
-    line-height: 1.2 !important; /* Mejor legibilidad */
-    padding: 0 15px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
-/* Títulos impares: entran de derecha a izquierda */
-.title-odd {
-  animation: slideInRight 2s ease-in-out forwards;
-  text-align: left;
-  margin-left: 5%;
-}
-
-.title-odd.visible {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.title-odd.hidden {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
-/* Títulos pares: entran de izquierda a derecha */
-.title-even {
-  animation: slideInLeft 2s ease-in-out forwards;
-  text-align: right;
-  margin-right: 5%;
-}
-
-.title-even.visible {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.title-even.hidden {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-/* Párrafos generales */
-p {
-  font-size: 1.2rem; /* Tamaño del texto */
-  line-height: 1.5; /* Altura de línea */
-  margin: 1rem 0; /* Espaciado entre elementos */
-  opacity: 0; /* Oculto inicialmente para animación */
-}
-
-/* Párrafos debajo de títulos impares: entran de izquierda a derecha */
-.paragraph-odd {
-  animation: slideInLeft 1s ease-in-out forwards;
-  text-align: right;
-  margin-right: 5%;
-}
-
-/* Párrafos debajo de títulos pares: entran de derecha a izquierda */
-.paragraph-even {
-  animation: slideInRight 1s ease-in-out forwards;
-  text-align: left;
-  margin-left: 5%;
-}
-
-/* Animaciones */
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-@keyframes slideOutLeft {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-}
-
-/* Contenedor de la tabla */
-.tableContainer {
+.main-section {
+  max-width: 1200px;
   margin: 0 auto;
-  overflow-x: auto;
+  padding: 40px 20px;
 }
 
-/* Estilos de la tabla */
-.experienceTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-  opacity: 0;
-  animation: slideInRight 1s ease-in-out forwards;
-}
-
-.centeredContainer {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding: 0 20px; /* Añade un poco de padding para evitar que el contenido toque los bordes */
-}
-
-.tableWrapper {
-  max-width: 1200px; /* Ancho máximo del contenido */
-  width: 100%; /* Ocupa el 100% del espacio disponible */
-}
-
-.experienceTable th,
-.experienceTable td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.experienceTable th {
-  background-color: #3b424c;
-  color: #e8e8e8;
+.title-left {
   font-family: 'DIN Condensed', sans-serif;
-  text-transform: uppercase;
-}
-
-.experienceTable td {
-  font-family: 'Carme', sans-serif;
-}
-
-.experienceTable ul {
-  list-style-type: disc;
-  margin-left: 1.5rem;
-}
-
-.experienceTable ul li {
-  margin-bottom: 0.5rem;
-}
-
-.media {
-  max-width: 100px;
-  height: auto;
-  border-radius: 8px;
-}
-
-/* Animaciones */
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-table {
-  border-spacing: 20px; /* Espaciado horizontal y vertical entre celdas */
-}
-
-.alignLeft {
+  font-size: 8rem;
   text-align: left;
-  padding-left: 0;
+  line-height: 0.75;
+  margin-bottom: 2rem;
 }
 
-td ul {
-  text-align: left;
-  padding-left: 20px; /* Ajusta según sea necesario */
-  list-style-position: outside; /* Para que los bullets no queden alineados con el texto */
+.text-right {
+  text-align: right;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
 }
 
-.modal {
-  position: fixed;
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.video-container iframe {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.8);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
   position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.close-btn {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.footer {
+  background-color: #3b424c;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.final-text {
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.title-right {
+  font-family: 'DIN Condensed', sans-serif;
+  font-size: 8rem;
+  text-align: right;
+  line-height: 0.75;
+  margin-bottom: 2rem;
+}
+
+.text-left {
+  text-align: left;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.table-container {
+  margin-top: 2rem;
+  overflow-x: auto;
+  border: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+  border: 0;
+}
+
+td {
+  padding: 0.8rem;
+  border: 1px solid #3b424c;
+  vertical-align: middle;
+  border: 0;
+}
+
+.centered {
   text-align: center;
 }
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.bullets ul {
+  list-style-type: none;
+  padding-left: 1rem;
+  text-align: left;
+}
+
+.bullets li::before {
+  content: "*";
+  margin-right: 0.5rem;
+}
+
+.resource-btn {
+  font-family: 'DIN Condensed', sans-serif;
   background: none;
-  border: none;
-  font-size: 1.5rem;
+  border: 1px solid #3b424c;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resource-btn:hover {
+  background-color: #ffa742;
+  color: white;
+  border-color: #ffa742;
+}
+
+/* Ajustes adicionales para el modal */
+.modal-content img {
+  max-height: 80vh;
+  max-width: 100%;
+}
+
+.modal-content iframe {
+  width: 80vw;
+  height: 80vh;
+}
+
+.hyperlinks {
+  text-align: left;
+  margin: 2rem 0;
+}
+
+.din-link {
+  font-family: 'DIN Condensed', sans-serif;
+  color: #3b424c;
+  text-decoration: none;
+  margin-right: 2rem;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.din-link:hover {
+  color: #ffa742;
+}
+
+/* Ajustes para Main Div 3 y 4 */
+.main-section:last-of-type {
+  margin-bottom: 4rem;
+}
+
+.editable-cell {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0.3rem;
+  outline: none;
+}
+
+.editable-cell:focus {
+  background-color: rgba(255, 167, 66, 0.1);
+}
+
+.editable-bullet {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0.2rem;
+  margin-left: -0.3rem;
+}
+
+.editable-bullet:focus {
+  background-color: rgba(255, 167, 66, 0.1);
+}
+
+.resource-btn {
+  /* Mantén tus estilos existentes */
+  min-width: 120px;
 }
