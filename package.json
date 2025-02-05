@@ -1,17 +1,16 @@
 {
-  "name": "marco-motion",
-  "version": "0.1.0",
-  "private": true,
+  "name": "nextjs-project",
+  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
-  "build": "npm run clean && next build",
-  "start": "next start",
-  "clean": "rm -rf .next node_modules/.cache",
-  "deploy": "npm run clean && npm run build && npm run start"
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "next": "^15.1.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^13.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0"
   }
 }
