@@ -139,7 +139,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse; /* Elimina el espacio entre celdas */
-  font-size: clamp(0.4rem, 2vw, 0.7rem); /* Fuente responsiva */
+  font-size: clamp(0.4rem, 2vw, 0.9rem); /* Fuente responsiva */
   border: 0; /* Elimina bordes adicionales */
   min-width: 600px; /* Ancho mínimo para mantener la estructura */
 }
