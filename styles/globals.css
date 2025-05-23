@@ -1,3 +1,7 @@
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100;300;400&display=swap');
+
+/* Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -7,9 +11,11 @@
 body {
   background-color: #e8e8e8;
   color: #3b424c;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
 }
 
+/* Banner Styles */
 .banner {
   background-color: #ffa742;
   padding: 3px 0;
@@ -19,8 +25,9 @@ body {
 .marquee {
   white-space: nowrap;
   animation: marquee 20s linear infinite;
-  font-family: 'DIN Condensed', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   font-size: 2rem;
+  color: #3b424c;
 }
 
 @keyframes marquee {
@@ -28,46 +35,372 @@ body {
   100% { transform: translateX(-100%); }
 }
 
+/* Section Styles */
 .main-section {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 60px 20px;
 }
 
-.title-left {
-  font-family: 'DIN Condensed', sans-serif;
-  text-align: left;
-  line-height: 0.75;
+/* Typography */
+.title-left, .title-right {
+  font-family: 'Bebas Neue', sans-serif;
+  line-height: 0.85;
   margin-bottom: 2rem;
-  /* Tamaño base para pantallas grandes */
-  font-size: 8rem;
-
-  /* Escalado responsivo usando unidades relativas */
-  font-size: clamp(2rem, 10vw, 8rem);
+  font-size: clamp(3rem, 10vw, 8rem);
+  letter-spacing: 1px;
 }
 
-.text-right {
-  text-align: right;
+.title-left { text-align: left; }
+.title-right { text-align: right; }
+
+.text-left, .text-right {
+  font-size: clamp(0.9rem, 3vw, 1.3rem);
+  line-height: 1.6;
   margin-bottom: 2rem;
-  font-size: clamp(0.5rem, 3vw, 1.3rem); /* Escalado responsivo */
 }
 
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  max-width: 100%;
-}
+.text-left { text-align: left; }
+.text-right { text-align: right; }
 
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Dark Sections */
+.apps-projects-section,
+.contact-section {
+  background-color: #3b424c;
+  color: #e8e8e8;
   width: 100%;
-  height: 100%;
 }
 
+.apps-projects-section .title-left,
+.contact-section .title-left {
+  color: #ffa742;
+}
+
+.apps-projects-section .title-left,
+.contact-section .title-left {
+  color: #ffa742;
+}
+
+
+.apps-projects-section .text-right,
+.contact-section .text-right {
+  color: #e8e8e8;
+}
+
+/* Contact Section - Fixed Version */
+.maincontact-section {
+  background-color: #3b424c; /* Dark gray background full width */
+  color: #e8e8e8;
+  width: 100%;
+}
+
+.maincontact-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px; /* Same padding as other sections */
+}
+
+.maincontact-section .title-left {
+  color: #ffa742;
+  font-family: 'Bebas Neue', sans-serif;
+  line-height: 0.85;
+  margin-bottom: 2rem;
+  font-size: clamp(3rem, 10vw, 8rem);
+  letter-spacing: 1px;
+  text-align: left;
+}
+
+.maincontact-section .text-right {
+  color: #e8e8e8;
+  text-align: right;
+}
+
+.email-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  color: #e8e8e8;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.project-item {
+  transition: transform 0.3s ease;
+}
+
+.project-item:hover {
+  transform: translateY(-5px);
+}
+
+.project-image {
+  height: 300px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.project-info {
+  padding: 1.5rem 0;
+}
+
+.project-info h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #ffa742;
+  letter-spacing: 1px;
+}
+
+.project-description {
+  margin-bottom: 1.5rem;
+}
+
+.description-line {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.project-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.keyword-badge {
+  background-color: rgba(255, 167, 66, 0.2);
+  color: #ffa742;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+/* Keyword Filter */
+.keyword-filter-container {
+  margin: 2rem 0;
+}
+
+.keyword-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.keyword-filter-header h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: #ffa742;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.keyword-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.keyword-tag {
+  background: none;
+  border: 1px solid #ffa742;
+  color: #ffa742;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+}
+
+.keyword-tag.active,
+.keyword-tag:hover {
+  background-color: #ffa742;
+  color: #3b424c;
+}
+
+.reset-keywords-btn {
+  background: none;
+  border: 1px solid #e8e8e8;
+  color: #e8e8e8;
+  padding: 5px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.reset-keywords-btn:hover {
+  background-color: #e8e8e8;
+  color: #3b424c;
+}
+
+/* Professional Experience */
+.table-container {
+  background-color: #f5f5f5;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 2rem 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 600px;
+}
+
+th {
+  background-color: #3b424c;
+  color: white;
+  padding: 1rem;
+  text-align: left;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+}
+
+td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+.company-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: #3b424c;
+  letter-spacing: 1px;
+}
+
+.company-location {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.bullets ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.bullets li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.bullets li::before {
+  content: "•";
+  color: #ffa742;
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+.resource-btn {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+  background-color: #3b424c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.resource-btn:hover {
+  background-color: #ffa742;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Contact Section */
+.email-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  color: #e8e8e8;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 5px;
+  transition: all 0.3s ease;
+}
+
+.email-link:hover {
+  color: #ffa742;
+}
+
+.email-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #ffa742;
+  transition: width 0.3s ease;
+}
+
+.email-link:hover::after {
+  width: 100%;
+}
+
+/* Social Links */
+.hyperlinks {
+  display: flex;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.din-link {
+  font-family: 'Bebas Neue', sans-serif;
+  color: #3b424c;
+  text-decoration: none;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.din-link:hover {
+  color: #ffa742;
+}
+
+/* Footer */
+.footer {
+  background-color: #3b424c;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.final-text {
+  font-size: 0.8rem;
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+}
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -89,7 +422,7 @@ body {
 
 .close-btn {
   position: absolute;
-  top: -30px;
+  top: -40px;
   right: 0;
   background: none;
   border: none;
@@ -98,105 +431,6 @@ body {
   cursor: pointer;
 }
 
-.footer {
-  background-color: #3b424c;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-
-.final-text {
-  font-size: 0.8rem;
-  margin-top: 10px;
-}
-
-.title-right {
-  font-family: 'DIN Condensed', sans-serif;
-  text-align: right;
-  line-height: 0.75;
-  margin-bottom: 2rem;
-  /* Tamaño base para pantallas grandes */
-  font-size: 8rem;
-
-  /* Escalado responsivo usando unidades relativas */
-  font-size: clamp(2rem, 10vw, 8rem);
-}
-
-.text-left {
-  text-align: left;
-  margin-bottom: 2rem;
-  font-size: clamp(0.5rem, 3vw, 1.3rem); /* Escalado responsivo */
-}
-
-.table-container {
-  margin-top: 2rem;
-  overflow-x: auto; /* Permite el desplazamiento horizontal en móviles */
-  width: 100%; /* Asegura que ocupe el ancho disponible */
-  -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en dispositivos táctiles */
-  border: 0; /* Elimina bordes adicionales */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse; /* Elimina el espacio entre celdas */
-  font-size: clamp(0.4rem, 2vw, 0.9rem); /* Fuente responsiva */
-  border: 0; /* Elimina bordes adicionales */
-  min-width: 600px; /* Ancho mínimo para mantener la estructura */
-}
-
-td {
-  padding: 0.5rem;
-  border: 1px solid #3b424c;
-  vertical-align: middle;
-  border: 0;
-}
-
-/* Estilos para dispositivos móviles */
-@media (max-width: 768px) {
-  .table-container {
-    overflow-x: scroll; /* Fuerza el desplazamiento horizontal */
-  }
-
-  table {
-    font-size: 0.6rem; /* Tamaño de fuente más pequeño en móviles */
-  }
-
-  td {
-    padding: 0.3rem; /* Reducir el padding en móviles */
-  }
-}
-
-.centered {
-  text-align: center;
-}
-
-.bullets ul {
-  list-style-type: none;
-  padding-left: 1rem;
-  text-align: left;
-}
-
-.bullets li::before {
-  content: "*";
-  margin-right: 0.5rem;
-}
-
-.resource-btn {
-  font-family: 'DIN Condensed', sans-serif;
-  background: none;
-  border: 1px solid #3b424c;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.resource-btn:hover {
-  background-color: #ffa742;
-  color: white;
-  border-color: #ffa742;
-}
-
-/* Ajustes adicionales para el modal */
 .modal-content img {
   max-height: 80vh;
   max-width: 100%;
@@ -207,58 +441,56 @@ td {
   height: 80vh;
 }
 
-.hyperlinks {
-  text-align: left;
-  margin: 2rem 0;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .main-section {
+    padding: 40px 20px;
+  }
+  
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .project-image {
+    height: 250px;
+  }
+  
+  .table-container {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  th, td {
+    padding: 0.8rem;
+  }
+  
+  .company-name {
+    font-size: 1.2rem;
+  }
+  
+  .resource-btn {
+    padding: 0.5rem 1rem;
+  }
+  
+  .hyperlinks {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
-.din-link {
-  font-family: 'DIN Condensed', sans-serif;
-  color: #3b424c;
-  text-decoration: none;
-  margin-right: 2rem;
-  font-size: 1.2rem;
-  transition: color 0.3s ease;
-}
-
-.din-link:hover {
-  color: #ffa742;
-}
-
-/* Ajustes para Main Div 3 y 4 */
-.main-section:last-of-type {
-  margin-bottom: 4rem;
-}
-
-.editable-cell {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-family: Arial, sans-serif;
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 0.3rem;
-  outline: none;
-}
-
-.editable-cell:focus {
-  background-color: rgba(255, 167, 66, 0.1);
-}
-
-.editable-bullet {
-  width: 100%;
-  border: none;
-  background: transparent;
-  text-align: left;
-  padding: 0.2rem;
-  margin-left: -0.3rem;
-}
-
-.editable-bullet:focus {
-  background-color: rgba(255, 167, 66, 0.1);
-}
-
-.resource-btn {
-  /* Mantén tus estilos existentes */
-  min-width: 120px;
+@media (max-width: 480px) {
+  .marquee {
+    font-size: 1.5rem;
+  }
+  
+  .project-info h3 {
+    font-size: 1.5rem;
+  }
+  
+  .keyword-filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }
