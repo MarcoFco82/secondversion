@@ -343,14 +343,27 @@ const renderProjectItem = (project) => (
 
       {/* Main Introduction Section */}
       <div className="main-section">
-        <h1 className="title-left">MARCO<br />FRANCISCO</h1>
-        <p className="text-right">
-          Motion Graphics<br />
-          Production and Post-Production<br />
-          Photography and Video<br />
-          Web Design
-        </p>
-      </div>
+  <h1 className="title-left">
+    MARC<a 
+      href="https://layergen.marcomotion.com/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="name-link"
+    >O</a><br />
+    FRANCISC<a 
+      href="https://photogen.marcomotion.com/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="name-link"
+    >O</a>
+  </h1>
+  <p className="text-right">
+    Motion Graphics<br />
+    Production and Post-Production<br />
+    Photography and Video<br />
+    Web Design
+  </p>
+</div>
 
       {/* Banner Separator 2 */}
       <div className="banner">
