@@ -8,9 +8,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "next": "15.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.8.0"
+    "react-icons": "^4.8.0",
+    "react-tsparticles": "^2.0.6",
+    "tsparticles": "^3.8.1",
+    "tsparticles-slim": "^2.0.6"
   }
 }

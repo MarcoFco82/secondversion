@@ -270,3 +270,21 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Local development cache
+.temp/
+
+# Image optimization cache (if using next/image)
+.next/cache/images
+
+# Local IDE settings (if not shared)
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Large media files (if you have source assets)
+/source-assets/  # If you keep PSD/AI files etc.
+/raw-media/      # For uncompressed videos/images

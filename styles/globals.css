@@ -8,11 +8,47 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   background-color: #e8e8e8;
   color: #3b424c;
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
+  line-height: 1.6;
+}
+
+/* Particles Container Fix */
+[id^="tsparticles-"] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Section Containers */
+.main-section, 
+.apps-projects-section,
+.maincontact-section {
+  position: relative; /* Keep this */
+  overflow: visible; /* Change from 'hidden' */
+  padding: 40px 20px;
+  z-index: 1; /* Content above particles */
+}
+
+.particle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Below content */
+  pointer-events: none;
 }
 
 /* Banner Styles */
@@ -35,18 +71,21 @@ body {
   100% { transform: translateX(-100%); }
 }
 
-/* Section Styles */
+/* Section Layout */
 .main-section {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: auto;
 }
 
 /* Typography */
 .title-left, .title-right {
   font-family: 'Bebas Neue', sans-serif;
   line-height: 0.85;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-size: clamp(3rem, 10vw, 8rem);
   letter-spacing: 1px;
 }
@@ -56,8 +95,8 @@ body {
 
 .text-left, .text-right {
   font-size: clamp(0.9rem, 3vw, 1.3rem);
-  line-height: 1.6;
-  margin-bottom: 2rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
 }
 
 .text-left { text-align: left; }
@@ -65,54 +104,28 @@ body {
 
 /* Dark Sections */
 .apps-projects-section,
-.contact-section {
+.maincontact-section {
   background-color: #3b424c;
   color: #e8e8e8;
   width: 100%;
+  line-height: 1;
 }
 
 .apps-projects-section .title-left,
-.contact-section .title-left {
+.maincontact-section .title-left {
   color: #ffa742;
 }
-
-.apps-projects-section .title-left,
-.contact-section .title-left {
-  color: #ffa742;
-}
-
 
 .apps-projects-section .text-right,
-.contact-section .text-right {
+.maincontact-section .text-right {
   color: #e8e8e8;
 }
 
-/* Contact Section - Fixed Version */
-.maincontact-section {
-  background-color: #3b424c; /* Dark gray background full width */
-  color: #e8e8e8;
-  width: 100%;
-}
-
+/* Contact Section */
 .maincontact-section .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 20px; /* Same padding as other sections */
-}
-
-.maincontact-section .title-left {
-  color: #ffa742;
-  font-family: 'Bebas Neue', sans-serif;
-  line-height: 0.85;
-  margin-bottom: 2rem;
-  font-size: clamp(3rem, 10vw, 8rem);
-  letter-spacing: 1px;
-  text-align: left;
-}
-
-.maincontact-section .text-right {
-  color: #e8e8e8;
-  text-align: right;
+  padding: 40px 20px;
 }
 
 .email-link {
@@ -126,6 +139,25 @@ body {
   transition: all 0.3s ease;
 }
 
+.email-link:hover {
+  color: #ffa742;
+}
+
+.email-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #ffa742;
+  transition: width 0.3s ease;
+}
+
+.email-link:hover::after {
+  width: 100%;
+}
+
 /* Projects Grid */
 .projects-grid {
   display: grid;
@@ -136,10 +168,14 @@ body {
 
 .project-item {
   transition: transform 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .project-item:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .project-image {
@@ -148,12 +184,15 @@ body {
   background-size: cover;
   background-position: center;
   cursor: pointer;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.project-image:hover {
+  opacity: 0.9;
 }
 
 .project-info {
-  padding: 1.5rem 0;
+  padding: 1.5rem;
 }
 
 .project-info h3 {
@@ -170,7 +209,7 @@ body {
 
 .description-line {
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.2;
   margin-bottom: 0.5rem;
 }
 
@@ -179,7 +218,6 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 1rem;
-  justify-content: center;
 }
 
 .keyword-badge {
@@ -200,6 +238,11 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
+}
+
+.banner + .main-section,
+.banner + .apps-projects-section {
+  padding-top: 20px; /* Reduce space after banners */
 }
 
 .keyword-filter-header h3 {
@@ -256,7 +299,8 @@ body {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin: 2rem 0;
+  margin: 1rem 0;
+  overflow-x: auto;
 }
 
 table {
@@ -326,6 +370,7 @@ td {
   padding: 0.6rem 1.2rem;
   border-radius: 4px;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .resource-btn:hover {
@@ -334,42 +379,11 @@ td {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Contact Section */
-.email-link {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  font-size: 1.5rem;
-  color: #e8e8e8;
-  text-decoration: none;
-  position: relative;
-  padding-bottom: 5px;
-  transition: all 0.3s ease;
-}
-
-.email-link:hover {
-  color: #ffa742;
-}
-
-.email-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 1px;
-  bottom: 0;
-  left: 0;
-  background-color: #ffa742;
-  transition: width 0.3s ease;
-}
-
-.email-link:hover::after {
-  width: 100%;
-}
-
 /* Social Links */
 .hyperlinks {
   display: flex;
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 .din-link {
@@ -418,6 +432,9 @@ td {
   position: relative;
   max-width: 90%;
   max-height: 90%;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .close-btn {
@@ -431,25 +448,42 @@ td {
   cursor: pointer;
 }
 
-.modal-content img {
+.modal-media {
   max-height: 80vh;
   max-width: 100%;
+  border-radius: 4px;
 }
 
-.modal-content iframe {
+.modal-iframe {
   width: 80vw;
   height: 80vh;
+  border: none;
+  border-radius: 4px;
+}
+
+/* Name Link Animation */
+.name-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.name-link:hover {
+  color: #ffa742;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .main-section {
+  .main-section, 
+  .maincontact-section .container {
     padding: 40px 20px;
   }
   
   .projects-grid {
     grid-template-columns: 1fr;
     gap: 30px;
+    margin-top: 20px;
   }
   
   .project-image {
@@ -458,7 +492,6 @@ td {
   
   .table-container {
     padding: 1rem;
-    overflow-x: auto;
   }
   
   th, td {
@@ -493,15 +526,4 @@ td {
     align-items: flex-start;
     gap: 1rem;
   }
-}
-
-.name-link {
-  color: inherit;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  position: relative;
-}
-
-.name-link:hover {
-  color: #ffa742;
 }
