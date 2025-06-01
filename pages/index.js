@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Head from 'next/head';
 import ParticlesBackground from '../components/ParticlesBackground.js';
 import { debounce } from 'lodash';
+import GoogleAnalytics from '../components/GoogleAnalytics';
 
 const professionalExperience = [
   {
@@ -335,6 +336,7 @@ export default function Home() {
   return (
     <div className="container">
       <Head>
+      <GoogleAnalytics />
         <title>MarcoMotion | Professional Portfolio</title>
         <meta name="description" content="Professional portfolio of Marco Francisco - Motion Graphics Designer and Interactive Media Developer" />
         <link rel="icon" href="/favicon.ico" />
