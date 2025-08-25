@@ -157,10 +157,25 @@ const projectsData = [
     ],
     media: {
       type: "vimeo",
-      url: "https://player.vimeo.com/video/1086965653?h=c8050769c3",
+      url: "https://player.vimeo.com/video/1106568526",
     },
     imageUrl: "/project_3.jpg",
     keywords: ["Motion Graphics", "Vfx", "Design"]
+  },
+  {
+    id: 4,
+    title: "AI Short: Book Trailer",
+    description: [
+      "Book Trailer no. 2 realizado para el",
+      "libro de Mónica Rojas: A la sombra",
+      "de un árbol muerto."
+    ],
+    media: {
+      type: "vimeo",
+      url: "https://player.vimeo.com/video/1106568526",
+    },
+    imageUrl: "/project_4.jpg",
+    keywords: ["AI Video", "Editing", "Storytelling"]
   }
 ];
 
