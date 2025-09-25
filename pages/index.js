@@ -193,6 +193,8 @@ export default function Home() {
   const [size, setSize] = useState(4);
   const [speed, setSpeed] = useState(0.5);
   const [isMobile, setIsMobile] = useState(false);
+  const [showExperienceSection, setShowExperienceSection] = useState(false);
+  const [expandedExperienceId, setExpandedExperienceId] = useState(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -321,37 +323,66 @@ export default function Home() {
     </div>
   ), []);
 
-  const renderExperienceRow = useCallback((row) => (
-    <tr key={row.id}>
-      <td className="centered">
-        <div className="company-name">{row.company}</div>
-        <div className="company-location">{row.location}</div>
-      </td>
-      <td className="bullets">
-        <ul>
-          {row.bullets.map((bullet, bulletIndex) => (
-            <li key={bulletIndex}>{bullet}</li>
-          ))}
-        </ul>
-      </td>
-      <td className="centered">
-        {row.media.type !== 'none' && (
-          <button
-            className="resource-btn"
-            onClick={() => setSelectedMedia(row.media)}
-            aria-label={`View resource for ${row.company}`}
-          >
-            VIEW RESOURCE
-          </button>
-        )}
-      </td>
-    </tr>
-  ), []);
+  const renderExperienceSection = useCallback(() => (
+    <div className="experience-section">
+      <button 
+        className="toggle-experience-btn"
+        onClick={() => {
+          setShowExperienceSection(!showExperienceSection);
+          setExpandedExperienceId(showExperienceSection ? null : 0); // Abre Envato por defecto
+        }}
+      >
+        {showExperienceSection ? 'HIDE PROFESSIONAL EXPERIENCE' : 'VIEW PROFESSIONAL EXPERIENCE'}
+      </button>
+      
+      {showExperienceSection && (
+        <div className="experience-accordion">
+          {professionalExperience.map(exp => {
+            const isExpanded = expandedExperienceId === exp.id;
+            return (
+              <div key={exp.id} className="experience-item">
+                <div 
+                  className="experience-header"
+                  onClick={() => setExpandedExperienceId(isExpanded ? null : exp.id)}
+                >
+                  <div className="company-info">
+                    <h3 className="company-name">{exp.company}</h3>
+                    <span className="company-location">{exp.location}</span>
+                  </div>
+                  <span className="toggle-icon">
+                    {isExpanded ? '−' : '+'}
+                  </span>
+                </div>
+                
+                {isExpanded && (
+                  <div className="experience-content">
+                    <ul className="experience-bullets">
+                      {exp.bullets.map((bullet, index) => (
+                        <li key={index}>{bullet}</li>
+                      ))}
+                    </ul>
+                    {exp.media.type !== 'none' && (
+                      <button
+                        className="resource-btn"
+                        onClick={() => setSelectedMedia(exp.media)}
+                      >
+                        VIEW RESOURCE
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  ), [showExperienceSection, expandedExperienceId, professionalExperience]);
 
   return (
     <div className="container">
       <Head>
-      <GoogleAnalytics />
+        <GoogleAnalytics />
         <title>MarcoMotion | Professional Portfolio</title>
         <meta name="description" content="Professional portfolio of Marco Francisco - Motion Graphics Designer and Interactive Media Developer" />
         <link rel="icon" href="/favicon.ico" />
@@ -370,9 +401,9 @@ export default function Home() {
       </div>
 
       <div className="main-section">
-      <div className="particle-container">
-    <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
-  </div>
+        <div className="particle-container">
+          <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
+        </div>
         <h1 className="title-left">
           MARC<a 
             href="https://layergen.marcomotion.com/" 
@@ -394,23 +425,21 @@ export default function Home() {
           Web Design
         </p>
 
-        {/* MARCO MOTION */}
         <div className="full-width-vimeo">
-    <iframe 
-      src="https://player.vimeo.com/video/1115649422?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
-      frameBorder="0" 
-      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
-      referrerPolicy="strict-origin-when-cross-origin" 
-      title="MarcoMotion"
-      loading="lazy"
-    ></iframe>
-  </div>
-
+          <iframe 
+            src="https://player.vimeo.com/video/1115649422?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
+            frameBorder="0" 
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+            referrerPolicy="strict-origin-when-cross-origin" 
+            title="MarcoMotion"
+            loading="lazy"
+          ></iframe>
+        </div>
       </div>
 
       <div className="particle-container">
-    <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
-  </div>
+        <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
+      </div>
       <div className="banner">
         <div className="marquee">
           <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
@@ -418,7 +447,6 @@ export default function Home() {
       </div>
 
       <div className="apps-projects-section">
-     
         <div className="main-section">
           <h1 className="title-left">APPS &<br />PROJECTS</h1>
           <p className="text-right">
@@ -462,20 +490,7 @@ export default function Home() {
           Specialized in animation and video.
         </p>
         
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Responsibilities</th>
-                <th>Media</th>
-              </tr>
-            </thead>
-            <tbody>
-              {professionalExperience.map(renderExperienceRow)}
-            </tbody>
-          </table>
-        </div>
+        {renderExperienceSection()}
       </div>
 
       <ParticlesBackground theme="light" layer="banner" key="banner-particles-4" />
@@ -490,7 +505,7 @@ export default function Home() {
           <h1 className="title-left">CONTACT</h1>
           <p className="text-right">
             <a href="mailto:markof.render@gmail.com" className="email-link">
-              markof.render@gmail.com
+              contacto@marcomotion.com
             </a>
           </p>
         </div>
