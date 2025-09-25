@@ -195,6 +195,9 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const [showExperienceSection, setShowExperienceSection] = useState(false);
   const [expandedExperienceId, setExpandedExperienceId] = useState(null);
+  const [password, setPassword] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -224,6 +227,37 @@ export default function Home() {
 
   const resetKeywords = useCallback(() => {
     setSelectedKeywords([]);
+  }, []);
+
+  const handlePasswordSubmit = useCallback((e) => {
+    if (e) e.preventDefault();
+    if (password.toLowerCase() === 'caputdraconis') {
+      setShowExperienceSection(true);
+      setShowPasswordModal(false);
+      setPasswordError(false);
+      setPassword('');
+      setExpandedExperienceId(0); // Abre Envato por defecto
+    } else {
+      setPasswordError(true);
+      setPassword('');
+    }
+  }, [password]);
+  
+  const handlePasswordChange = useCallback((e) => {
+    setPassword(e.target.value);
+    setPasswordError(false);
+  }, []);
+  
+  const handleClosePasswordModal = useCallback(() => {
+    setShowPasswordModal(false);
+    setPasswordError(false);
+    setPassword('');
+  }, []);
+  
+  const handleOpenPasswordModal = useCallback(() => {
+    setShowPasswordModal(true);
+    setPasswordError(false);
+    setPassword('');
   }, []);
 
   const renderMediaModal = useCallback(() => {
@@ -327,10 +361,7 @@ export default function Home() {
     <div className="experience-section">
       <button 
         className="toggle-experience-btn"
-        onClick={() => {
-          setShowExperienceSection(!showExperienceSection);
-          setExpandedExperienceId(showExperienceSection ? null : 0); // Abre Envato por defecto
-        }}
+        onClick={handleOpenPasswordModal}
       >
         {showExperienceSection ? 'HIDE PROFESSIONAL EXPERIENCE' : 'VIEW PROFESSIONAL EXPERIENCE'}
       </button>
@@ -377,7 +408,7 @@ export default function Home() {
         </div>
       )}
     </div>
-  ), [showExperienceSection, expandedExperienceId, professionalExperience]);
+), [showExperienceSection, expandedExperienceId, professionalExperience, handleOpenPasswordModal]);
 
   return (
     <div className="container">
@@ -504,7 +535,7 @@ export default function Home() {
         <div className="container">
           <h1 className="title-left">CONTACT</h1>
           <p className="text-right">
-            <a href="mailto:markof.render@gmail.com" className="email-link">
+            <a href="mailto:contacto@marcomotion.com" className="email-link">
               contacto@marcomotion.com
             </a>
           </p>
@@ -557,6 +588,38 @@ export default function Home() {
       </footer>
 
       {renderMediaModal()}
+      {/* Password Modal */}
+{showPasswordModal && (
+  <div className="modal-overlay">
+    <div className="modal-content password-modal">
+      <button 
+        className="close-btn" 
+        onClick={handleClosePasswordModal}
+        aria-label="Close password modal"
+      >
+        ×
+      </button>
+      <h3>Access Professional Experience</h3>
+      <p>Enter the password to view professional details:</p>
+      <form onSubmit={handlePasswordSubmit} className="password-form">
+        <input
+          type="password"
+          value={password}
+          onChange={handlePasswordChange}
+          placeholder="Enter password"
+          className={`password-input ${passwordError ? 'error' : ''}`}
+          autoFocus
+        />
+        {passwordError && (
+          <p className="password-error">Incorrect password. Please try again.</p>
+        )}
+        <button type="submit" className="password-submit-btn">
+          UNLOCK
+        </button>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 }
