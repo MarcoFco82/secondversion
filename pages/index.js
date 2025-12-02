@@ -1,130 +1,27 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Head from 'next/head';
 import ParticlesBackground from '../components/ParticlesBackground.js';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useLanguage } from '../context/LanguageContext';
 import { debounce } from 'lodash';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 
-const professionalExperience = [
-  {
-    id: 0,
-    company: "Envato México",
-    location: "Guadalajara, Jalisco",
-    bullets: [
-      "Motion graphics production for global market.",
-      "Code implementation for interactive animations.",
-      "Artificial intelligence integration.",
-    ],
-    media: {
-      type: "image",
-      url: "/awards.jpg",
-    },
-  },
-  {
-    id: 1,
-    company: "ZU Media",
-    location: "Mexico City, Col. San Angel Inn",
-    bullets: [
-      "Animation and Post-Production Coordinator.",
-      "Spots production for HBO, Natura México, Jim Beam.",
-      "Infographic animation.",
-      "Spots editing for Latin American TV.",
-      "TV documentary program editing for Canall 11.",
-    ],
-    media: {
-      type: "youtube",
-      url: "https://www.youtube.com/embed/5veKZq1OXsk?si=jENuT3qe-45Tw9j2",
-    },
-  },
-  {
-    id: 2,
-    company: "ED Escuela Digital",
-    location: "Mexico City, Paseo de la Reforma",
-    bullets: [
-      "Video Post-Production and Digital Animation courses instructor.",
-    ],
-    media: {
-      type: "image",
-      url: "/masterclass.jpg",
-    },
-  },
-  {
-    id: 4,
-    company: "Donceles 66, Cultural Forum.",
-    location: "Mexico City, Historic Center.",
-    bullets: [
-      "Webmaster.",
-      "Audiovisual Producer.",
-    ],
-    media: {
-      type: "vimeo",
-      url: "https://player.vimeo.com/video/57662024",
-    },
-  },
-  {
-    id: 5,
-    company: "ClickOnero México",
-    location: "Mexico City, Polanco",
-    bullets: [
-      "Design and animation of banners for digital campaigns.",
-      "Motion Graphics.",
-    ],
-    media: {
-      type: "vimeo",
-      url: "https://player.vimeo.com/video/29595327",
-    },
-  },
-  {
-    id: 6,
-    company: "El Salón de la Franquicia",
-    location: "Mexico City, Col. Del Valle",
-    bullets: [
-      "Webmaster.",
-      "Graphic Designer for magazine ads and billboards.",
-      "Production of franchises expos videos.",
-      "Member of the organizing committee for franchises expos.",
-    ],
-    media: {
-      type: "youtube",
-      url: "https://www.youtube.com/embed/N4PNVg96VxE?si=l1pykLRcMlYQ7l9y",
-    },
-  },
-  {
-    id: 7,
-    company: "Secretaría de Seguridad Pública y Tránsito Municipal",
-    location: "Puebla City",
-    bullets: [
-      "Graphic Reporter for the Social Communication Department.",
-      "Press release writing for local media.",
-      "Police photography and photo archive management.",
-    ],
-    media: {
-      type: "image",
-      url: "/notaroja.jpg",
-    },
-  },
-  {
-    id: 8,
-    company: "Sicom TV, State of Puebla Television",
-    location: "Puebla, Angelópolis",
-    bullets: [
-      "Video Editor and Post-Producer.",
-    ],
-    media: {
-      type: "none",
-      url: "",
-    },
-  },
+// Media data for professional experience (no translation needed)
+const experienceMedia = [
+  { type: "image", url: "/awards.jpg" },
+  { type: "youtube", url: "https://www.youtube.com/embed/5veKZq1OXsk?si=jENuT3qe-45Tw9j2" },
+  { type: "image", url: "/masterclass.jpg" },
+  { type: "none", url: "" },
+  { type: "vimeo", url: "https://player.vimeo.com/video/57662024" },
+  { type: "vimeo", url: "https://player.vimeo.com/video/29595327" },
+  { type: "youtube", url: "https://www.youtube.com/embed/N4PNVg96VxE?si=l1pykLRcMlYQ7l9y" },
+  { type: "image", url: "/notaroja.jpg" },
+  { type: "none", url: "" }
 ];
 
 const projectsData = [
   {
     id: 1,
-    title: "Character Prompt Generator",
-    description: [
-      "Built to make character creation easy",
-      "with total control over the look and feel,",
-      "crafting unique, consistent styles."
-    ],
     media: {
       type: "url",
       url: "https://chargen.marcomotion.com/",
@@ -135,11 +32,6 @@ const projectsData = [
   },
   {
     id: 2,
-    title: "Scripts for Data Visualization in After Effects",
-    description: [
-      "Custom AE scripts to automate",
-      "charts, graphs, and infographics."
-    ],
     media: {
       type: "vimeo",
       url: "https://player.vimeo.com/video/1086598671?h=5e6b68bdc7",
@@ -149,27 +41,15 @@ const projectsData = [
   },
   {
     id: 3,
-    title: "Intro Logos Reel",
-    description: [
-      "Animated logo intros and social reels",
-      "designed for modern brands and creators,",
-      "ready for instant use and customization."
-    ],
     media: {
       type: "vimeo",
-      url: "https://player.vimeo.com/video/1106568526",
+      url: "https://player.vimeo.com/video/1086965653",
     },
     imageUrl: "/project_3.jpg",
     keywords: ["Motion Graphics", "Vfx", "Design"]
   },
   {
     id: 4,
-    title: "AI Short: Book Trailer",
-    description: [
-      "Book Trailer no. 2 realizado para el",
-      "libro de Mónica Rojas: A la sombra",
-      "de un árbol muerto."
-    ],
     media: {
       type: "vimeo",
       url: "https://player.vimeo.com/video/1106568526",
@@ -187,6 +67,7 @@ const allKeywords = [
 ];
 
 export default function Home() {
+  const { t } = useLanguage();
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
   const [shape, setShape] = useState("circle");
@@ -236,7 +117,7 @@ export default function Home() {
       setShowPasswordModal(false);
       setPasswordError(false);
       setPassword('');
-      setExpandedExperienceId(0); // Abre Envato por defecto
+      setExpandedExperienceId(0);
     } else {
       setPasswordError(true);
       setPassword('');
@@ -247,30 +128,27 @@ export default function Home() {
     setPassword(e.target.value);
     setPasswordError(false);
   }, []);
-  
-  const handleClosePasswordModal = useCallback(() => {
-    setShowPasswordModal(false);
-    setPasswordError(false);
-    setPassword('');
-  }, []);
-  
+
   const handleOpenPasswordModal = useCallback(() => {
     setShowPasswordModal(true);
-    setPasswordError(false);
+  }, []);
+
+  const handleClosePasswordModal = useCallback(() => {
+    setShowPasswordModal(false);
     setPassword('');
+    setPasswordError(false);
+  }, []);
+
+  const toggleExperience = useCallback((id) => {
+    setExpandedExperienceId(prev => prev === id ? null : id);
   }, []);
 
   const renderMediaModal = useCallback(() => {
     if (!selectedMedia) return null;
-  
-    if (selectedMedia.behavior === "new_tab") {
-      window.open(selectedMedia.url, '_blank', 'noopener,noreferrer');
-      return null;
-    }
-  
+
     return (
-      <div className="modal-overlay">
-        <div className="modal-content">
+      <div className="modal-overlay" onClick={() => setSelectedMedia(null)}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <button 
             className="close-btn" 
             onClick={() => setSelectedMedia(null)}
@@ -278,103 +156,112 @@ export default function Home() {
           >
             ×
           </button>
-          {selectedMedia.type === 'image' ? (
+          {selectedMedia.type === 'image' && (
             <img 
               src={selectedMedia.url} 
-              alt="Project showcase" 
+              alt="Resource" 
               className="modal-media"
               loading="lazy"
             />
-          ) : selectedMedia.type === 'none' ? null : (
-            <iframe
+          )}
+          {(selectedMedia.type === 'youtube' || selectedMedia.type === 'vimeo') && (
+            <iframe 
               src={selectedMedia.url}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title="Project video"
               className="modal-iframe"
+              allow="autoplay; fullscreen"
               loading="lazy"
-            ></iframe>
+            />
           )}
         </div>
       </div>
     );
   }, [selectedMedia]);
 
+  const renderProjectItem = useCallback((project) => {
+    const projectTranslation = t.projects.find(p => p.id === project.id);
+    
+    const handleProjectClick = () => {
+      if (project.media.type === 'url' && project.media.behavior === 'new_tab') {
+        window.open(project.media.url, '_blank', 'noopener,noreferrer');
+      } else {
+        setSelectedMedia(project.media);
+      }
+    };
+
+    return (
+      <div key={project.id} className="project-item">
+        <div 
+          className="project-image" 
+          style={{ backgroundImage: `url(${project.imageUrl})` }}
+          onClick={handleProjectClick}
+          role="button"
+          tabIndex={0}
+          onKeyPress={(e) => e.key === 'Enter' && handleProjectClick()}
+        />
+        <div className="project-info">
+          <h3>{projectTranslation?.title || project.title}</h3>
+          <div className="project-description">
+            {(projectTranslation?.description || project.description).map((line, idx) => (
+              <p key={idx} className="description-line">{line}</p>
+            ))}
+          </div>
+          <div className="project-keywords">
+            {project.keywords.map((keyword, idx) => (
+              <span key={idx} className="keyword-badge">{keyword}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }, [t]);
+
   const renderKeywordFilter = useCallback(() => (
     <div className="keyword-filter-container">
       <div className="keyword-filter-header">
-        <h3>Filter Projects:</h3>
+        <h3>{t.filterTitle}</h3>
         {selectedKeywords.length > 0 && (
           <button onClick={resetKeywords} className="reset-keywords-btn">
-            Reset Filters
+            {t.resetFiltersBtn}
           </button>
         )}
       </div>
       <div className="keyword-tags-container">
-        {allKeywords.map(keyword => (
+        {allKeywords.map((keyword) => (
           <button
             key={keyword}
-            className={`keyword-tag ${selectedKeywords.includes(keyword) ? 'active' : ''}`}
             onClick={() => toggleKeyword(keyword)}
+            className={`keyword-tag ${selectedKeywords.includes(keyword) ? 'active' : ''}`}
           >
             {keyword}
           </button>
         ))}
       </div>
     </div>
-  ), [selectedKeywords, resetKeywords, toggleKeyword]);
-
-  const renderProjectItem = useCallback((project) => (
-    <div key={project.id} className="project-item">
-      <div 
-        className="project-image"
-        onClick={() => setSelectedMedia(project.media)}
-        style={{ backgroundImage: `url(${project.imageUrl})` }}
-        role="img"
-        aria-label={`Preview of ${project.title} project`}
-      >
-        <img 
-          src={project.imageUrl} 
-          alt={project.title}
-          style={{ display: 'none' }}
-          loading="lazy"
-        />
-      </div>
-      <div className="project-info">
-        <h3>{project.title}</h3>
-        <div className="project-description">
-          {project.description.map((line, index) => (
-            <p key={index} className="description-line">{line}</p>
-          ))}
-        </div>
-        <div className="project-keywords">
-          {project.keywords?.map(keyword => (
-            <span key={keyword} className="keyword-badge">{keyword}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  ), []);
+  ), [selectedKeywords, resetKeywords, toggleKeyword, t]);
 
   const renderExperienceSection = useCallback(() => (
     <div className="experience-section">
-      <button 
-        className="toggle-experience-btn"
-        onClick={handleOpenPasswordModal}
-      >
-        {showExperienceSection ? 'HIDE PROFESSIONAL EXPERIENCE' : 'VIEW PROFESSIONAL EXPERIENCE'}
-      </button>
-      
-      {showExperienceSection && (
+      {!showExperienceSection ? (
+        <button 
+          className="toggle-experience-btn"
+          onClick={handleOpenPasswordModal}
+        >
+          {t.viewExperienceBtn}
+        </button>
+      ) : (
         <div className="experience-accordion">
-          {professionalExperience.map(exp => {
+          {t.experience.map((exp, index) => {
             const isExpanded = expandedExperienceId === exp.id;
+            const media = experienceMedia[index];
+            
             return (
               <div key={exp.id} className="experience-item">
                 <div 
                   className="experience-header"
-                  onClick={() => setExpandedExperienceId(isExpanded ? null : exp.id)}
+                  onClick={() => toggleExperience(exp.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyPress={(e) => e.key === 'Enter' && toggleExperience(exp.id)}
                 >
                   <div className="company-info">
                     <h3 className="company-name">{exp.company}</h3>
@@ -388,16 +275,16 @@ export default function Home() {
                 {isExpanded && (
                   <div className="experience-content">
                     <ul className="experience-bullets">
-                      {exp.bullets.map((bullet, index) => (
-                        <li key={index}>{bullet}</li>
+                      {exp.bullets.map((bullet, idx) => (
+                        <li key={idx}>{bullet}</li>
                       ))}
                     </ul>
-                    {exp.media.type !== 'none' && (
+                    {media && media.type !== 'none' && (
                       <button
                         className="resource-btn"
-                        onClick={() => setSelectedMedia(exp.media)}
+                        onClick={() => setSelectedMedia(media)}
                       >
-                        VIEW RESOURCE
+                        {t.viewResourceBtn}
                       </button>
                     )}
                   </div>
@@ -408,7 +295,7 @@ export default function Home() {
         </div>
       )}
     </div>
-), [showExperienceSection, expandedExperienceId, professionalExperience, handleOpenPasswordModal]);
+  ), [showExperienceSection, expandedExperienceId, toggleExperience, handleOpenPasswordModal, t]);
 
   return (
     <div className="container">
@@ -427,7 +314,7 @@ export default function Home() {
       <ParticlesBackground theme="light" layer="banner" key="banner-particles" />
       <div className="banner" role="marquee">
         <div className="marquee">
-          <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
+          <span>{t.banner}</span>
         </div>
       </div>
 
@@ -435,25 +322,30 @@ export default function Home() {
         <div className="particle-container">
           <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
         </div>
-        <h1 className="title-left">
-          MARC<a 
-            href="https://layergen.marcomotion.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="name-link"
-          >O</a><br />
-          FRANCISC<a 
-            href="https://photogen.marcomotion.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="name-link"
-          >O</a>
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          <h1 className="title-left">
+            {t.mainTitle.line1}<a 
+              href="https://layergen.marcomotion.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="name-link"
+            >O</a><br />
+            {t.mainTitle.line2}<a 
+              href="https://photogen.marcomotion.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="name-link"
+            >O</a>
+          </h1>
+          <LanguageSwitcher />
+        </div>
         <p className="text-right">
-          Motion Graphics<br />
-          Production and Post-Production<br />
-          Photography and Video<br />
-          Web Design
+          {t.mainDescription.map((line, idx) => (
+            <span key={idx}>
+              {line}
+              {idx < t.mainDescription.length - 1 && <br />}
+            </span>
+          ))}
         </p>
 
         <div className="full-width-vimeo">
@@ -469,21 +361,24 @@ export default function Home() {
       </div>
 
       <div className="particle-container">
-        <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles" />
+        <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles-2" />
       </div>
       <div className="banner">
         <div className="marquee">
-          <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
+          <span>{t.banner}</span>
         </div>
       </div>
 
       <div className="apps-projects-section">
         <div className="main-section">
-          <h1 className="title-left">APPS &<br />PROJECTS</h1>
+          <h1 className="title-left">{t.projectsTitle}</h1>
           <p className="text-right">
-            Infographics, experimental videos and short films.<br />
-            The Interactive Media projects and Apps<br />
-            where coded with AI assistance.<br />
+            {t.projectsDescription.map((line, idx) => (
+              <span key={idx}>
+                {line}
+                {idx < t.projectsDescription.length - 1 && <br />}
+              </span>
+            ))}
           </p>
           
           {renderKeywordFilter()}
@@ -493,12 +388,12 @@ export default function Home() {
               filteredProjects.map(renderProjectItem)
             ) : (
               <div className="no-projects-message">
-                <p>No projects match the selected filters.</p>
+                <p>{t.noProjectsMessage}</p>
                 <button 
                   onClick={resetKeywords}
                   className="reset-keywords-btn"
                 >
-                  Reset Filters
+                  {t.resetFiltersBtn}
                 </button>
               </div>
             )}
@@ -509,16 +404,20 @@ export default function Home() {
       <ParticlesBackground theme="light" layer="banner" key="banner-particles-3" />
       <div className="banner">
         <div className="marquee">
-          <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
+          <span>{t.banner}</span>
         </div>
       </div>
 
       <div className="main-section">
         <ParticlesBackground theme="light" size={size} speed={speed} key="experience-particles" />
-        <h1 className="title-right">PROFESSIONAL<br />EXPERIENCE</h1>
+        <h1 className="title-right">{t.experienceTitle}</h1>
         <p className="text-left">
-          Over 15 years in the creative industry.<br />
-          Specialized in animation and video.
+          {t.experienceDescription.map((line, idx) => (
+            <span key={idx}>
+              {line}
+              {idx < t.experienceDescription.length - 1 && <br />}
+            </span>
+          ))}
         </p>
         
         {renderExperienceSection()}
@@ -527,13 +426,13 @@ export default function Home() {
       <ParticlesBackground theme="light" layer="banner" key="banner-particles-4" />
       <div className="banner">
         <div className="marquee">
-          <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
+          <span>{t.banner}</span>
         </div>
       </div>
 
       <div className="maincontact-section">
         <div className="container">
-          <h1 className="title-left">CONTACT</h1>
+          <h1 className="title-left">{t.contactTitle}</h1>
           <p className="text-right">
             <a href="mailto:contacto@marcomotion.com" className="email-link">
               contacto@marcomotion.com
@@ -545,13 +444,13 @@ export default function Home() {
       <ParticlesBackground theme="light" layer="banner" key="banner-particles-5" />
       <div className="banner">
         <div className="marquee">
-          <span>SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN</span>
+          <span>{t.banner}</span>
         </div>
       </div>
 
       <div className="main-section">
         <ParticlesBackground theme="light" size={size} speed={speed} key="social-particles" />
-        <h1 className="title-right">SOCIAL<br />MEDIA</h1>
+        <h1 className="title-right">{t.socialTitle}</h1>
         <div className="hyperlinks">
           <a
             href="https://www.behance.net/marcofrancisco"
@@ -572,7 +471,7 @@ export default function Home() {
             LinkedIn
           </a>
           <a
-            href="https://vimeo.com/marcofrancisco"
+            href="https://vimeo.com/marcomotion"
             className="din-link"
             target="_blank"
             rel="noopener noreferrer"
@@ -584,42 +483,42 @@ export default function Home() {
       </div>
 
       <footer className="footer">
-        <p className="final-text">© {new Date().getFullYear()} Marco Francisco. Site developed with Next.js and AI assistance.</p>
+        <p className="final-text">© {new Date().getFullYear()} Marco Francisco. {t.footer}</p>
       </footer>
 
       {renderMediaModal()}
-      {/* Password Modal */}
-{showPasswordModal && (
-  <div className="modal-overlay">
-    <div className="modal-content password-modal">
-      <button 
-        className="close-btn" 
-        onClick={handleClosePasswordModal}
-        aria-label="Close password modal"
-      >
-        ×
-      </button>
-      <h3>Access Professional Experience</h3>
-      <p>Enter the password to view professional details:</p>
-      <form onSubmit={handlePasswordSubmit} className="password-form">
-        <input
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          placeholder="Enter password"
-          className={`password-input ${passwordError ? 'error' : ''}`}
-          autoFocus
-        />
-        {passwordError && (
-          <p className="password-error">Incorrect password. Please try again.</p>
-        )}
-        <button type="submit" className="password-submit-btn">
-          UNLOCK
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+      
+      {showPasswordModal && (
+        <div className="modal-overlay">
+          <div className="modal-content password-modal">
+            <button 
+              className="close-btn" 
+              onClick={handleClosePasswordModal}
+              aria-label="Close password modal"
+            >
+              ×
+            </button>
+            <h3>{t.passwordModal.title}</h3>
+            <p>{t.passwordModal.description}</p>
+            <form onSubmit={handlePasswordSubmit} className="password-form">
+              <input
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder={t.passwordModal.placeholder}
+                className={`password-input ${passwordError ? 'error' : ''}`}
+                autoFocus
+              />
+              {passwordError && (
+                <p className="password-error">{t.passwordModal.errorMessage}</p>
+              )}
+              <button type="submit" className="password-submit-btn">
+                {t.passwordModal.submitBtn}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
