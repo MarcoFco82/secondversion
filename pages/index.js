@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Head from 'next/head';
 import ParticlesBackground from '../components/ParticlesBackground.js';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import LabTerminalHUD from '../components/LabTerminal/LabTerminalHUD';
 import { useLanguage } from '../context/LanguageContext';
 import { debounce } from 'lodash';
 import GoogleAnalytics from '../components/GoogleAnalytics';
@@ -19,55 +20,8 @@ const experienceMedia = [
   { type: "none", url: "" }
 ];
 
-const projectsData = [
-  {
-    id: 1,
-    media: {
-      type: "url",
-      url: "https://chargen.marcomotion.com/",
-      behavior: "new_tab"
-    },
-    imageUrl: "/project_1.png",
-    keywords: ["Apps", "Frontend", "UI/UX", "AI Image"]
-  },
-  {
-    id: 2,
-    media: {
-      type: "vimeo",
-      url: "https://player.vimeo.com/video/1086598671?h=5e6b68bdc7",
-    },
-    imageUrl: "/project_2.jpg",
-    keywords: ["Web", "Interactive Motion", "Creative Coding"]
-  },
-  {
-    id: 3,
-    media: {
-      type: "vimeo",
-      url: "https://player.vimeo.com/video/1086965653",
-    },
-    imageUrl: "/project_3.jpg",
-    keywords: ["Motion Graphics", "Vfx", "Design"]
-  },
-  {
-    id: 4,
-    media: {
-      type: "vimeo",
-      url: "https://player.vimeo.com/video/1106568526",
-    },
-    imageUrl: "/project_4.jpg",
-    keywords: ["AI Video", "Editing", "Storytelling"]
-  }
-];
-
-const allKeywords = [
-  "Motion Graphics", "Editing", "Vfx", "Apps", "Storytelling", 
-  "Web", "Frontend", "UI/UX", "Interactive Motion", "Infographics", 
-  "Design", "Prototyping", "AI Image", "AI Video", "Automation Tools", 
-  "Data Visualization", "Creative Coding"
-];
-
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
   const [shape, setShape] = useState("circle");
@@ -79,6 +33,55 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  
+  // Projects from API
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+
+  // Fetch projects from API
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+        if (data.success && data.data) {
+          // Transform API data to component format
+          const transformed = data.data.map(p => ({
+            id: p.id,
+            code: p.code,
+            alias: p.alias,
+            displayName: {
+              en: p.display_name_en,
+              es: p.display_name_es || p.display_name_en,
+            },
+            description: {
+              en: p.description_en ? [p.description_en] : [],
+              es: p.description_es ? [p.description_es] : [],
+            },
+            accentColor: p.accent_color || '#ffa742',
+            thumbnailUrl: p.thumbnail_url,
+            featuredMediaUrl: p.featured_media_url,
+            featuredMediaType: p.featured_media_type,
+            category: p.category,
+            status: p.status,
+            progress: p.progress,
+            techStack: p.tech_stack ? JSON.parse(p.tech_stack) : [],
+            tags: p.tags ? JSON.parse(p.tags) : [],
+            keywords: p.tags ? JSON.parse(p.tags) : [],
+            externalUrl: p.external_url,
+            isFeatured: p.is_featured === 1,
+          }));
+          setProjects(transformed);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -88,15 +91,22 @@ export default function Home() {
     return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
+  // Get all keywords from projects
+  const allKeywords = useMemo(() => {
+    const tagSet = new Set();
+    projects.forEach(p => {
+      p.tags?.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet);
+  }, [projects]);
+
+  // Filter projects by selected keywords
   const filteredProjects = useMemo(() => {
-    return selectedKeywords.length > 0
-      ? projectsData.filter(project => 
-          project.keywords.some(keyword => 
-            selectedKeywords.includes(keyword)
-          )
-        )
-      : projectsData;
-  }, [selectedKeywords]);
+    if (selectedKeywords.length === 0) return projects;
+    return projects.filter(p => 
+      p.tags?.some(tag => selectedKeywords.includes(tag))
+    );
+  }, [projects, selectedKeywords]);
 
   const toggleKeyword = useCallback((keyword) => {
     setSelectedKeywords(prev => 
@@ -143,12 +153,23 @@ export default function Home() {
     setExpandedExperienceId(prev => prev === id ? null : id);
   }, []);
 
+  // Get project media for modal gallery (will be from API later)
+  const selectedProjectMedia = useMemo(() => {
+    return [];
+  }, [selectedMedia]);
+
   const renderMediaModal = useCallback(() => {
     if (!selectedMedia) return null;
 
+    const accentColor = selectedMedia.accentColor || '#ffa742';
+
     return (
       <div className="modal-overlay" onClick={() => setSelectedMedia(null)}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="modal-content project-modal" 
+          onClick={(e) => e.stopPropagation()}
+          style={{ '--accent-color': accentColor }}
+        >
           <button 
             className="close-btn" 
             onClick={() => setSelectedMedia(null)}
@@ -156,10 +177,19 @@ export default function Home() {
           >
             ×
           </button>
+          
+          {/* Project Header */}
+          {selectedMedia.projectName && (
+            <div className="modal-project-header">
+              <h3 style={{ color: accentColor }}>{selectedMedia.projectName}</h3>
+            </div>
+          )}
+          
+          {/* Main Media */}
           {selectedMedia.type === 'image' && (
             <img 
               src={selectedMedia.url} 
-              alt="Resource" 
+              alt={selectedMedia.projectName || "Resource"}
               className="modal-media"
               loading="lazy"
             />
@@ -172,19 +202,56 @@ export default function Home() {
               loading="lazy"
             />
           )}
+          
+          {/* Project Gallery Thumbnails */}
+          {selectedProjectMedia.length > 1 && (
+            <div className="modal-gallery">
+              {selectedProjectMedia.map((media, idx) => (
+                <button
+                  key={idx}
+                  className={`gallery-thumb ${selectedMedia.url === media.url ? 'active' : ''}`}
+                  onClick={() => setSelectedMedia(prev => ({
+                    ...prev,
+                    type: media.type,
+                    url: media.url,
+                  }))}
+                  style={{ borderColor: selectedMedia.url === media.url ? accentColor : 'transparent' }}
+                >
+                  {media.type === 'image' ? (
+                    <img src={media.url} alt={media.caption || `Media ${idx + 1}`} />
+                  ) : (
+                    <div className="gallery-thumb-video">
+                      <span>▶</span>
+                      <span className="thumb-type">{media.type?.toUpperCase()}</span>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
-  }, [selectedMedia]);
+  }, [selectedMedia, selectedProjectMedia]);
 
   const renderProjectItem = useCallback((project) => {
-    const projectTranslation = t.projects.find(p => p.id === project.id);
+    // Get localized display name and description from unified model
+    const displayName = project.displayName?.[language] || project.displayName?.en || 'Untitled';
+    const description = project.description?.[language] || project.description?.en || [];
     
     const handleProjectClick = () => {
-      if (project.media.type === 'url' && project.media.behavior === 'new_tab') {
-        window.open(project.media.url, '_blank', 'noopener,noreferrer');
+      // If project has external URL, open in new tab
+      if (project.externalUrl) {
+        window.open(project.externalUrl, '_blank', 'noopener,noreferrer');
       } else {
-        setSelectedMedia(project.media);
+        // Open media modal with featured media
+        setSelectedMedia({
+          type: project.featuredMediaType,
+          url: project.featuredMediaUrl,
+          projectId: project.id,
+          projectName: displayName,
+          accentColor: project.accentColor,
+        });
       }
     };
 
@@ -192,28 +259,47 @@ export default function Home() {
       <div key={project.id} className="project-item">
         <div 
           className="project-image" 
-          style={{ backgroundImage: `url(${project.imageUrl})` }}
+          style={{ 
+            backgroundImage: `url(${project.thumbnailUrl})`,
+            borderColor: project.accentColor,
+          }}
           onClick={handleProjectClick}
           role="button"
           tabIndex={0}
           onKeyPress={(e) => e.key === 'Enter' && handleProjectClick()}
-        />
+        >
+          {/* Progress indicator */}
+          {project.status === 'active' && (
+            <div 
+              className="project-progress-badge"
+              style={{ backgroundColor: project.accentColor }}
+            >
+              {project.progress}%
+            </div>
+          )}
+        </div>
         <div className="project-info">
-          <h3>{projectTranslation?.title || project.title}</h3>
+          <h3 style={{ color: project.accentColor }}>{displayName}</h3>
           <div className="project-description">
-            {(projectTranslation?.description || project.description).map((line, idx) => (
+            {description.map((line, idx) => (
               <p key={idx} className="description-line">{line}</p>
             ))}
           </div>
           <div className="project-keywords">
-            {project.keywords.map((keyword, idx) => (
-              <span key={idx} className="keyword-badge">{keyword}</span>
+            {project.keywords?.map((keyword, idx) => (
+              <span 
+                key={idx} 
+                className="keyword-badge"
+                style={{ borderColor: project.accentColor }}
+              >
+                {keyword}
+              </span>
             ))}
           </div>
         </div>
       </div>
     );
-  }, [t]);
+  }, [language]);
 
   const renderKeywordFilter = useCallback(() => (
     <div className="keyword-filter-container">
@@ -251,28 +337,23 @@ export default function Home() {
       ) : (
         <div className="experience-accordion">
           {t.experience.map((exp, index) => {
-            const isExpanded = expandedExperienceId === exp.id;
             const media = experienceMedia[index];
-            
             return (
               <div key={exp.id} className="experience-item">
                 <div 
                   className="experience-header"
                   onClick={() => toggleExperience(exp.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e) => e.key === 'Enter' && toggleExperience(exp.id)}
                 >
                   <div className="company-info">
-                    <h3 className="company-name">{exp.company}</h3>
-                    <span className="company-location">{exp.location}</span>
+                    <h3>{exp.company}</h3>
+                    <p className="company-location">{exp.location}</p>
                   </div>
                   <span className="toggle-icon">
-                    {isExpanded ? '−' : '+'}
+                    {expandedExperienceId === exp.id ? '−' : '+'}
                   </span>
                 </div>
                 
-                {isExpanded && (
+                {expandedExperienceId === exp.id && (
                   <div className="experience-content">
                     <ul className="experience-bullets">
                       {exp.bullets.map((bullet, idx) => (
@@ -302,11 +383,11 @@ export default function Home() {
       <Head>
         <GoogleAnalytics />
         <title>MarcoMotion | Professional Portfolio</title>
-        <meta name="description" content="Professional portfolio of Marco Francisco - Motion Graphics Designer and Interactive Media Developer" />
+        <meta name="description" content="Marco Francisco - Creative Technologist building interactive experiences with code, animation, and AI" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:title" content="MarcoMotion | Professional Portfolio" />
-        <meta property="og:description" content="Motion Graphics Designer and Interactive Media Developer" />
+        <meta property="og:description" content="Creative Technologist - Code, Animation & AI Integration" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://marcomotion.com" />
       </Head>
@@ -358,6 +439,9 @@ export default function Home() {
             loading="lazy"
           ></iframe>
         </div>
+
+        {/* LAB TERMINAL - Integrado después del video */}
+        <LabTerminalHUD lang={language} />
       </div>
 
       <div className="particle-container">
@@ -483,7 +567,10 @@ export default function Home() {
       </div>
 
       <footer className="footer">
-        <p className="final-text">© {new Date().getFullYear()} Marco Francisco. {t.footer}</p>
+        <p className="final-text">
+          © {new Date().getFullYear()} Marco Francisco. {t.footer}
+          <a href="/admin/login" className="admin-link" title="Admin">●</a>
+        </p>
       </footer>
 
       {renderMediaModal()}

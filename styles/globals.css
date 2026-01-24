@@ -1,3 +1,4 @@
+@import './variables.css';
 /* Font imports */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100;300;400&display=swap');
 
@@ -495,6 +496,111 @@ body {
   border-radius: 4px;
 }
 
+/* Project Modal with Gallery */
+.project-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--color-gray-900, #2a2f38);
+  max-width: 900px;
+  padding: 24px;
+}
+
+.modal-project-header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-gray-700, #3b424c);
+}
+
+.modal-project-header h3 {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.project-modal .modal-media,
+.project-modal .modal-iframe {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.project-modal .modal-iframe {
+  height: 50vh;
+}
+
+/* Modal Gallery Thumbnails */
+.modal-gallery {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-gray-700, #3b424c);
+  overflow-x: auto;
+}
+
+.gallery-thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-gray-800, #333842);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.gallery-thumb:hover {
+  transform: scale(1.05);
+}
+
+.gallery-thumb.active {
+  border-width: 2px;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumb-video {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--terminal-text-muted, #64748b);
+}
+
+.gallery-thumb-video span:first-child {
+  font-size: 1.2rem;
+}
+
+.thumb-type {
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  font-family: var(--font-mono, monospace);
+}
+
+/* Project Card Progress Badge */
+.project-progress-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-gray-900, #2a2f38);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
 /* Name Link Animation */
 .name-link {
   color: inherit;
@@ -840,3 +946,18 @@ body {
   background-color: #e6953a;
   transform: translateY(-2px);
 }
+/* Admin link - discrete */
+.admin-link {
+  margin-left: 1rem;
+  color: var(--text-dim, #666);
+  text-decoration: none;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  font-size: 0.6rem;
+}
+
+.admin-link:hover {
+  opacity: 1;
+  color: var(--accent, #ffa742);
+}
+

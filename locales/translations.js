@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     // Banner
-    banner: "SR. MOTION GRAPHICS DESIGNER - INTERACTIVE MEDIA - GRAPHIC DESIGN - POST-PRODUCTION - EDITING - WEB DESIGN",
+    banner: "INTERACTIVE MEDIA - CODE + MOTION - AI INTEGRATION - POST-PRODUCTION - CREATIVE DEVELOPMENT - WEB APPS",
     
     // Main Section
     mainTitle: {
@@ -9,67 +9,31 @@ export const translations = {
       line2: "FRANCISC"
     },
     mainDescription: [
-      "Senior Motion Graphics Artist",
-      "Production and Post-Production",
-      "Photography and Video",
-      "AI-Powered App & Web Developer"
+      "Creative Technologist",
+      "Code-Driven Animation & Interactivity",
+      "AI-Powered Tools & Workflows",
+      "Visual Systems Developer"
     ],
     
     // Apps & Projects Section
     projectsTitle: "APPS &\nPROJECTS",
     projectsDescription: [
-      "Infographics, experimental videos and short films.",
-      "The Interactive Media projects and Apps",
-      "where coded with AI assistance."
+      "Interactive experiences, tools, and visual systems.",
+      "Built with code, animation, and AI integration.",
+      "Bridging design and development."
     ],
     filterTitle: "FILTER BY CATEGORY",
     noProjectsMessage: "No projects match the selected filters.",
     resetFiltersBtn: "Reset Filters",
     
-    // Projects Data
-    projects: [
-      {
-        id: 1,
-        title: "Character Prompt Generator",
-        description: [
-          "Built to make character creation easy",
-          "with total control over the look and feel,",
-          "crafting unique, consistent styles."
-        ]
-      },
-      {
-        id: 2,
-        title: "Scripts for Data Visualization in After Effects",
-        description: [
-          "Custom AE scripts to automate",
-          "charts, graphs, and infographics."
-        ]
-      },
-      {
-        id: 3,
-        title: "Intro Logos Reel",
-        description: [
-          "Animated logo intros and social reels",
-          "designed for modern brands and creators,",
-          "ready for instant use and customization."
-        ]
-      },
-      {
-        id: 4,
-        title: "AI Short: Book Trailer",
-        description: [
-          "Book Trailer no. 2 created for",
-          "Monica Rojas' book: In the Shadow",
-          "of a Dead Tree."
-        ]
-      }
-    ],
+    // Projects Data (legacy - now from API)
+    projects: [],
     
     // Professional Experience Section
     experienceTitle: "PROFESSIONAL\nEXPERIENCE",
     experienceDescription: [
-      "Over 15 years in the creative industry.",
-      "Specialized in animation and video."
+      "15+ years crafting visual experiences.",
+      "From broadcast to interactive media."
     ],
     viewExperienceBtn: "VIEW PROFESSIONAL EXPERIENCE",
     viewResourceBtn: "VIEW RESOURCE",
@@ -81,9 +45,9 @@ export const translations = {
         company: "Envato México",
         location: "Guadalajara, Jalisco",
         bullets: [
-          "Motion graphics production for global market.",
-          "Code implementation for interactive animations.",
-          "Artificial intelligence integration."
+          "Interactive templates and tools for global marketplace.",
+          "Code-driven animations and visual systems.",
+          "AI workflow integration and automation."
         ]
       },
       {
@@ -91,11 +55,11 @@ export const translations = {
         company: "ZU Media",
         location: "Mexico City, Col. San Angel Inn",
         bullets: [
-          "Animation and Post-Production Coordinator.",
-          "Spots production for HBO, Natura México, Jim Beam.",
-          "Infographic animation.",
-          "Spots editing for Latin American TV.",
-          "TV documentary program editing for Canal 11."
+          "Animation and Post-Production Lead.",
+          "Commercial production for HBO, Natura México, Jim Beam.",
+          "Data visualization and infographic animation.",
+          "Broadcast editing for Latin American TV.",
+          "Documentary production for Canal 11."
         ]
       },
       {
@@ -103,16 +67,16 @@ export const translations = {
         company: "ED Escuela Digital",
         location: "Mexico City, Paseo de la Reforma",
         bullets: [
-          "Video Post-Production and Digital Animation courses instructor."
+          "Instructor for Post-Production and Digital Animation."
         ]
       },
       {
         id: 4,
-        company: "Donceles 66, Cultural Forum.",
-        location: "Mexico City, Historic Center.",
+        company: "Donceles 66, Cultural Forum",
+        location: "Mexico City, Historic Center",
         bullets: [
-          "Webmaster.",
-          "Audiovisual Producer."
+          "Web Development.",
+          "Audiovisual Production."
         ]
       },
       {
@@ -120,8 +84,8 @@ export const translations = {
         company: "ClickOnero México",
         location: "Mexico City, Polanco",
         bullets: [
-          "Design and animation of banners for digital campaigns.",
-          "Motion Graphics."
+          "Animated banners and interactive campaigns.",
+          "Visual systems for digital marketing."
         ]
       },
       {
@@ -129,10 +93,10 @@ export const translations = {
         company: "El Salón de la Franquicia",
         location: "Mexico City, Col. Del Valle",
         bullets: [
-          "Webmaster.",
-          "Graphic Designer for magazine ads and billboards.",
-          "Production of franchises expos videos.",
-          "Member of the organizing committee for franchises expos."
+          "Web Development.",
+          "Visual design for print and outdoor media.",
+          "Event video production.",
+          "Organizing committee member for franchise expos."
         ]
       },
       {
@@ -140,9 +104,8 @@ export const translations = {
         company: "Secretaría de Seguridad Pública y Tránsito Municipal",
         location: "Puebla City",
         bullets: [
-          "Graphic Reporter for the Social Communication Department.",
-          "Press release writing for local media.",
-          "Police photography and photo archive management."
+          "Visual documentation and press communications.",
+          "Photo archive management and documentation."
         ]
       },
       {
@@ -171,12 +134,12 @@ export const translations = {
     socialTitle: "SOCIAL\nMEDIA",
     
     // Footer
-    footer: "Site developed with Next.js and AI assistance."
+    footer: "Built with Next.js, Cloudflare, and AI assistance."
   },
   
   es: {
     // Banner
-    banner: "DISEÑADOR DE MOTION GRAPHICS SR. - MEDIOS INTERACTIVOS - DISEÑO GRÁFICO - POSTPRODUCCIÓN - EDICIÓN - DISEÑO WEB",
+    banner: "MEDIOS INTERACTIVOS - CÓDIGO + MOTION - INTEGRACIÓN IA - POSTPRODUCCIÓN - DESARROLLO CREATIVO - WEB APPS",
     
     // Main Section
     mainTitle: {
@@ -184,67 +147,31 @@ export const translations = {
       line2: "FRANCISC"
     },
     mainDescription: [
-      "Artista Senior de Motion Graphics",
-      "Producción y Postproducción",
-      "Fotografía y Video",
-      "Desarrollador de Apps y Web con IA"
+      "Tecnólogo Creativo",
+      "Animación e Interactividad con Código",
+      "Herramientas y Flujos con IA",
+      "Desarrollador de Sistemas Visuales"
     ],
     
     // Apps & Projects Section
     projectsTitle: "APPS Y\nPROYECTOS",
     projectsDescription: [
-      "Infografías, videos experimentales y cortometrajes.",
-      "Los proyectos de Medios Interactivos y Apps",
-      "fueron programados con asistencia de IA."
+      "Experiencias interactivas, herramientas y sistemas visuales.",
+      "Construidos con código, animación e integración de IA.",
+      "Conectando diseño y desarrollo."
     ],
     filterTitle: "FILTRAR POR CATEGORÍA",
     noProjectsMessage: "No hay proyectos que coincidan con los filtros seleccionados.",
     resetFiltersBtn: "Resetear Filtros",
     
-    // Projects Data
-    projects: [
-      {
-        id: 1,
-        title: "Generador de Prompts para Personajes",
-        description: [
-          "Diseñado para facilitar la creación de personajes",
-          "con control total sobre la apariencia,",
-          "creando estilos únicos y consistentes."
-        ]
-      },
-      {
-        id: 2,
-        title: "Scripts para Visualización de Datos en After Effects",
-        description: [
-          "Scripts personalizados de AE para automatizar",
-          "gráficas, tablas e infografías."
-        ]
-      },
-      {
-        id: 3,
-        title: "Reel de Intros de Logos",
-        description: [
-          "Intros de logos animados y reels para redes",
-          "diseñados para marcas modernas y creadores,",
-          "listos para uso inmediato y personalización."
-        ]
-      },
-      {
-        id: 4,
-        title: "Cortometraje IA: Book Trailer",
-        description: [
-          "Book Trailer no. 2 realizado para el",
-          "libro de Mónica Rojas: A la sombra",
-          "de un árbol muerto."
-        ]
-      }
-    ],
+    // Projects Data (legacy - now from API)
+    projects: [],
     
     // Professional Experience Section
     experienceTitle: "EXPERIENCIA\nPROFESIONAL",
     experienceDescription: [
-      "Más de 15 años en la industria creativa.",
-      "Especializado en animación y video."
+      "15+ años creando experiencias visuales.",
+      "De broadcast a medios interactivos."
     ],
     viewExperienceBtn: "VER EXPERIENCIA PROFESIONAL",
     viewResourceBtn: "VER RECURSO",
@@ -256,9 +183,9 @@ export const translations = {
         company: "Envato México",
         location: "Guadalajara, Jalisco",
         bullets: [
-          "Producción de motion graphics para mercado global.",
-          "Implementación de código para animaciones interactivas.",
-          "Integración de inteligencia artificial."
+          "Templates y herramientas interactivas para marketplace global.",
+          "Animaciones y sistemas visuales con código.",
+          "Integración de flujos de trabajo con IA."
         ]
       },
       {
@@ -266,11 +193,11 @@ export const translations = {
         company: "ZU Media",
         location: "Ciudad de México, Col. San Ángel Inn",
         bullets: [
-          "Coordinador de Animación y Postproducción.",
-          "Producción de spots para HBO, Natura México, Jim Beam.",
-          "Animación de infografías.",
-          "Edición de spots para TV Latinoamericana.",
-          "Edición de programas documentales de TV para Canal 11."
+          "Líder de Animación y Postproducción.",
+          "Producción comercial para HBO, Natura México, Jim Beam.",
+          "Visualización de datos y animación infográfica.",
+          "Edición broadcast para TV Latinoamericana.",
+          "Producción documental para Canal 11."
         ]
       },
       {
@@ -278,16 +205,16 @@ export const translations = {
         company: "ED Escuela Digital",
         location: "Ciudad de México, Paseo de la Reforma",
         bullets: [
-          "Instructor de cursos de Postproducción de Video y Animación Digital."
+          "Instructor de Postproducción y Animación Digital."
         ]
       },
       {
         id: 4,
-        company: "Donceles 66, Foro Cultural.",
-        location: "Ciudad de México, Centro Histórico.",
+        company: "Donceles 66, Foro Cultural",
+        location: "Ciudad de México, Centro Histórico",
         bullets: [
-          "Webmaster.",
-          "Productor Audiovisual."
+          "Desarrollo Web.",
+          "Producción Audiovisual."
         ]
       },
       {
@@ -295,8 +222,8 @@ export const translations = {
         company: "ClickOnero México",
         location: "Ciudad de México, Polanco",
         bullets: [
-          "Diseño y animación de banners para campañas digitales.",
-          "Motion Graphics."
+          "Banners animados y campañas interactivas.",
+          "Sistemas visuales para marketing digital."
         ]
       },
       {
@@ -304,10 +231,10 @@ export const translations = {
         company: "El Salón de la Franquicia",
         location: "Ciudad de México, Col. Del Valle",
         bullets: [
-          "Webmaster.",
-          "Diseñador Gráfico para anuncios de revista y espectaculares.",
-          "Producción de videos de expos de franquicias.",
-          "Miembro del comité organizador de expos de franquicias."
+          "Desarrollo Web.",
+          "Diseño visual para medios impresos y exteriores.",
+          "Producción de video para eventos.",
+          "Miembro del comité organizador de expos."
         ]
       },
       {
@@ -315,9 +242,8 @@ export const translations = {
         company: "Secretaría de Seguridad Pública y Tránsito Municipal",
         location: "Ciudad de Puebla",
         bullets: [
-          "Reportero Gráfico para el Departamento de Comunicación Social.",
-          "Redacción de comunicados de prensa para medios locales.",
-          "Fotografía policiaca y gestión de archivo fotográfico."
+          "Documentación visual y comunicación de prensa.",
+          "Gestión de archivo y documentación fotográfica."
         ]
       },
       {
@@ -346,6 +272,6 @@ export const translations = {
     socialTitle: "REDES\nSOCIALES",
     
     // Footer
-    footer: "Sitio desarrollado con Next.js y asistencia de IA."
+    footer: "Desarrollado con Next.js, Cloudflare y asistencia de IA."
   }
 };

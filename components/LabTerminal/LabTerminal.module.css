@@ -1,0 +1,455 @@
+/* LabTerminal.module.css */
+/* Usa variables de /styles/variables.css */
+
+.terminalWrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 1.5rem auto 3rem;
+  padding: 0 20px;
+}
+
+.terminal {
+  background: var(--terminal-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-terminal);
+  font-family: var(--font-mono);
+}
+
+/* Terminal Header */
+.terminalHeader {
+  background: var(--terminal-header-gradient);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-primary-light);
+}
+
+.terminalTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--terminal-accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.terminalIcon {
+  font-size: 0.7rem;
+  color: var(--terminal-accent);
+}
+
+.terminalVersion {
+  color: var(--terminal-text-muted);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.terminalControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--terminal-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  transition: color var(--transition-base);
+}
+
+.liveIndicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--terminal-text-muted);
+  transition: all var(--transition-base);
+}
+
+.liveActive {
+  color: var(--terminal-live);
+}
+
+.liveActive::before {
+  background: var(--terminal-live);
+  box-shadow: 0 0 10px var(--terminal-live);
+}
+
+.windowButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.windowBtn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-gray-700);
+  border: 1px solid var(--terminal-border);
+}
+
+.windowBtn:nth-child(1),
+.windowBtn:nth-child(2),
+.windowBtn:nth-child(3) {
+  background: var(--terminal-text-muted);
+}
+
+/* Terminal Content */
+.terminalContent {
+  padding: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.terminalContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminalContent::-webkit-scrollbar-track {
+  background: var(--terminal-bg);
+}
+
+.terminalContent::-webkit-scrollbar-thumb {
+  background: var(--terminal-border);
+  border-radius: 3px;
+}
+
+.terminalContent::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-accent);
+}
+
+/* System Line - Contextual message */
+.systemLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+}
+
+.systemPrefix {
+  color: var(--terminal-live);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.systemText {
+  color: var(--terminal-text-subtle);
+}
+
+.sectionHeader {
+  color: var(--terminal-text);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prompt {
+  color: var(--terminal-accent);
+  font-weight: bold;
+}
+
+.cursor {
+  color: var(--terminal-accent);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--terminal-divider), transparent);
+  margin: 16px 0;
+}
+
+/* Log Entries */
+.logsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.logEntry {
+  animation: fadeSlideIn 0.4s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.timestamp {
+  color: var(--terminal-text-muted);
+  font-size: 0.8rem;
+}
+
+.projectCode {
+  color: var(--terminal-accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.separator {
+  color: var(--terminal-border);
+}
+
+.projectAlias {
+  color: var(--terminal-text-subtle);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* Log Details */
+.logDetails {
+  padding-left: 8px;
+}
+
+.logLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.linePrefix {
+  color: var(--terminal-border);
+  flex-shrink: 0;
+}
+
+.lineLabel {
+  color: var(--terminal-text-muted);
+  min-width: 50px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.lineColon {
+  color: var(--terminal-border);
+}
+
+.entryType {
+  color: var(--terminal-accent);
+  font-weight: 500;
+}
+
+.techStack {
+  color: var(--terminal-text);
+}
+
+.techSeparator {
+  color: var(--terminal-accent);
+}
+
+.oneLiner {
+  color: var(--terminal-text);
+}
+
+.challenge {
+  color: var(--terminal-text-subtle);
+  font-style: italic;
+}
+
+/* Progress Bar */
+.progressBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+}
+
+.progressFilled {
+  color: var(--terminal-accent);
+  letter-spacing: -2px;
+}
+
+.progressEmpty {
+  color: var(--color-gray-700);
+  letter-spacing: -2px;
+}
+
+.progressPercent {
+  color: var(--terminal-accent);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+/* Filters Row */
+.filtersRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  background: transparent;
+  border: none;
+  color: var(--terminal-text-muted);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.5px;
+}
+
+.filterBtn:hover {
+  color: var(--terminal-accent);
+}
+
+.filterActive {
+  color: var(--terminal-accent);
+  background: var(--color-primary-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.viewMoreLink {
+  color: var(--terminal-text-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-fast);
+}
+
+.viewMoreLink:hover {
+  color: var(--terminal-accent);
+}
+
+.arrow {
+  transition: transform var(--transition-fast);
+}
+
+.viewMoreLink:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terminalWrapper {
+    padding: 0 15px;
+    margin: 1rem auto 2rem;
+  }
+
+  .terminal {
+    border-radius: var(--radius-md);
+  }
+
+  .terminalHeader {
+    padding: 10px 15px;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .terminalControls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .terminalContent {
+    padding: 15px;
+    max-height: 500px;
+  }
+
+  .systemLine {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
+  .logHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .logLine {
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+  }
+
+  .lineLabel {
+    min-width: 45px;
+  }
+
+  .filtersRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filterButtons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .progressFilled,
+  .progressEmpty {
+    letter-spacing: -3px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terminalTitle {
+    font-size: 0.8rem;
+  }
+
+  .timestamp {
+    font-size: 0.7rem;
+  }
+
+  .projectCode {
+    font-size: 0.8rem;
+  }
+
+  .logLine {
+    font-size: 0.75rem;
+  }
+
+  .filterBtn {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}

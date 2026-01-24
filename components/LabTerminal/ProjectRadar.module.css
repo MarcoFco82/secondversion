@@ -1,0 +1,183 @@
+/* ProjectRadar.module.css */
+
+.radarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radarLabel {
+  color: var(--terminal-text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.radarScreen {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--color-gray-800);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Radar Circles */
+.radarCircle1,
+.radarCircle2,
+.radarCircle3 {
+  position: absolute;
+  border: 1px solid var(--terminal-border);
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.radarCircle1 {
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.radarCircle2 {
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+}
+
+.radarCircle3 {
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  height: 90%;
+  transform: translate(-50%, -50%);
+}
+
+/* Cross Lines */
+.radarLineH,
+.radarLineV {
+  position: absolute;
+  background: var(--terminal-border);
+  opacity: 0.2;
+}
+
+.radarLineH {
+  top: 50%;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.radarLineV {
+  left: 50%;
+  top: 5%;
+  bottom: 5%;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+/* Radar Sweep */
+.radarSweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--terminal-accent), transparent);
+  transform-origin: left center;
+  animation: radarSpin 4s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes radarSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Center Dot */
+.centerDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--terminal-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--terminal-accent);
+}
+
+/* Project Dots */
+.projectDot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  z-index: 2;
+}
+
+.projectDot:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+}
+
+.projectDotActive {
+  z-index: 3;
+}
+
+/* Pulse Ring for Active */
+.pulseRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Project Count */
+.projectCount {
+  text-align: center;
+  color: var(--terminal-text-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .radarScreen {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 600px) {
+  .radarContainer {
+    gap: 6px;
+  }
+
+  .radarLabel {
+    font-size: 0.65rem;
+  }
+
+  .projectDot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .centerDot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .projectCount {
+    font-size: 0.6rem;
+  }
+}

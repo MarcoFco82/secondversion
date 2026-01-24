@@ -1,0 +1,37 @@
+# ===========================================
+# MARCOMOTION - Cloudflare Configuration
+# ===========================================
+
+name = "marcomotion"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".next"
+
+# ===========================================
+# D1 DATABASE
+# ===========================================
+
+[[d1_databases]]
+binding = "DB"
+database_name = "marcomotion-db"
+database_id = "ae5a2b71-f241-4331-af04-27b4d83715ee"
+
+# ===========================================
+# R2 BUCKET (Media Storage)
+# ===========================================
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "marcomotion-media"
+
+# ===========================================
+# ENVIRONMENT VARIABLES
+# ===========================================
+[vars]
+ENVIRONMENT = "production"
+ADMIN_SECRET = "devlog-secret-2025"
+
+# ===========================================
+# LOCAL DEVELOPMENT
+# ===========================================
+[env.development]
+vars = { ENVIRONMENT = "development" }
