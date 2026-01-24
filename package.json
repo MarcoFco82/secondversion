@@ -2,19 +2,19 @@
   "name": "nextjs-project",
   "version": "1.0.0",
   "scripts": {
-  "dev": "npx @opennextjs/cloudflare dev",
-  "build": "next build",
-  "pages:build": "npx @opennextjs/cloudflare build",
-  "preview": "wrangler pages dev",
-  "deploy": "npm run pages:build && wrangler pages deploy"
-},
+    "dev": "npx @opennextjs/cloudflare dev",
+    "build": "next build",
+    "pages:build": "npx @opennextjs/cloudflare build",
+    "preview": "wrangler pages dev",
+    "deploy": "npm run pages:build && wrangler pages deploy"
+  },
   "dependencies": {
     "formidable": "^3.5.2",
     "framer-motion": "^12.27.5",
     "lodash": "^4.17.21",
     "next": "^15.5.9",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-icons": "^4.8.0",
     "react-tsparticles": "^2.0.6",
     "tsparticles": "^3.8.1",
