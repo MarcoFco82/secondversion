@@ -4,7 +4,7 @@
 
 name = "marcomotion"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = ".next"
+pages_build_output_dir = ".open-next"
 
 # ===========================================
 # D1 DATABASE
@@ -29,9 +29,3 @@ bucket_name = "marcomotion-media"
 [vars]
 ENVIRONMENT = "production"
 ADMIN_SECRET = "devlog-secret-2025"
-
-# ===========================================
-# LOCAL DEVELOPMENT
-# ===========================================
-[env.preview]
-vars = { ENVIRONMENT = "preview" }
