@@ -33,5 +33,5 @@ ADMIN_SECRET = "devlog-secret-2025"
 # ===========================================
 # LOCAL DEVELOPMENT
 # ===========================================
-[env.development]
-vars = { ENVIRONMENT = "development" }
+[env.preview]
+vars = { ENVIRONMENT = "preview" }
