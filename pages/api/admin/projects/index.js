@@ -1,20 +1,19 @@
 /**
- * Development API: Admin Projects
+ * API: Admin Projects
  * POST /api/admin/projects - Create project
  * 
- * This is for local development only.
- * In production, Cloudflare Functions handle this.
+ * Uses D1 database in production (Cloudflare)
+ * Falls back to in-memory store for local development
  */
 
-import { PROJECTS as staticProjects } from '../../../../data/projects';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 
-// Simple token validation for development
+// Simple token validation
 const validateAuth = (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return { valid: false, error: 'Missing authorization header' };
   }
-  // In dev, accept any token that was set during login
   return { valid: true };
 };
 
@@ -34,7 +33,7 @@ const generateProjectCode = () => {
   return `PRJ-${greek}${num}${letter}`;
 };
 
-// In-memory store for development (persists during dev session)
+// In-memory store fallback for local development
 if (!global.devProjects) global.devProjects = [];
 if (!global.devLogs) global.devLogs = [];
 
@@ -71,47 +70,119 @@ export default async function handler(req, res) {
 
       const id = generateId('proj');
       const code = body.code || generateProjectCode();
+      const now = new Date().toISOString();
 
-      const newProject = {
-        id,
-        code,
-        alias: body.alias,
-        display_name_en: body.displayNameEn,
-        display_name_es: body.displayNameEs || null,
-        description_en: body.descriptionEn || null,
-        description_es: body.descriptionEs || null,
-        accent_color: body.accentColor || '#ffa742',
-        thumbnail_url: body.thumbnailUrl || null,
-        featured_media_url: body.featuredMediaUrl || null,
-        featured_media_type: body.featuredMediaType || null,
-        category: body.category,
-        status: body.status || 'active',
-        progress: body.progress || 0,
-        tech_stack: JSON.stringify(body.techStack || []),
-        tags: JSON.stringify(body.tags || []),
-        external_url: body.externalUrl || null,
-        is_featured: body.isFeatured ? 1 : 0,
-        display_order: body.displayOrder || 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      // Try to get D1 database from Cloudflare context
+      let db = null;
+      try {
+        const { env } = await getCloudflareContext();
+        db = env.DB;
+      } catch (e) {
+        // Not in Cloudflare environment, use fallback
+        console.log('D1 not available, using in-memory fallback');
+      }
 
-      global.devProjects.push(newProject);
+      if (db) {
+        // === PRODUCTION: Use D1 Database ===
+        
+        // Insert project
+        await db.prepare(`
+          INSERT INTO projects (
+            id, code, alias, display_name_en, display_name_es,
+            description_en, description_es, accent_color,
+            thumbnail_url, featured_media_url, featured_media_type,
+            category, status, progress, tech_stack, tags,
+            external_url, is_featured, display_order, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          id,
+          code,
+          body.alias,
+          body.displayNameEn,
+          body.displayNameEs || null,
+          body.descriptionEn || null,
+          body.descriptionEs || null,
+          body.accentColor || '#ffa742',
+          body.thumbnailUrl || null,
+          body.featuredMediaUrl || null,
+          body.featuredMediaType || null,
+          body.category,
+          body.status || 'active',
+          body.progress || 0,
+          JSON.stringify(body.techStack || []),
+          JSON.stringify(body.tags || []),
+          body.externalUrl || null,
+          body.isFeatured ? 1 : 0,
+          body.displayOrder || 0,
+          now,
+          now
+        ).run();
 
-      // Handle logs if provided
-      if (body.logs && Array.isArray(body.logs)) {
-        for (const log of body.logs) {
-          if (log.oneLiner && log.oneLiner.trim()) {
-            const logId = generateId('log');
-            global.devLogs.push({
-              id: logId,
-              project_id: id,
-              entry_type: log.entryType || 'build',
-              one_liner: log.oneLiner,
-              challenge_abstract: log.challengeAbstract || null,
-              mental_note: log.mentalNote || null,
-              created_at: new Date().toISOString(),
-            });
+        // Insert logs if provided
+        if (body.logs && Array.isArray(body.logs)) {
+          for (const log of body.logs) {
+            if (log.oneLiner && log.oneLiner.trim()) {
+              const logId = generateId('log');
+              await db.prepare(`
+                INSERT INTO dev_logs (id, project_id, entry_type, one_liner, challenge_abstract, mental_note, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+              `).bind(
+                logId,
+                id,
+                log.entryType || 'build',
+                log.oneLiner,
+                log.challengeAbstract || null,
+                log.mentalNote || null,
+                now
+              ).run();
+            }
+          }
+        }
+
+      } else {
+        // === DEVELOPMENT: Use in-memory store ===
+        
+        const newProject = {
+          id,
+          code,
+          alias: body.alias,
+          display_name_en: body.displayNameEn,
+          display_name_es: body.displayNameEs || null,
+          description_en: body.descriptionEn || null,
+          description_es: body.descriptionEs || null,
+          accent_color: body.accentColor || '#ffa742',
+          thumbnail_url: body.thumbnailUrl || null,
+          featured_media_url: body.featuredMediaUrl || null,
+          featured_media_type: body.featuredMediaType || null,
+          category: body.category,
+          status: body.status || 'active',
+          progress: body.progress || 0,
+          tech_stack: JSON.stringify(body.techStack || []),
+          tags: JSON.stringify(body.tags || []),
+          external_url: body.externalUrl || null,
+          is_featured: body.isFeatured ? 1 : 0,
+          display_order: body.displayOrder || 0,
+          created_at: now,
+          updated_at: now,
+        };
+
+        global.devProjects.push(newProject);
+
+        // Handle logs if provided
+        if (body.logs && Array.isArray(body.logs)) {
+          for (const log of body.logs) {
+            if (log.oneLiner && log.oneLiner.trim()) {
+              const logId = generateId('log');
+              global.devLogs.push({
+                id: logId,
+                project_id: id,
+                entry_type: log.entryType || 'build',
+                one_liner: log.oneLiner,
+                challenge_abstract: log.challengeAbstract || null,
+                mental_note: log.mentalNote || null,
+                created_at: now,
+              });
+            }
           }
         }
       }
@@ -123,6 +194,7 @@ export default async function handler(req, res) {
       });
 
     } catch (error) {
+      console.error('Create project error:', error);
       return res.status(500).json({
         success: false,
         error: error.message,
