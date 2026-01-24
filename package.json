@@ -6,7 +6,7 @@
     "build": "next build",
     "pages:build": "npx @opennextjs/cloudflare build",
     "preview": "wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy"
+    "deploy": "bash deploy.sh"
   },
   "dependencies": {
     "formidable": "^3.5.2",
