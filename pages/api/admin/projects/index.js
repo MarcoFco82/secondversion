@@ -6,7 +6,7 @@
  * In production, Cloudflare Functions handle this.
  */
 
-import { projects as staticProjects } from '../../../../data/projects';
+import { PROJECTS as staticProjects } from '../../../../data/projects';
 
 // Simple token validation for development
 const validateAuth = (req) => {

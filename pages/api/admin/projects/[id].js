@@ -5,7 +5,7 @@
  * DELETE /api/admin/projects/[id] - Delete project
  */
 
-import { projects as staticProjects } from '../../../../data/projects';
+import { PROJECTS as staticProjects } from '../../../../data/projects';
 
 const validateAuth = (req) => {
   const authHeader = req.headers.authorization;
