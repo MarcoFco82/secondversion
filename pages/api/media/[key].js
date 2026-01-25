@@ -30,18 +30,18 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    const headers = new Headers();
-    object.writeHttpMetadata(headers);
+    // Get content type from R2 object metadata
+    const contentType = object.httpMetadata?.contentType || 'application/octet-stream';
     
     // Set cache headers
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('Content-Type', headers.get('content-type') || 'application/octet-stream');
+    res.setHeader('Content-Type', contentType);
     
-    // Stream the response
+    // Get the body as ArrayBuffer and convert to Buffer
     const arrayBuffer = await object.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    res.status(200).send(buffer);
+    return res.status(200).send(buffer);
 
   } catch (error) {
     console.error('Serve media error:', error);
