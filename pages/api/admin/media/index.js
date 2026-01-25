@@ -210,14 +210,8 @@ export default async function handler(req, res) {
             },
           });
 
-          // Construct public URL
-          // R2 public access URL pattern: https://pub-{hash}.r2.dev/{key}
-          // Or custom domain if configured
-          mediaUrl = `https://media.marcomotion.com/${key}`;
-          
-          // If no custom domain, use R2.dev URL (need to enable public access)
-          // For now, store the key and we'll configure the URL later
-          mediaUrl = `/api/media/${key}`;
+          // Public R2 URL
+          mediaUrl = `https://pub-53d4a6f5b3144ad7aaceddf9c6415871.r2.dev/${key}`;
         } else {
           // Development fallback - store base64
           mediaUrl = `data:${file.type};base64,${file.data.toString('base64')}`;
