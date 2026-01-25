@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { href: '/admin/projects', label: 'Projects', icon: '◆' },
   { href: '/admin/logs', label: 'Dev Logs', icon: '▣' },
   { href: '/admin/media', label: 'Media', icon: '▤' },
-  { href: '/admin/social', label: 'Social Generator', icon: '◩', disabled: true },
+  { href: '/admin/social', label: 'Social Generator', icon: '◩' },
   { href: '/admin/cv', label: 'CV Generator', icon: '▧', disabled: true },
 ];
 
