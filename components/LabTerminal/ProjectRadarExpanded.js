@@ -173,12 +173,46 @@ export default function ProjectRadarExpanded({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProjectMedia, setSelectedProjectMedia] = useState([]);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const radarRef = useRef(null);
   const lastPosRef = useRef({ x: 0, y: 0 });
   const lastPinchDistRef = useRef(0);
+
+  // Fetch media when selected project changes
+  useEffect(() => {
+    const fetchProjectMedia = async () => {
+      if (!selectedProject?.id) {
+        setSelectedProjectMedia([]);
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/media?projectId=${selectedProject.id}`);
+        const data = await res.json();
+        
+        if (data.success && data.data) {
+          const mediaItems = data.data.map(m => ({
+            id: m.id,
+            type: m.media_type,
+            url: m.media_url,
+            caption: m.caption_en || m.caption_es || '',
+            date: m.created_at,
+          }));
+          setSelectedProjectMedia(mediaItems);
+        } else {
+          setSelectedProjectMedia([]);
+        }
+      } catch (error) {
+        console.error('Error fetching project media:', error);
+        setSelectedProjectMedia([]);
+      }
+    };
+
+    fetchProjectMedia();
+  }, [selectedProject?.id]);
 
   // Zoom limits
   const MIN_ZOOM = 0.6;
@@ -624,7 +658,7 @@ export default function ProjectRadarExpanded({
                         </div>
                         
                         <MediaGallery 
-                          media={selectedProject.media} 
+                          media={selectedProjectMedia} 
                           projectColor={selectedProject.color}
                         />
                       </div>
