@@ -112,10 +112,42 @@ export default function LabTerminalHUD({ lang = 'en' }) {
     return projects.find(p => p.id === activeLog.projectId);
   }, [activeLog, projects]);
 
-  // Get media for active project
-  const activeProjectMedia = useMemo(() => {
-    return [];
-  }, [activeLog]);
+  // State for active project media
+  const [activeProjectMedia, setActiveProjectMedia] = useState([]);
+
+  // Fetch media when active project changes
+  useEffect(() => {
+    const fetchProjectMedia = async () => {
+      if (!activeLog?.projectId) {
+        setActiveProjectMedia([]);
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/media?projectId=${activeLog.projectId}`);
+        const data = await res.json();
+        
+        if (data.success && data.data) {
+          // Transform to format expected by MediaPreview
+          const mediaItems = data.data.map(m => ({
+            id: m.id,
+            type: m.media_type,
+            url: m.media_url,
+            caption: m.caption_en || m.caption_es || '',
+            date: m.created_at,
+          }));
+          setActiveProjectMedia(mediaItems);
+        } else {
+          setActiveProjectMedia([]);
+        }
+      } catch (error) {
+        console.error('Error fetching project media:', error);
+        setActiveProjectMedia([]);
+      }
+    };
+
+    fetchProjectMedia();
+  }, [activeLog?.projectId]);
 
   // Unique projects for radar
   const uniqueProjects = useMemo(() => {

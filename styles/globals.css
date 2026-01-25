@@ -587,6 +587,28 @@ body {
   font-family: var(--font-mono, monospace);
 }
 
+/* Modal Video */
+.project-modal .modal-video {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Modal No Media State */
+.modal-no-media {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 66, 76, 0.3);
+  border-radius: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
 /* Project Card Progress Badge */
 .project-progress-badge {
   position: absolute;
@@ -599,6 +621,47 @@ body {
   color: var(--color-gray-900, #2a2f38);
   font-weight: 600;
   letter-spacing: 1px;
+}
+
+/* Empty project image state */
+.project-image-empty {
+  background-color: rgba(59, 66, 76, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+/* Media count badge */
+.project-media-count {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-gray-900, #2a2f38);
+  font-weight: 700;
+}
+
+/* Make project-image position relative for badges */
+.project-image {
+  position: relative;
 }
 
 /* Name Link Animation */

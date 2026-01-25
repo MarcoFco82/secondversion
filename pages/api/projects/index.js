@@ -37,6 +37,33 @@ export default async function handler(req, res) {
       `).all();
       
       projects = result.results || [];
+
+      // Fetch media for each project
+      for (let i = 0; i < projects.length; i++) {
+        const mediaResult = await db.prepare(`
+          SELECT * FROM project_media 
+          WHERE project_id = ? 
+          ORDER BY display_order ASC, created_at DESC
+        `).bind(projects[i].id).all();
+        
+        projects[i].media = mediaResult.results || [];
+        
+        // If no thumbnail_url but has media, use first image as thumbnail
+        if (!projects[i].thumbnail_url && projects[i].media.length > 0) {
+          const firstImage = projects[i].media.find(m => 
+            m.media_type === 'image' || m.media_type === 'gif'
+          );
+          if (firstImage) {
+            projects[i].thumbnail_url = firstImage.media_url;
+          }
+        }
+        
+        // If no featured_media_url but has media, use first media
+        if (!projects[i].featured_media_url && projects[i].media.length > 0) {
+          projects[i].featured_media_url = projects[i].media[0].media_url;
+          projects[i].featured_media_type = projects[i].media[0].media_type;
+        }
+      }
     } else {
       // === DEVELOPMENT: Use in-memory + static data ===
       

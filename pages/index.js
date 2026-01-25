@@ -23,6 +23,7 @@ const experienceMedia = [
 export default function Home() {
   const { t, language } = useLanguage();
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [selectedProjectMedia, setSelectedProjectMedia] = useState([]);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
   const [shape, setShape] = useState("circle");
   const [size, setSize] = useState(4);
@@ -70,6 +71,13 @@ export default function Home() {
             keywords: p.tags ? JSON.parse(p.tags) : [],
             externalUrl: p.external_url,
             isFeatured: p.is_featured === 1,
+            // Include media array for slideshow
+            media: (p.media || []).map(m => ({
+              id: m.id,
+              type: m.media_type,
+              url: m.media_url,
+              caption: m.caption_en || m.caption_es || '',
+            })),
           }));
           setProjects(transformed);
         }
@@ -153,18 +161,20 @@ export default function Home() {
     setExpandedExperienceId(prev => prev === id ? null : id);
   }, []);
 
-  // Get project media for modal gallery (will be from API later)
-  const selectedProjectMedia = useMemo(() => {
-    return [];
-  }, [selectedMedia]);
+  // Close modal and reset media
+  const closeMediaModal = useCallback(() => {
+    setSelectedMedia(null);
+    setSelectedProjectMedia([]);
+  }, []);
 
   const renderMediaModal = useCallback(() => {
     if (!selectedMedia) return null;
 
     const accentColor = selectedMedia.accentColor || '#ffa742';
+    const hasGallery = selectedProjectMedia.length > 1;
 
     return (
-      <div className="modal-overlay" onClick={() => setSelectedMedia(null)}>
+      <div className="modal-overlay" onClick={closeMediaModal}>
         <div 
           className="modal-content project-modal" 
           onClick={(e) => e.stopPropagation()}
@@ -172,10 +182,10 @@ export default function Home() {
         >
           <button 
             className="close-btn" 
-            onClick={() => setSelectedMedia(null)}
+            onClick={closeMediaModal}
             aria-label="Close modal"
           >
-            ×
+            x
           </button>
           
           {/* Project Header */}
@@ -186,7 +196,7 @@ export default function Home() {
           )}
           
           {/* Main Media */}
-          {selectedMedia.type === 'image' && (
+          {(selectedMedia.type === 'image' || selectedMedia.type === 'gif') && selectedMedia.url && (
             <img 
               src={selectedMedia.url} 
               alt={selectedMedia.projectName || "Resource"}
@@ -194,7 +204,17 @@ export default function Home() {
               loading="lazy"
             />
           )}
-          {(selectedMedia.type === 'youtube' || selectedMedia.type === 'vimeo') && (
+          {selectedMedia.type === 'video' && selectedMedia.url && (
+            <video 
+              src={selectedMedia.url}
+              className="modal-media modal-video"
+              controls
+              autoPlay
+              loop
+              muted
+            />
+          )}
+          {(selectedMedia.type === 'youtube' || selectedMedia.type === 'vimeo') && selectedMedia.url && (
             <iframe 
               src={selectedMedia.url}
               className="modal-iframe"
@@ -203,12 +223,19 @@ export default function Home() {
             />
           )}
           
+          {/* No media fallback */}
+          {!selectedMedia.url && (
+            <div className="modal-no-media">
+              <span style={{ color: accentColor }}>No media available</span>
+            </div>
+          )}
+          
           {/* Project Gallery Thumbnails */}
-          {selectedProjectMedia.length > 1 && (
+          {hasGallery && (
             <div className="modal-gallery">
               {selectedProjectMedia.map((media, idx) => (
                 <button
-                  key={idx}
+                  key={media.id || idx}
                   className={`gallery-thumb ${selectedMedia.url === media.url ? 'active' : ''}`}
                   onClick={() => setSelectedMedia(prev => ({
                     ...prev,
@@ -217,7 +244,7 @@ export default function Home() {
                   }))}
                   style={{ borderColor: selectedMedia.url === media.url ? accentColor : 'transparent' }}
                 >
-                  {media.type === 'image' ? (
+                  {(media.type === 'image' || media.type === 'gif') ? (
                     <img src={media.url} alt={media.caption || `Media ${idx + 1}`} />
                   ) : (
                     <div className="gallery-thumb-video">
@@ -232,35 +259,44 @@ export default function Home() {
         </div>
       </div>
     );
-  }, [selectedMedia, selectedProjectMedia]);
+  }, [selectedMedia, selectedProjectMedia, closeMediaModal]);
 
   const renderProjectItem = useCallback((project) => {
     // Get localized display name and description from unified model
     const displayName = project.displayName?.[language] || project.displayName?.en || 'Untitled';
     const description = project.description?.[language] || project.description?.en || [];
     
+    // Get thumbnail - fallback to first media if no thumbnail
+    const thumbnailUrl = project.thumbnailUrl || 
+      (project.media?.length > 0 ? project.media[0].url : null);
+    
+    // Check if project has multiple media items for slideshow
+    const hasMultipleMedia = project.media?.length > 1;
+    
     const handleProjectClick = () => {
       // If project has external URL, open in new tab
       if (project.externalUrl) {
         window.open(project.externalUrl, '_blank', 'noopener,noreferrer');
       } else {
-        // Open media modal with featured media
+        // Open media modal with all project media
         setSelectedMedia({
-          type: project.featuredMediaType,
-          url: project.featuredMediaUrl,
+          type: project.featuredMediaType || (project.media?.[0]?.type),
+          url: project.featuredMediaUrl || (project.media?.[0]?.url),
           projectId: project.id,
           projectName: displayName,
           accentColor: project.accentColor,
         });
+        // Store all project media for gallery navigation
+        setSelectedProjectMedia(project.media || []);
       }
     };
 
     return (
       <div key={project.id} className="project-item">
         <div 
-          className="project-image" 
+          className={`project-image ${!thumbnailUrl ? 'project-image-empty' : ''}`}
           style={{ 
-            backgroundImage: `url(${project.thumbnailUrl})`,
+            backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none',
             borderColor: project.accentColor,
           }}
           onClick={handleProjectClick}
@@ -268,13 +304,30 @@ export default function Home() {
           tabIndex={0}
           onKeyPress={(e) => e.key === 'Enter' && handleProjectClick()}
         >
+          {/* No thumbnail placeholder */}
+          {!thumbnailUrl && (
+            <div className="project-image-placeholder">
+              <span style={{ color: project.accentColor }}>{project.code || project.alias}</span>
+            </div>
+          )}
+          
           {/* Progress indicator */}
-          {project.status === 'active' && (
+          {project.status === 'active' && project.progress > 0 && (
             <div 
               className="project-progress-badge"
               style={{ backgroundColor: project.accentColor }}
             >
               {project.progress}%
+            </div>
+          )}
+          
+          {/* Media count badge */}
+          {hasMultipleMedia && (
+            <div 
+              className="project-media-count"
+              style={{ backgroundColor: project.accentColor }}
+            >
+              {project.media.length}
             </div>
           )}
         </div>
