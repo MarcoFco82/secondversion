@@ -126,8 +126,10 @@ function FloatingDot({ project, baseX, baseY, isActive, onClick, index, zoom }) 
   );
 }
 
-// Media Gallery
+// Media Gallery - Carousel with main view and thumbnails
 function MediaGallery({ media = [], projectColor }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  
   if (!media || media.length === 0) {
     return (
       <div className={styles.mediaGalleryEmpty}>
@@ -138,29 +140,73 @@ function MediaGallery({ media = [], projectColor }) {
     );
   }
 
+  const activeMedia = media[activeIndex];
+  const canGoPrev = activeIndex > 0;
+  const canGoNext = activeIndex < media.length - 1;
+
+  const goNext = () => setActiveIndex(prev => Math.min(media.length - 1, prev + 1));
+  const goPrev = () => setActiveIndex(prev => Math.max(0, prev - 1));
+
   return (
     <div className={styles.mediaGallery}>
-      {media.map((item, index) => (
-        <motion.div
-          key={index}
-          className={styles.mediaItem}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-        >
-          {item.type === 'image' && (
-            <img src={item.url} alt={item.caption || `Media ${index + 1}`} />
-          )}
-          {item.type === 'video' && (
-            <video src={item.url} controls />
-          )}
-          {item.type === 'gif' && (
-            <img src={item.url} alt={item.caption || `GIF ${index + 1}`} />
-          )}
-          {item.caption && <div className={styles.mediaCaption}>{item.caption}</div>}
-          {item.date && <div className={styles.mediaDate}>{item.date}</div>}
-        </motion.div>
-      ))}
+      {/* Main viewer */}
+      <div className={styles.mediaMainView}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIndex}
+            className={styles.mediaMainContent}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            {(activeMedia.type === 'image' || activeMedia.type === 'gif') && (
+              <img src={activeMedia.url} alt={activeMedia.caption || `Media ${activeIndex + 1}`} />
+            )}
+            {activeMedia.type === 'video' && (
+              <video src={activeMedia.url} controls autoPlay muted loop playsInline />
+            )}
+          </motion.div>
+        </AnimatePresence>
+        
+        {/* Navigation arrows */}
+        {canGoPrev && (
+          <button className={`${styles.mediaNavBtn} ${styles.mediaNavPrev}`} onClick={goPrev}>
+            ‹
+          </button>
+        )}
+        {canGoNext && (
+          <button className={`${styles.mediaNavBtn} ${styles.mediaNavNext}`} onClick={goNext}>
+            ›
+          </button>
+        )}
+        
+        {/* Counter */}
+        <div className={styles.mediaCounter} style={{ color: projectColor }}>
+          {activeIndex + 1} / {media.length}
+        </div>
+      </div>
+      
+      {/* Thumbnail strip */}
+      {media.length > 1 && (
+        <div className={styles.mediaThumbnails}>
+          {media.map((item, index) => (
+            <button
+              key={item.id || index}
+              className={`${styles.mediaThumb} ${index === activeIndex ? styles.mediaThumbActive : ''}`}
+              onClick={() => setActiveIndex(index)}
+              style={index === activeIndex ? { borderColor: projectColor } : {}}
+            >
+              {(item.type === 'image' || item.type === 'gif') && (
+                <img src={item.url} alt={item.caption || `Thumb ${index + 1}`} />
+              )}
+              {item.type === 'video' && (
+                <div className={styles.mediaThumbVideo}>▶</div>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
