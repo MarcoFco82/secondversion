@@ -306,7 +306,8 @@ export default function LabTerminalHUD({ lang = 'en' }) {
                   
                   {/* Left Column: Media Preview + Radar */}
                   <div className={styles.leftColumn}>
-                    <MediaPreview 
+                    <MediaPreview
+                      key={activeProject?.id || activeLog?.projectCode}
                       mediaUrl={activeProject?.featured_media_url}
                       mediaType={activeProject?.featured_media_type}
                       projectCode={activeLog?.projectCode}
