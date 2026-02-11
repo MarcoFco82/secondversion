@@ -357,8 +357,9 @@ export default function MediaPreview({
   const renderMedia = () => {
     if (!mediaUrl && allMedia.length === 0) return renderPlaceholder();
 
-    const displayUrl = mediaUrl || allMedia[0]?.url;
-    const displayType = effectiveMediaType || detectMediaType(displayUrl);
+    // PRIORITY: Use mediaHistory first, fallback to featured_media_url
+    const displayUrl = allMedia[0]?.url || mediaUrl;
+    const displayType = allMedia[0]?.type || effectiveMediaType || detectMediaType(displayUrl);
 
     switch (displayType) {
       case 'vimeo':
