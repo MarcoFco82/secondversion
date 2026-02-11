@@ -1,5 +1,18 @@
 # Changelog
 
+## [2026-02-11]
+
+### Fixed
+- **Lab Terminal MediaPreview not updating on auto-rotate**: Fixed issue where media preview would only update on manual project selection but not during automatic log rotation
+  - Modified `MediaPreview.js` to prioritize dynamic `mediaHistory` over static `featured_media_url`
+  - Added `useEffect` in `LogDetailsPanel.js` to notify parent component when auto-rotate changes active log
+  - Commits: 3b850df, 710bf84
+- **Deployment pipeline reactivated**: Resumed automatic deployments in Cloudflare dashboard after confirming no Edge Runtime code in pending commits
+
+### Infrastructure
+- **Automatic deployments**: Successfully reactivated after verification that commits 639b64b and 57eb9e0 contained no problematic Edge Runtime declarations
+- **Production deployment**: New commits deployed automatically (3b850df, 710bf84)
+
 ## [2026-02-10]
 
 ### Fixed

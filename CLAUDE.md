@@ -12,7 +12,7 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 ## Repository
 - **GitHub:** https://github.com/MarcoFco82/secondversion
 - **Production:** marcomotion.com, marcomotion.pages.dev
-- **Current Deployment:** 8e3c0868 (commit 35b4348)
+- **Current Deployment:** Auto-deploying from main branch (commit 710bf84)
 - **Working Branch:** main
 
 ## Current Sprint
@@ -21,22 +21,22 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - Fixed media URL 404 errors via database migration
 - Generated 8 background textures for Social Generator
 - Identified and documented deployment pipeline issue
+- **[2026-02-11]** Reactivated automatic deployments
+- **[2026-02-11]** Fixed Lab Terminal MediaPreview not updating on auto-rotate
+- **[2026-02-11]** Deployed MediaPreview fixes to production (commits 3b850df, 710bf84)
 
-### Blocked 🚫
-- **Critical:** Deployment pipeline broken - automatic deployments paused
-  - Cause: Edge Runtime incompatibility with Next.js 15.5.9 Pages Router API routes
-  - Impact: Cannot deploy new code changes
-  - Workaround: Database-level changes work (persist across deployments)
+### Resolved 🟢
+- ~~Deployment pipeline broken~~ → Reactivated successfully
+- ~~MediaPreview fix pending deployment~~ → Deployed and working
 
 ### In Progress 🔄
-- MediaPreview fix (code ready, deployment blocked)
-- CORS resolution for Social Generator canvas (blocked by deployment)
+- CORS resolution for Social Generator canvas
 
 ### Next Steps
-1. **Immediate:** Reactivate automatic deployments in Cloudflare dashboard
-2. **Short-term:** Monitor for @cloudflare/next-on-pages or Next.js fixes
-3. **Medium-term:** Consider App Router migration if issue persists
-4. **Backlog:** Implement CORS solution for Social Generator
+1. **Immediate:** Configure CORS on R2 bucket for Social Generator canvas support
+2. **Short-term:** Monitor deployment pipeline stability
+3. **Medium-term:** Consider App Router migration if Edge Runtime issues return
+4. **Backlog:** Add navigation controls to Lab Terminal (lost in rollback, code in stash)
 
 ## Key Files
 - `/pages/api/**/*.js` - API routes (currently blocking deployments)
@@ -52,9 +52,8 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **admin_users** - Admin authentication (D1)
 
 ## Known Issues
-1. **Deployment Pipeline:** Edge Runtime requirement breaks all API routes with 500 errors
-2. **CORS:** R2 images blocked in canvas (Social Generator) - needs bucket-level CORS
-3. **MediaPreview:** Component doesn't remount on project change (fix ready but not deployed)
+1. **CORS:** R2 images blocked in canvas (Social Generator) - needs bucket-level CORS configuration
+2. **Edge Runtime (Monitoring):** Keep watch for any Edge Runtime incompatibility issues with future Next.js/Cloudflare updates
 
 ## Backup & Recovery
 - **Backup Branch:** `backup-working-state-35b4348` (last known good state)
@@ -64,4 +63,5 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 ## Important Notes
 - Media URLs in database fixed on 2026-02-10 (persists across deployments)
 - Do NOT add `export const runtime = 'edge';` to API routes (causes production failures)
-- Auto-deployments currently paused - manual resume required
+- Auto-deployments active and working (reactivated 2026-02-11)
+- MediaPreview now prioritizes dynamic mediaHistory over static featured_media_url
