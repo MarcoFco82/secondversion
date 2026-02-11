@@ -257,6 +257,13 @@ export default function LogDetailsPanel({
     }
   }, [activeProjectCode]);
 
+  // Notify parent when activeLog changes (auto-rotate or manual)
+  useEffect(() => {
+    if (activeLog && onLogSelect) {
+      onLogSelect(activeLog);
+    }
+  }, [activeLog, onLogSelect]);
+
   // ESC para cerrar expanded
   useEffect(() => {
     const handleEsc = (e) => {
