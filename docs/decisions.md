@@ -1,5 +1,54 @@
 # Architecture Decisions Log
 
+## [2026-02-12] Decision: Unidirectional Data Flow for Auto-Rotate Sync
+
+**Context:**
+LogDetailsPanel and LabTerminalHUD had a bidirectional sync for the active project:
+1. Auto-rotate fires → notify effect tells parent → parent sets `activeProjectCode`
+2. Parent passes `activeProjectCode` back as prop → sync effect resets LogDetailsPanel index to first log of that project
+
+This circular dependency caused the auto-rotate index to reset every time a new project was reached, preventing the parent's `activeLog`, `activeProject`, and MediaPreview from updating.
+
+**Decision:**
+Use a `useRef` (`lastNotifiedProjectRef`) to track which project the auto-rotate last communicated to the parent. The sync effect only fires when `activeProjectCode` differs from the ref (i.e., when an external source like ProjectRadar changes the project), not when the change originated from auto-rotate itself.
+
+**Rationale:**
+- Eliminates the circular dependency without removing the sync capability
+- Radar clicks still sync LogDetailsPanel to the selected project
+- Auto-rotate flows one-way: child → parent, no echo back
+- Minimal code change (1 ref + 2 guard checks)
+
+**Implementation:**
+- `LogDetailsPanel.js`: Added `lastNotifiedProjectRef = useRef(null)`
+- Notify effect sets `lastNotifiedProjectRef.current = activeLog.projectCode` before calling `onLogSelect`
+- Sync effect checks `activeProjectCode !== lastNotifiedProjectRef.current` before calling `goTo`
+
+**Status:** Implemented (commit 8a8b37e), deployed manually
+
+---
+
+## [2026-02-12] Decision: Manual Deploy Required (GitHub Auto-Deploy Broken)
+
+**Context:**
+Cloudflare Pages GitHub auto-deploy has been silently failing for all recent commits. Builds succeed locally but fail on Cloudflare's build servers (likely due to OpenNext/Cloudflare adapter differences).
+
+**Decision:**
+Use `npm run deploy` (local `deploy.sh`) for all deployments until auto-deploy is fixed.
+
+**Rationale:**
+- Local build + `wrangler pages deploy` works reliably
+- Auto-deploy failure is in Cloudflare's build environment, not our code
+- Investigating root cause is lower priority than shipping fixes
+
+**Consequences:**
+- Must run `npm run deploy` manually after each commit
+- Cannot rely on push-to-deploy workflow
+- Should investigate Cloudflare build logs when time permits
+
+**Status:** Active workaround
+
+---
+
 ## [2026-02-11] Decision: Prioritize Dynamic mediaHistory Over Static featured_media_url
 
 **Context:**

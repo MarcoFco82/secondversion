@@ -2,45 +2,26 @@
 
 ## Immediate Actions Required
 
-### 1. Reactivate Automatic Deployments (BLOCKER)
-**Priority:** CRITICAL
-**Owner:** Marco
-**Status:** Waiting for manual action
-
-**Steps:**
-1. Go to Cloudflare Dashboard: https://dash.cloudflare.com/af6afcc9d7e51a33924fcecd94280af0/pages/view/marcomotion
-2. Navigate to Settings → Builds & deployments
-3. Click "Resume automatic deployments"
-4. Verify commit 57eb9e0 auto-deploys
-
-**Why:** Currently all code changes are blocked from deploying
-
----
-
-## Pending Code Fixes (Ready to Deploy)
-
-### 2. MediaPreview Component Update
+### 1. Fix GitHub Auto-Deploy on Cloudflare Pages
 **Priority:** HIGH
-**Status:** Code committed, awaiting deployment
-**Commits:** 639b64b, 57eb9e0
+**Owner:** Marco
+**Status:** Investigating
 
-**What:** Added `key` prop to force React remount when switching projects
+All recent GitHub auto-deploys fail on Cloudflare's build servers. Local builds work fine.
 
-**Expected Outcome:**
-- Lab Terminal will show correct media for each project
-- No more "stuck" on previous project's image
+**Workaround:** Always use `npm run deploy` for manual deployment.
 
-**Testing:**
-1. Deploy the commits
-2. Open Lab Terminal
-3. Switch between projects (Aparta La Fecha ↔ NavidadCon)
-4. Verify media updates correctly
+**Investigation steps:**
+1. Check Cloudflare Pages build logs for the failing deployments
+2. Compare Cloudflare's Node.js version vs local (v23.3.0)
+3. Check if `@opennextjs/cloudflare` build works in Cloudflare's environment
+4. Consider adding a `build` command override in Cloudflare Pages settings
 
 ---
 
 ## Unresolved Issues
 
-### 3. CORS for Social Generator
+### 2. CORS for Social Generator
 **Priority:** MEDIUM
 **Status:** Not started
 **Original Issue:** R2 images blocked when used in HTML5 canvas
@@ -82,46 +63,9 @@ wrangler r2 bucket update marcomotion-media --cors-config cors.json
 
 ---
 
-### 4. Deployment Pipeline Issue
-**Priority:** HIGH (prevents all deployments)
-**Status:** Investigating
-**Issue:** Build requires `export const runtime = 'edge';` but causes 500 errors
-
-**Current Workaround:**
-- Using deployment 8e3c0868 (stable)
-- Making database-level changes only
-
-**Potential Solutions:**
-
-**Option A: Wait for Tooling Fix**
-- Monitor @cloudflare/next-on-pages releases
-- Monitor Next.js 15.x updates
-- May resolve automatically
-
-**Option B: Install Specific Version**
-```bash
-npm install -D @cloudflare/next-on-pages@1.12.0
-```
-Then try deploy again (older version may not require Edge Runtime)
-
-**Option C: Migrate to App Router**
-- Rewrite all Pages Router API routes to App Router format
-- Time investment: ~4-6 hours
-- Future-proof solution
-- Better Edge Runtime support
-
-**Option D: Use Cloudflare Workers Directly**
-- Remove Next.js API routes
-- Create separate Workers for each endpoint
-- Most work but most control
-
-**Recommended:** Try Option B first, then A, then consider C if problem persists
-
----
-
 ## Tech Debt
 
-### 5. Project Navigation Controls
+### 3. Project Navigation Controls
 **Priority:** LOW
 **Status:** Previously implemented, lost in rollback
 
@@ -144,7 +88,7 @@ git stash show -p | grep -A50 "navigation"
 
 ## Database Maintenance
 
-### 6. Media URL Audit
+### 4. Media URL Audit
 **Priority:** LOW
 **Status:** Not started
 
@@ -172,7 +116,7 @@ WHERE media_url LIKE '%pub-53d4a6f5b3144ad7aaceddf9c6415871.r2.dev/%';
 
 ## Future Enhancements
 
-### 7. Media Upload Improvements
+### 5. Media Upload Improvements
 **Priority:** LOW
 **Ideas:**
 - Preview before upload
@@ -181,7 +125,7 @@ WHERE media_url LIKE '%pub-53d4a6f5b3144ad7aaceddf9c6415871.r2.dev/%';
 - Drag-and-drop interface
 - Bulk upload support
 
-### 8. Lab Terminal Enhancements
+### 6. Lab Terminal Enhancements
 **Priority:** LOW
 **Ideas:**
 - Keyboard shortcuts for project navigation

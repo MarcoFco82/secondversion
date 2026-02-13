@@ -1,5 +1,20 @@
 # Changelog
 
+## [2026-02-12]
+
+### Fixed
+- **Lab Terminal auto-rotate not updating image/progress**: Broke circular dependency between sync and notify `useEffect` hooks in `LogDetailsPanel.js`. Added `lastNotifiedProjectRef` to distinguish internal (auto-rotate) from external (radar click) project changes, preventing index resets that blocked parent state updates.
+- **Missing effect dependencies**: Added `logs`, `index`, `goTo` to sync effect dependency array in `LogDetailsPanel.js` (were missing, causing stale closures).
+- **React state mutation in MediaPreview**: Fixed `mediaHistory.sort()` mutating parent state array — changed to `[...mediaHistory].sort()` in `MediaPreview.js:255`.
+
+### Infrastructure
+- **Discovered GitHub auto-deploy failures**: All recent Cloudflare Pages auto-deploys from GitHub have been silently failing. Manual deploy via `npm run deploy` (`deploy.sh`) is required.
+- **Manual deploy to production**: Successfully deployed fix (commits 8a8b37e → 686c2c9) via `deploy.sh`.
+
+### Files Changed
+- `components/LabTerminal/LogDetailsPanel.js` — ref-based sync guard, fixed deps
+- `components/LabTerminal/MediaPreview.js` — immutable sort
+
 ## [2026-02-11]
 
 ### Fixed

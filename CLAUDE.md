@@ -12,7 +12,7 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 ## Repository
 - **GitHub:** https://github.com/MarcoFco82/secondversion
 - **Production:** marcomotion.com, marcomotion.pages.dev
-- **Current Deployment:** Auto-deploying from main branch (commit 710bf84)
+- **Current Deployment:** Manual deploy via `npm run deploy` (commit 686c2c9). GitHub auto-deploy is broken.
 - **Working Branch:** main
 
 ## Current Sprint
@@ -24,17 +24,22 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-02-11]** Reactivated automatic deployments
 - **[2026-02-11]** Fixed Lab Terminal MediaPreview not updating on auto-rotate
 - **[2026-02-11]** Deployed MediaPreview fixes to production (commits 3b850df, 710bf84)
+- **[2026-02-12]** Fixed auto-rotate not updating image/progress (circular useEffect dependency)
+- **[2026-02-12]** Fixed `.sort()` mutating React state in MediaPreview
+- **[2026-02-12]** Deployed fixes manually (commits 8a8b37e → 686c2c9)
 
 ### Resolved 🟢
-- ~~Deployment pipeline broken~~ → Reactivated successfully
+- ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
 - ~~MediaPreview fix pending deployment~~ → Deployed and working
+- ~~Auto-rotate not syncing image/progress~~ → Fixed via ref-based unidirectional flow
 
 ### In Progress 🔄
 - CORS resolution for Social Generator canvas
+- Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
 1. **Immediate:** Configure CORS on R2 bucket for Social Generator canvas support
-2. **Short-term:** Monitor deployment pipeline stability
+2. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
 3. **Medium-term:** Consider App Router migration if Edge Runtime issues return
 4. **Backlog:** Add navigation controls to Lab Terminal (lost in rollback, code in stash)
 
@@ -60,8 +65,14 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **Stashed Changes:** `WIP: attempted edge runtime fixes - broken`
 - **Working Deployment ID:** 8e3c0868-180e-48c2-a7fa-5f18c49b90c6
 
+## Deployment
+- **ALWAYS use `npm run deploy`** (runs `deploy.sh` with OpenNext build + wrangler pages deploy)
+- GitHub auto-deploy is currently broken (builds fail on Cloudflare servers)
+- Never rely on push-to-deploy; always verify with manual deploy
+
 ## Important Notes
 - Media URLs in database fixed on 2026-02-10 (persists across deployments)
 - Do NOT add `export const runtime = 'edge';` to API routes (causes production failures)
-- Auto-deployments active and working (reactivated 2026-02-11)
+- GitHub auto-deployments are BROKEN as of 2026-02-12 — use `npm run deploy`
 - MediaPreview now prioritizes dynamic mediaHistory over static featured_media_url
+- LogDetailsPanel uses `lastNotifiedProjectRef` to prevent circular sync — do not remove
