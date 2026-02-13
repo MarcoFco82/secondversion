@@ -100,10 +100,14 @@ export default function LabTerminalHUD({ lang = 'en' }) {
 
   // Active log (first filtered or by selected project)
   const activeLog = useMemo(() => {
+    let result;
     if (activeProjectCode) {
-      return filteredLogs.find(log => log.projectCode === activeProjectCode) || filteredLogs[0];
+      result = filteredLogs.find(log => log.projectCode === activeProjectCode) || filteredLogs[0];
+    } else {
+      result = filteredLogs[0];
     }
-    return filteredLogs[0];
+    console.log('[PARENT] activeLog derived:', result?.projectCode, 'from activeProjectCode:', activeProjectCode);
+    return result;
   }, [filteredLogs, activeProjectCode]);
 
   // Get active project data
@@ -117,6 +121,7 @@ export default function LabTerminalHUD({ lang = 'en' }) {
 
   // Fetch media when active project changes
   useEffect(() => {
+    console.log('[MEDIA-FETCH] trigger, projectId:', activeLog?.projectId, 'code:', activeProjectCode);
     const fetchProjectMedia = async () => {
       if (!activeLog?.projectId) {
         setActiveProjectMedia([]);
@@ -178,6 +183,7 @@ export default function LabTerminalHUD({ lang = 'en' }) {
 
   // Handle log selection from LogDetailsPanel
   const handleLogSelect = useCallback((log) => {
+    console.log('[PARENT] handleLogSelect:', log.projectCode, 'projectId:', log.projectId);
     setActiveProjectCode(log.projectCode);
   }, []);
 

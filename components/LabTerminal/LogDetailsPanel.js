@@ -23,7 +23,11 @@ function useAutoRotate(length, interval = 8000, resumeDelay = 4000) {
     if (isPaused || length === 0) return;
     
     intervalRef.current = setInterval(() => {
-      setIndex(prev => (prev + 1) % length);
+      setIndex(prev => {
+        const next = (prev + 1) % length;
+        console.log('[AUTO-ROTATE] index:', prev, '→', next);
+        return next;
+      });
     }, interval);
     
     return () => clearInterval(intervalRef.current);
@@ -262,6 +266,7 @@ export default function LogDetailsPanel({
   // Notify parent when activeLog changes (auto-rotate or manual)
   useEffect(() => {
     if (activeLog && onLogSelect) {
+      console.log('[NOTIFY] firing for project:', activeLog.projectCode, 'index:', index);
       lastNotifiedProjectRef.current = activeLog.projectCode;
       onLogSelect(activeLog);
     }
