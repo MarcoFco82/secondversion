@@ -252,7 +252,7 @@ export default function MediaPreview({
   // Combine media history (no need to add current separately, it should be in mediaHistory)
   const allMedia = useMemo(() => {
     if (mediaHistory.length > 0) {
-      return mediaHistory.sort((a, b) => 
+      return [...mediaHistory].sort((a, b) =>
         new Date(b.date) - new Date(a.date)
       );
     }

@@ -210,6 +210,7 @@ export default function LogDetailsPanel({
   );
 
   const activeLog = logs[index];
+  const lastNotifiedProjectRef = useRef(null);
 
   // Agrupar logs por proyecto
   const logsByProject = useMemo(() => {
@@ -247,19 +248,21 @@ export default function LogDetailsPanel({
     }
   }, [goTo, logs, onLogSelect]);
 
-  // Sync con proyecto activo externo
+  // Sync solo con selección EXTERNA (radar click, no auto-rotate)
   useEffect(() => {
-    if (activeProjectCode && logs.length > 0) {
+    if (activeProjectCode && logs.length > 0 && activeProjectCode !== lastNotifiedProjectRef.current) {
       const projectIndex = logs.findIndex(log => log.projectCode === activeProjectCode);
       if (projectIndex !== -1 && projectIndex !== index) {
+        lastNotifiedProjectRef.current = activeProjectCode;
         goTo(projectIndex);
       }
     }
-  }, [activeProjectCode]);
+  }, [activeProjectCode, logs, index, goTo]);
 
   // Notify parent when activeLog changes (auto-rotate or manual)
   useEffect(() => {
     if (activeLog && onLogSelect) {
+      lastNotifiedProjectRef.current = activeLog.projectCode;
       onLogSelect(activeLog);
     }
   }, [activeLog, onLogSelect]);
