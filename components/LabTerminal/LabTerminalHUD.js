@@ -106,27 +106,36 @@ export default function LabTerminalHUD({ lang = 'en' }) {
     return filteredLogs[0];
   }, [filteredLogs, activeProjectCode]);
 
-  // Get active project data
+  // Log-driven: activeProject derives from the active log
   const activeProject = useMemo(() => {
     if (!activeLog?.projectId) return null;
     return projects.find(p => p.id === activeLog.projectId);
   }, [activeLog, projects]);
 
+  // Fallback for projects without logs (clicked from radar)
+  const fallbackProject = useMemo(() => {
+    if (!activeProjectCode) return null;
+    const hasLogs = filteredLogs.some(log => log.projectCode === activeProjectCode);
+    if (hasLogs) return null;
+    return projects.find(p => p.code === activeProjectCode) || null;
+  }, [activeProjectCode, filteredLogs, projects]);
+
   // State for active project media
   const [activeProjectMedia, setActiveProjectMedia] = useState([]);
 
-  // Fetch media when active project changes
+  // Fetch media when active project changes (log-driven with fallback)
   useEffect(() => {
     const fetchProjectMedia = async () => {
-      if (!activeLog?.projectId) {
+      const projectId = activeLog?.projectId || fallbackProject?.id;
+      if (!projectId) {
         setActiveProjectMedia([]);
         return;
       }
-      
+
       try {
-        const res = await fetch(`/api/media?projectId=${activeLog.projectId}`);
+        const res = await fetch(`/api/media?projectId=${projectId}`);
         const data = await res.json();
-        
+
         if (data.success && data.data) {
           // Transform to format expected by MediaPreview
           const mediaItems = data.data.map(m => ({
@@ -147,29 +156,20 @@ export default function LabTerminalHUD({ lang = 'en' }) {
     };
 
     fetchProjectMedia();
-  }, [activeLog?.projectId]);
+  }, [activeLog?.projectId, fallbackProject?.id]);
 
-  // Unique projects for radar
+  // All projects for radar (not just those with logs)
   const uniqueProjects = useMemo(() => {
-    const projectMap = new Map();
-    
-    enrichedLogs.forEach(log => {
-      const project = projects.find(p => p.id === log.projectId);
-      if (project && !projectMap.has(project.id)) {
-        projectMap.set(project.id, {
-          id: project.id,
-          code: project.code,
-          alias: project.alias,
-          color: project.accent_color,
-          progress: project.progress,
-          category: project.category,
-          status: project.status,
-        });
-      }
-    });
-    
-    return Array.from(projectMap.values());
-  }, [enrichedLogs, projects]);
+    return projects.map(project => ({
+      id: project.id,
+      code: project.code,
+      alias: project.alias,
+      color: project.accent_color,
+      progress: project.progress,
+      category: project.category,
+      status: project.status,
+    }));
+  }, [projects]);
 
   // Activity array for chart
   const activityArray = useMemo(() => {
@@ -307,20 +307,20 @@ export default function LabTerminalHUD({ lang = 'en' }) {
                   {/* Left Column: Media Preview + Radar */}
                   <div className={styles.leftColumn}>
                     <MediaPreview
-                      key={activeProject?.id || activeLog?.projectCode}
-                      mediaUrl={activeProject?.featured_media_url}
-                      mediaType={activeProject?.featured_media_type}
-                      projectCode={activeLog?.projectCode}
-                      projectAlias={activeLog?.projectAlias}
-                      accentColor={activeLog?.accentColor}
-                      projectName={activeProject?.display_name_en}
+                      key={activeLog?.projectCode || fallbackProject?.code}
+                      mediaUrl={activeProject?.featured_media_url || fallbackProject?.featured_media_url}
+                      mediaType={activeProject?.featured_media_type || fallbackProject?.featured_media_type}
+                      projectCode={activeLog?.projectCode || fallbackProject?.code}
+                      projectAlias={activeLog?.projectAlias || fallbackProject?.alias}
+                      accentColor={activeLog?.accentColor || fallbackProject?.accent_color}
+                      projectName={activeProject?.display_name_en || fallbackProject?.display_name_en}
                       mediaHistory={activeProjectMedia}
                       lang={lang}
                     />
-                    
-                    <ProjectRadarExpanded 
+
+                    <ProjectRadarExpanded
                       projects={uniqueProjects}
-                      activeProject={activeLog?.projectCode}
+                      activeProject={activeLog?.projectCode || fallbackProject?.code}
                       onProjectSelect={handleProjectSelect}
                       label={t.projects}
                     />
@@ -353,7 +353,7 @@ export default function LabTerminalHUD({ lang = 'en' }) {
                   label={t.activity}
                   sublabel={t.weeklyPulse}
                   onDaySelect={handleDaySelect}
-                  accentColor={activeLog?.accentColor || 'var(--terminal-accent)'}
+                  accentColor={activeLog?.accentColor || fallbackProject?.accent_color || 'var(--terminal-accent)'}
                 />
               </>
             )}
