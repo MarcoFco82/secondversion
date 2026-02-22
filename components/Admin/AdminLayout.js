@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: '/admin/logs', label: 'Dev Logs', icon: '▣' },
   { href: '/admin/media', label: 'Media', icon: '▤' },
   { href: '/admin/social', label: 'Social Generator', icon: '◩' },
+  { href: '/admin/sphere', label: 'Sphere Config', icon: '◎' },
   { href: '/admin/cv', label: 'CV Generator', icon: '▧', disabled: true },
 ];
 

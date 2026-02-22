@@ -17,6 +17,7 @@ export default function ProjectFace({
   onHover,
   onUnhover,
   enableText3D,
+  sphereConfig,
 }) {
   const groupRef = useRef();
   const meshRef = useRef();
@@ -28,7 +29,7 @@ export default function ProjectFace({
   const centerVec = useMemo(() => new THREE.Vector3(...center), [center]);
 
   const isActive = project != null;
-  const color = isActive ? (project.accent_color || '#ffa742') : '#38bdf8';
+  const color = isActive ? (project.accent_color || '#ffa742') : (sphereConfig.strokeColor || '#38bdf8');
 
   // Build hexagon BufferGeometry (fan from center, 6 triangles)
   const geometry = useMemo(() => {
@@ -95,15 +96,23 @@ export default function ProjectFace({
     }
   });
 
+  // Config values with fallbacks
+  const strokeColor = sphereConfig.strokeColor || '#38bdf8';
+  const strokeOpacity = sphereConfig.strokeOpacity ?? 1.0;
+  const inactiveFillOpacity = sphereConfig.inactiveFillOpacity ?? 0.02;
+  const emissiveBase = sphereConfig.activeEmissiveBase ?? 0.3;
+  const emissiveHover = sphereConfig.activeEmissiveHover ?? 0.8;
+  const emissiveSelected = sphereConfig.activeEmissiveSelected ?? 2.0;
+
   // --- INACTIVE FACE (no project) ---
   if (!isActive) {
     return (
       <group>
         <mesh geometry={geometry}>
           <meshBasicMaterial
-            color="#38bdf8"
+            color={strokeColor}
             transparent
-            opacity={0.04}
+            opacity={inactiveFillOpacity}
             side={THREE.DoubleSide}
             depthWrite={false}
           />
@@ -118,14 +127,14 @@ export default function ProjectFace({
               itemSize={3}
             />
           </bufferGeometry>
-          <lineBasicMaterial color="#38bdf8" transparent opacity={0.12} />
+          <lineBasicMaterial color={strokeColor} transparent opacity={strokeOpacity} />
         </lineLoop>
       </group>
     );
   }
 
   // --- ACTIVE FACE (has project) ---
-  const emissiveIntensity = isSelected ? 1.5 : (isHovered || localHover) ? 0.6 : 0.3;
+  const emissiveIntensity = isSelected ? emissiveSelected : (isHovered || localHover) ? emissiveHover : emissiveBase;
   const opacity = (isHovered || localHover) ? 0.9 : 0.7;
 
   return (
@@ -172,7 +181,7 @@ export default function ProjectFace({
             itemSize={3}
           />
         </bufferGeometry>
-        <lineBasicMaterial color={color} transparent opacity={0.6} />
+        <lineBasicMaterial color={color} transparent opacity={0.8} />
       </lineLoop>
 
       {/* 3D Text label — only on tablet/desktop + active faces */}

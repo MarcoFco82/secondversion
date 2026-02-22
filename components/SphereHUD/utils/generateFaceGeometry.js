@@ -1,23 +1,23 @@
 import * as THREE from 'three';
 
-const TOTAL_FACES = 30;
-
 /**
- * Generates 30 hexagonal face positions distributed on a sphere.
+ * Generates hexagonal face positions distributed on a sphere.
  * Each face is a regular hexagon tangent to the sphere surface.
  *
  * @param {number} radius - Sphere radius (default 1.5)
+ * @param {number} totalFaces - Number of hexagonal faces (default 30)
  * @returns {Array<{center, normal, vertices, textPosition, faceRadius}>}
  */
-export function generateFaceGeometry(radius = 1.5) {
+export function generateFaceGeometry(radius = 1.5, totalFaces = 30) {
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-  const faceRadius = 0.22;
+  // Scale face radius inversely with count so they don't overlap
+  const faceRadius = 0.22 * Math.sqrt(30 / totalFaces);
 
   const faces = [];
 
-  for (let i = 0; i < TOTAL_FACES; i++) {
+  for (let i = 0; i < totalFaces; i++) {
     // Fibonacci sphere distribution
-    const y = 1 - (i / (TOTAL_FACES - 1)) * 2;
+    const y = 1 - (i / (totalFaces - 1)) * 2;
     const radiusAtY = Math.sqrt(1 - y * y);
     const theta = goldenAngle * i;
 

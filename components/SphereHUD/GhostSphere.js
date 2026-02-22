@@ -6,7 +6,11 @@ import * as THREE from 'three';
  * Ghost wireframe icosahedron — very faint visual guide
  * suggesting the complete sphere shape.
  */
-export default function GhostSphere({ radius = 1.5 }) {
+export default function GhostSphere({
+  radius = 1.5,
+  color = '#38bdf8',
+  opacity = 0.06,
+}) {
   const ref = useRef();
 
   useFrame((_, delta) => {
@@ -19,7 +23,7 @@ export default function GhostSphere({ radius = 1.5 }) {
   return (
     <lineSegments ref={ref}>
       <edgesGeometry args={[new THREE.IcosahedronGeometry(radius, 2)]} />
-      <lineBasicMaterial color="#38bdf8" transparent opacity={0.04} depthWrite={false} />
+      <lineBasicMaterial color={color} transparent opacity={opacity} depthWrite={false} />
     </lineSegments>
   );
 }

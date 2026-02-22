@@ -1,0 +1,252 @@
+/* ===========================================
+   ADMIN SPHERE CONFIG PAGE
+   =========================================== */
+
+.container {
+  max-width: 800px;
+}
+
+/* Section cards */
+.section {
+  background: #0f0f0f;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #666;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* Field rows */
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.fieldRow:last-child {
+  margin-bottom: 0;
+}
+
+.fieldLabel {
+  flex: 0 0 140px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.fieldControl {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Sliders */
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #2a2a2a;
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffa742;
+  cursor: pointer;
+  border: 2px solid #0f0f0f;
+}
+
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffa742;
+  cursor: pointer;
+  border: 2px solid #0f0f0f;
+}
+
+.sliderValue {
+  flex: 0 0 50px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: #ffa742;
+  text-align: right;
+}
+
+/* Color pickers */
+.colorPickerRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.colorField {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.colorLabel {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.colorInput {
+  width: 36px;
+  height: 28px;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  padding: 1px;
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+.colorHex {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: #555;
+}
+
+/* Gradient preview */
+.gradientPreview {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+  margin-top: 0.5rem;
+}
+
+/* Action buttons */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.resetBtn {
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: #1a1a1a;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.saveBtn {
+  padding: 0.6rem 1.5rem;
+  background: rgba(255, 167, 66, 0.15);
+  border: 1px solid #ffa742;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffa742;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: rgba(255, 167, 66, 0.25);
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status message */
+.statusMsg {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.statusSuccess {
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.statusError {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fieldRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .fieldLabel {
+    flex: none;
+  }
+
+  .fieldControl {
+    width: 100%;
+  }
+
+  .colorPickerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .resetBtn,
+  .saveBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

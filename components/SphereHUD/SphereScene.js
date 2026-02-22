@@ -9,7 +9,7 @@ import ActivityRing from './ActivityRing';
 import { generateFaceGeometry } from './utils/generateFaceGeometry';
 
 /**
- * Main R3F Canvas scene — 30 hexagonal faces on sphere surface.
+ * Main R3F Canvas scene — hexagonal faces on sphere surface.
  * Active projects get colored faces; the rest stay dim as structure.
  */
 export default function SphereScene({
@@ -22,12 +22,15 @@ export default function SphereScene({
   onNodeUnhover,
   autoRotate,
   performanceConfig,
+  sphereConfig,
 }) {
   const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D } =
     performanceConfig;
 
-  // Always 30 hexagonal faces
-  const faceGeometries = useMemo(() => generateFaceGeometry(1.5), []);
+  const hexCount = sphereConfig.hexCount || 30;
+
+  // Generate face geometries based on dynamic hexCount
+  const faceGeometries = useMemo(() => generateFaceGeometry(1.5, hexCount), [hexCount]);
 
   return (
     <Canvas
@@ -54,14 +57,18 @@ export default function SphereScene({
         />
 
         {/* Ghost wireframe sphere */}
-        <GhostSphere radius={1.5} />
+        <GhostSphere
+          radius={1.5}
+          color={sphereConfig.ghostSphereColor}
+          opacity={sphereConfig.ghostSphereOpacity}
+        />
 
-        {/* 30 hexagonal faces — first N are active projects, rest are inactive */}
+        {/* Hexagonal faces — first N are active projects, rest are inactive */}
         {faceGeometries.map((faceData, i) => {
           const project = i < projects.length ? projects[i] : null;
           return (
             <ProjectFace
-              key={i}
+              key={`${hexCount}-${i}`}
               project={project}
               faceData={faceData}
               isSelected={project ? selectedProject?.id === project.id : false}
@@ -70,12 +77,18 @@ export default function SphereScene({
               onHover={onNodeHover}
               onUnhover={onNodeUnhover}
               enableText3D={enableText3D}
+              sphereConfig={sphereConfig}
             />
           );
         })}
 
         {/* Particles */}
-        <ParticleSystem count={particleCount} />
+        <ParticleSystem
+          count={particleCount}
+          color={sphereConfig.particleColor}
+          size={sphereConfig.particleSize}
+          opacity={sphereConfig.particleOpacity}
+        />
 
         {/* Activity ring (desktop only) */}
         {enableActivityRing && <ActivityRing activityData={activityData} />}
@@ -85,9 +98,9 @@ export default function SphereScene({
           <EffectComposer>
             {enableBloom && (
               <Bloom
-                luminanceThreshold={1.2}
-                luminanceSmoothing={0.3}
-                intensity={0.4}
+                luminanceThreshold={sphereConfig.bloomThreshold}
+                luminanceSmoothing={sphereConfig.bloomSmoothing}
+                intensity={sphereConfig.bloomIntensity}
                 mipmapBlur
               />
             )}

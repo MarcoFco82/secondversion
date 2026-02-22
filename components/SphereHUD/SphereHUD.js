@@ -6,6 +6,7 @@ import ProjectDetailPanel from './ProjectDetailPanel';
 import { useProjectData } from './hooks/useProjectData';
 import { useSphereInteraction } from './hooks/useSphereInteraction';
 import { useMobileDetect } from './hooks/useMobileDetect';
+import { useSphereConfig } from './hooks/useSphereConfig';
 
 /**
  * SphereHUD — Orchestrator component.
@@ -17,6 +18,7 @@ import { useMobileDetect } from './hooks/useMobileDetect';
 export default function SphereHUD({ lang = 'en' }) {
   const { projects, enrichedLogs, activityArray, loading } = useProjectData();
   const performanceConfig = useMobileDetect();
+  const { config: sphereConfig } = useSphereConfig();
   const {
     selectedProject,
     hoveredProject,
@@ -39,6 +41,9 @@ export default function SphereHUD({ lang = 'en' }) {
     });
   }, [projects, activeFilter]);
 
+  // Background gradient from config
+  const bgGradient = `linear-gradient(180deg, ${sphereConfig.bgGradientTop} 0%, ${sphereConfig.bgGradientBottom} 100%)`;
+
   if (loading) {
     return (
       <>
@@ -55,7 +60,7 @@ export default function SphereHUD({ lang = 'en' }) {
       <SphereIntro lang={lang} />
 
       <div className={styles.sphereWrapper}>
-        <div className={styles.sphereContainer}>
+        <div className={styles.sphereContainer} style={{ background: bgGradient }}>
           {/* Canvas */}
           <div className={styles.canvasWrapper}>
             <SphereScene
@@ -68,6 +73,7 @@ export default function SphereHUD({ lang = 'en' }) {
               onNodeUnhover={handleNodeUnhover}
               autoRotate={autoRotate}
               performanceConfig={performanceConfig}
+              sphereConfig={sphereConfig}
             />
 
             {/* HUD overlay */}

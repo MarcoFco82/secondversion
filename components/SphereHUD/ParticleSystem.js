@@ -6,7 +6,12 @@ import * as THREE from 'three';
  * Orbital particle system around the sphere.
  * Particles move in tangential orbits with slight randomness.
  */
-export default function ParticleSystem({ count = 200 }) {
+export default function ParticleSystem({
+  count = 200,
+  color = '#38bdf8',
+  size = 0.008,
+  opacity = 0.6,
+}) {
   const pointsRef = useRef();
 
   const { positions, velocities } = useMemo(() => {
@@ -73,10 +78,10 @@ export default function ParticleSystem({ count = 200 }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        color="#38bdf8"
-        size={0.008}
+        color={color}
+        size={size}
         transparent
-        opacity={0.6}
+        opacity={opacity}
         sizeAttenuation
         depthWrite={false}
         blending={THREE.AdditiveBlending}
