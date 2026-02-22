@@ -125,7 +125,6 @@ export default function ProjectFace({
           color={color}
           anchorX="center"
           anchorY="middle"
-          font="/fonts/JetBrainsMono-Regular.woff2"
           fillOpacity={1}
           outlineWidth={0}
         >
