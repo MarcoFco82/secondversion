@@ -76,12 +76,12 @@ export default function LabTerminalHUD({ lang = 'en' }) {
         challengeAbstract: log.challenge_abstract,
         mentalNote: log.mental_note,
         createdAt: log.created_at,
-        projectCode: project?.code,
-        projectAlias: project?.alias,
-        accentColor: project?.accent_color,
-        techStack: project?.tech_stack ? JSON.parse(project.tech_stack) : [],
-        progress: typeof project?.progress === 'number' ? project.progress : 0,
-        category: project?.category,
+        projectCode: log.project_code || project?.code,
+        projectAlias: log.project_alias || project?.alias,
+        accentColor: log.project_color || project?.accent_color,
+        techStack: (() => { try { return JSON.parse(log.project_tech_stack || project?.tech_stack || '[]'); } catch { return []; } })(),
+        progress: log.project_progress ?? project?.progress ?? 0,
+        category: log.project_category || project?.category,
       };
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [logs, projects]);
@@ -341,8 +341,8 @@ export default function LabTerminalHUD({ lang = 'en' }) {
                         paused: t.paused,
                         autoRotate: t.autoRotate,
                       }}
-                      autoRotateInterval={8000}
-                      resumeDelay={4000}
+                      autoRotateInterval={4000}
+                      resumeDelay={3000}
                     />
                   </div>
                 </div>

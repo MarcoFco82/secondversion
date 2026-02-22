@@ -31,11 +31,14 @@ export default async function handler(req, res) {
     if (db) {
       // === PRODUCTION: Use D1 ===
       const result = await db.prepare(`
-        SELECT 
+        SELECT
           dl.*,
           p.code as project_code,
           p.alias as project_alias,
-          p.accent_color as project_color
+          p.accent_color as project_color,
+          p.progress as project_progress,
+          p.tech_stack as project_tech_stack,
+          p.category as project_category
         FROM dev_logs dl
         LEFT JOIN projects p ON dl.project_id = p.id
         ORDER BY dl.created_at DESC
