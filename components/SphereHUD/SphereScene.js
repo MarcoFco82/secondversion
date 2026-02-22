@@ -9,8 +9,8 @@ import ActivityRing from './ActivityRing';
 import { generateFaceGeometry } from './utils/generateFaceGeometry';
 
 /**
- * Main R3F Canvas scene — sphere of project faces,
- * ghost wireframe, particles, activity ring, and post-processing.
+ * Main R3F Canvas scene — 30 hexagonal faces on sphere surface.
+ * Active projects get colored faces; the rest stay dim as structure.
  */
 export default function SphereScene({
   projects,
@@ -26,11 +26,8 @@ export default function SphereScene({
   const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D } =
     performanceConfig;
 
-  // Generate face geometry for each project
-  const faceGeometries = useMemo(() => {
-    if (projects.length === 0) return [];
-    return generateFaceGeometry(projects.length, 1.5);
-  }, [projects.length]);
+  // Always 30 hexagonal faces
+  const faceGeometries = useMemo(() => generateFaceGeometry(1.5), []);
 
   return (
     <Canvas
@@ -59,20 +56,23 @@ export default function SphereScene({
         {/* Ghost wireframe sphere */}
         <GhostSphere radius={1.5} />
 
-        {/* Project faces */}
-        {projects.map((project, i) => (
-          <ProjectFace
-            key={project.id}
-            project={project}
-            faceData={faceGeometries[i]}
-            isSelected={selectedProject?.id === project.id}
-            isHovered={hoveredProject?.id === project.id}
-            onClick={onNodeClick}
-            onHover={onNodeHover}
-            onUnhover={onNodeUnhover}
-            enableText3D={enableText3D}
-          />
-        ))}
+        {/* 30 hexagonal faces — first N are active projects, rest are inactive */}
+        {faceGeometries.map((faceData, i) => {
+          const project = i < projects.length ? projects[i] : null;
+          return (
+            <ProjectFace
+              key={i}
+              project={project}
+              faceData={faceData}
+              isSelected={project ? selectedProject?.id === project.id : false}
+              isHovered={project ? hoveredProject?.id === project.id : false}
+              onClick={onNodeClick}
+              onHover={onNodeHover}
+              onUnhover={onNodeUnhover}
+              enableText3D={enableText3D}
+            />
+          );
+        })}
 
         {/* Particles */}
         <ParticleSystem count={particleCount} />

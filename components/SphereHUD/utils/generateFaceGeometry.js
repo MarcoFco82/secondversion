@@ -1,25 +1,23 @@
 import * as THREE from 'three';
 
+const TOTAL_FACES = 30;
+
 /**
- * Generates face geometry data for N projects distributed on a sphere.
- * Each face is an equilateral triangle tangent to the sphere surface.
+ * Generates 30 hexagonal face positions distributed on a sphere.
+ * Each face is a regular hexagon tangent to the sphere surface.
  *
- * @param {number} n - Number of faces (projects)
  * @param {number} radius - Sphere radius (default 1.5)
  * @returns {Array<{center, normal, vertices, textPosition, faceRadius}>}
  */
-export function generateFaceGeometry(n, radius = 1.5) {
-  if (n === 0) return [];
-
+export function generateFaceGeometry(radius = 1.5) {
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-  const K = 1.3;
-  const faceRadius = Math.min(K / Math.sqrt(n), radius * 0.6);
+  const faceRadius = 0.22;
 
   const faces = [];
 
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < TOTAL_FACES; i++) {
     // Fibonacci sphere distribution
-    const y = n === 1 ? 0 : 1 - (i / (n - 1)) * 2;
+    const y = 1 - (i / (TOTAL_FACES - 1)) * 2;
     const radiusAtY = Math.sqrt(1 - y * y);
     const theta = goldenAngle * i;
 
@@ -40,17 +38,18 @@ export function generateFaceGeometry(n, radius = 1.5) {
     const u = new THREE.Vector3().crossVectors(up, normal).normalize();
     const v = new THREE.Vector3().crossVectors(normal, u).normalize();
 
-    // Equilateral triangle vertices in tangent plane
-    const angles = [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3];
-    const vertices = angles.map((a) => {
+    // Regular hexagon: 6 vertices in tangent plane
+    const vertices = [];
+    for (let j = 0; j < 6; j++) {
+      const a = (Math.PI / 3) * j;
       const px = center.x + faceRadius * (Math.cos(a) * u.x + Math.sin(a) * v.x);
       const py = center.y + faceRadius * (Math.cos(a) * u.y + Math.sin(a) * v.y);
       const pz = center.z + faceRadius * (Math.cos(a) * u.z + Math.sin(a) * v.z);
-      return new THREE.Vector3(px, py, pz);
-    });
+      vertices.push(new THREE.Vector3(px, py, pz));
+    }
 
     // Text position: offset outward from center along normal
-    const textPosition = center.clone().add(normal.clone().multiplyScalar(faceRadius * 0.4));
+    const textPosition = center.clone().add(normal.clone().multiplyScalar(faceRadius * 0.5));
 
     faces.push({
       center: [center.x, center.y, center.z],
