@@ -7,6 +7,8 @@ import * as THREE from 'three';
  * A single hexagonal face on the sphere surface.
  * If project is provided → active (colored, interactive, text).
  * If project is null → inactive (dim wireframe, not interactive).
+ *
+ * ALL faces float along their normal like objects on water.
  */
 export default function ProjectFace({
   project,
@@ -35,20 +37,13 @@ export default function ProjectFace({
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     const cx = center[0], cy = center[1], cz = center[2];
-
-    // 6 triangles: center → vertex[j] → vertex[(j+1)%6]
     const positions = [];
     const indices = [];
 
-    // Vertex 0 = center
     positions.push(cx, cy, cz);
-
-    // Vertices 1-6 = hexagon corners
     for (let j = 0; j < 6; j++) {
       positions.push(vertices[j].x, vertices[j].y, vertices[j].z);
     }
-
-    // Index triangles
     for (let j = 0; j < 6; j++) {
       indices.push(0, j + 1, ((j + 1) % 6) + 1);
     }
@@ -59,23 +54,38 @@ export default function ProjectFace({
     return geo;
   }, [center, vertices]);
 
-  // Hover displacement target
+  // Floating animation — deterministic per face based on position
+  const floatPhase = useMemo(
+    () => (center[0] * 13.7 + center[1] * 7.3 + center[2] * 19.1) % (Math.PI * 2),
+    [center],
+  );
+  const floatSpeed = useMemo(
+    () => 0.35 + Math.abs(center[1]) * 0.3,
+    [center],
+  );
+  const floatAmplitude = 0.03;
+
+  // Hover displacement target (active faces only)
   const hoverOffset = useRef(0);
 
   useFrame((state) => {
     if (!groupRef.current) return;
 
+    // Floating offset — all faces bob along their normal like water surface
+    const floatOffset = Math.sin(state.clock.elapsedTime * floatSpeed + floatPhase) * floatAmplitude;
+
     if (isActive) {
       const active = isSelected || isHovered || localHover;
 
-      // Hover: displace outward along normal
-      const targetOffset = active ? 0.06 : 0;
-      hoverOffset.current = THREE.MathUtils.lerp(hoverOffset.current, targetOffset, 0.08);
+      // Hover: extra displacement outward
+      const targetHover = active ? 0.06 : 0;
+      hoverOffset.current = THREE.MathUtils.lerp(hoverOffset.current, targetHover, 0.08);
+      const totalOffset = floatOffset + hoverOffset.current;
 
       groupRef.current.position.set(
-        hoverOffset.current * normalVec.x,
-        hoverOffset.current * normalVec.y,
-        hoverOffset.current * normalVec.z,
+        totalOffset * normalVec.x,
+        totalOffset * normalVec.y,
+        totalOffset * normalVec.z,
       );
 
       // Selected pulse
@@ -93,21 +103,28 @@ export default function ProjectFace({
         const opacity = THREE.MathUtils.smoothstep(dot, 0.0, 0.3);
         textRef.current.fillOpacity = opacity;
       }
+    } else {
+      // Inactive faces: just float
+      groupRef.current.position.set(
+        floatOffset * normalVec.x,
+        floatOffset * normalVec.y,
+        floatOffset * normalVec.z,
+      );
     }
   });
 
   // Config values with fallbacks
   const strokeColor = sphereConfig.strokeColor || '#38bdf8';
   const strokeOpacity = sphereConfig.strokeOpacity ?? 1.0;
-  const inactiveFillOpacity = sphereConfig.inactiveFillOpacity ?? 0.02;
-  const emissiveBase = sphereConfig.activeEmissiveBase ?? 0.3;
-  const emissiveHover = sphereConfig.activeEmissiveHover ?? 0.8;
-  const emissiveSelected = sphereConfig.activeEmissiveSelected ?? 2.0;
+  const inactiveFillOpacity = sphereConfig.inactiveFillOpacity ?? 0.03;
+  const emissiveBase = sphereConfig.activeEmissiveBase ?? 0.5;
+  const emissiveHover = sphereConfig.activeEmissiveHover ?? 1.2;
+  const emissiveSelected = sphereConfig.activeEmissiveSelected ?? 2.5;
 
   // --- INACTIVE FACE (no project) ---
   if (!isActive) {
     return (
-      <group>
+      <group ref={groupRef}>
         <mesh geometry={geometry}>
           <meshBasicMaterial
             color={strokeColor}
