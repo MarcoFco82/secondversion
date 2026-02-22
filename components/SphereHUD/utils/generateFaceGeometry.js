@@ -6,12 +6,13 @@ import * as THREE from 'three';
  *
  * @param {number} radius - Sphere radius (default 1.5)
  * @param {number} totalFaces - Number of hexagonal faces (default 30)
+ * @param {number} baseSize - Base hex size before count scaling (default 0.22)
  * @returns {Array<{center, normal, vertices, textPosition, faceRadius}>}
  */
-export function generateFaceGeometry(radius = 1.5, totalFaces = 30) {
+export function generateFaceGeometry(radius = 1.5, totalFaces = 30, baseSize = 0.22) {
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
   // Scale face radius inversely with count so they don't overlap
-  const faceRadius = 0.22 * Math.sqrt(30 / totalFaces);
+  const faceRadius = baseSize * Math.sqrt(30 / totalFaces);
 
   const faces = [];
 

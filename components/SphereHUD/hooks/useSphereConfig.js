@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const DEFAULTS = {
   hexCount: 30,
+  hexSize: 0.22,
   bloomThreshold: 0.1,
   bloomIntensity: 1.5,
   bloomSmoothing: 0.5,

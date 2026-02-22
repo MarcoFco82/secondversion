@@ -28,9 +28,10 @@ export default function SphereScene({
     performanceConfig;
 
   const hexCount = sphereConfig.hexCount || 30;
+  const hexSize = sphereConfig.hexSize ?? 0.22;
 
-  // Generate face geometries based on dynamic hexCount
-  const faceGeometries = useMemo(() => generateFaceGeometry(1.5, hexCount), [hexCount]);
+  // Generate face geometries based on dynamic hexCount and hexSize
+  const faceGeometries = useMemo(() => generateFaceGeometry(1.5, hexCount, hexSize), [hexCount, hexSize]);
 
   return (
     <Canvas

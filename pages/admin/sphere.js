@@ -4,6 +4,7 @@ import styles from '../../styles/AdminSphere.module.css';
 
 const DEFAULTS = {
   hexCount: 30,
+  hexSize: 0.22,
   bloomThreshold: 0.1,
   bloomIntensity: 1.5,
   bloomSmoothing: 0.5,
@@ -153,6 +154,7 @@ export default function AdminSpherePage() {
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>Geometry</h3>
           <SliderField label="Hex Count" field="hexCount" min={10} max={80} step={1} />
+          <SliderField label="Hex Size" field="hexSize" min={0.08} max={0.45} step={0.01} />
         </div>
 
         {/* BLOOM / GLOW */}
