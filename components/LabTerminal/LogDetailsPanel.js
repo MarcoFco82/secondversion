@@ -170,8 +170,9 @@ function LogEntry({
 }
 
 // Progress bar component
-function ProgressBar({ progress, color }) {
-  const filled = Math.floor(progress / 4);
+function ProgressBar({ progress = 0, color }) {
+  const safeProgress = typeof progress === 'number' ? progress : 0;
+  const filled = Math.floor(safeProgress / 4);
   const empty = 25 - filled;
   
   return (
@@ -180,7 +181,7 @@ function ProgressBar({ progress, color }) {
         {'█'.repeat(filled)}
       </span>
       <span className={styles.progressEmpty}>{'░'.repeat(empty)}</span>
-      <span className={styles.progressPercent} style={{ color }}>{progress}%</span>
+      <span className={styles.progressPercent} style={{ color }}>{safeProgress}%</span>
     </span>
   );
 }

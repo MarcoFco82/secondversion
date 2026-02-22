@@ -1,5 +1,39 @@
 # Changelog
 
+## [2026-02-21]
+
+### Fixed
+- **Lab Terminal log-driven flow restored**: `activeProject` was incorrectly prioritizing `activeProjectCode` over the active log. Reverted to pure log-driven derivation. Added `fallbackProject` for radar clicks on projects without logs.
+- **Media fetch log-driven**: Media fetch now uses `activeLog?.projectId` as primary source with `fallbackProject?.id` as fallback, instead of deriving from `activeProject`.
+- **Radar shows all projects**: `uniqueProjects` now maps all projects directly instead of filtering through logs (projects without logs were invisible).
+- **Props cascade fixed**: MediaPreview, ProjectRadarExpanded, and ActivityPulse now use `activeLog` as primary data source with `fallbackProject` as secondary.
+
+### Added
+- **Favicon**: Generated `favicon.ico` (16, 32, 48px) from new `mm.svg` logo using sharp.
+- **Logo SVG**: Added `public/mm.svg` (marcomotion logo from Adobe Illustrator).
+
+### Files Changed
+- `components/LabTerminal/LabTerminalHUD.js` — restored log-driven flow, added fallbackProject
+- `public/favicon.ico` — regenerated from mm.svg
+- `public/mm.svg` — new file
+
+## [2026-02-20]
+
+### Fixed
+- **Admin "Create Project" returning 500**: The `projects` table in production D1 still had the original restrictive CHECK constraint `category IN ('saas', 'web', 'threejs', 'tool', 'motion', 'experiment')` from migration 0001. The admin form offers 40+ categories (added in code), but migration 0004 (which removes the constraint) was never fully executed on production — only the `tags` column had been added via ALTER TABLE.
+- **Executed migration 0004 manually on production D1**: Recreated the `projects` table without the category CHECK constraint. Used `tags` column data (not `keywords`) during copy to preserve existing tag data. Removed obsolete `keywords` column.
+
+### Migration Details
+- Created `projects_new` table with `category TEXT NOT NULL` (no CHECK)
+- Copied 2 existing projects preserving all data including `tags`
+- Dropped old `projects` table, renamed `projects_new` → `projects`
+- Recreated 4 indexes + `update_projects_timestamp` trigger
+
+### Database State
+- `projects` table: 2 rows (PRJ-Y2Y, PRJ-S9X), schema now matches migration 0004 spec
+- `dev_logs` table: migration 0005 was already applied (entry_type constraint includes new types)
+- No code changes — this was a production DB-only fix
+
 ## [2026-02-12]
 
 ### Fixed

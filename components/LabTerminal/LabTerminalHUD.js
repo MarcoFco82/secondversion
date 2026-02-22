@@ -80,7 +80,7 @@ export default function LabTerminalHUD({ lang = 'en' }) {
         projectAlias: project?.alias,
         accentColor: project?.accent_color,
         techStack: project?.tech_stack ? JSON.parse(project.tech_stack) : [],
-        progress: project?.progress,
+        progress: typeof project?.progress === 'number' ? project.progress : 0,
         category: project?.category,
       };
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

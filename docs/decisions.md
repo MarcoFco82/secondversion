@@ -1,5 +1,57 @@
 # Architecture Decisions Log
 
+## [2026-02-21] Decision: Log-Driven Flow with Fallback for No-Log Projects
+
+**Context:**
+LabTerminalHUD's `activeProject` was modified to prioritize `activeProjectCode` (from radar clicks) over the active log's project. This broke the core data flow: auto-rotate would change logs but `activeProject` stayed pinned to whatever was last clicked in radar, disconnecting the slider, progress bar, and media viewer.
+
+**Decision:**
+Restore `activeProject` as purely log-driven. Introduce a separate `fallbackProject` memo that only activates when the radar selects a project that has zero logs.
+
+**Rationale:**
+- The Lab Terminal is fundamentally log-driven: logs rotate → project derives → media loads
+- Projects without logs still need to be viewable from radar (show their image)
+- Mixing both concerns into one `activeProject` creates coupling that breaks auto-rotate
+- Separating into `activeProject` (log-driven) + `fallbackProject` (radar-only, no-log projects) keeps concerns clean
+
+**Implementation:**
+- `activeProject` = `projects.find(p => p.id === activeLog.projectId)` — pure log derivation
+- `fallbackProject` = only set when `activeProjectCode` has no matching logs in `filteredLogs`
+- Media fetch: `activeLog?.projectId || fallbackProject?.id`
+- All props: `activeLog?.X || fallbackProject?.X` pattern
+
+**Status:** Implemented (commit e20f21e), deployed
+
+---
+
+## [2026-02-20] Decision: Execute Migration 0004 Manually (Preserve Tags Over Keywords)
+
+**Context:**
+Admin panel "Create Project" was returning 500 errors. Investigation revealed migration 0004 was never fully executed on production D1. The table had the original CHECK constraint `category IN ('saas', 'web', 'threejs', 'tool', 'motion', 'experiment')` blocking any of the 40+ new categories added in the frontend. Additionally, someone had run `ALTER TABLE ADD COLUMN tags` independently, leaving both `keywords` (cid 16) and `tags` (cid 21) in the table.
+
+**Decision:**
+Execute migration 0004 with a modification: copy `tags` column data (not `keywords`) when rebuilding the table, since `tags` had real data and `keywords` was null for all rows.
+
+**Rationale:**
+- Original migration 0004 copies `keywords` → `tags`, which would overwrite existing tag data with null
+- Both projects had populated `tags` arrays but null `keywords`
+- Safest approach: verify data before each step, use `tags` as source
+
+**Steps Executed:**
+1. `PRAGMA table_info(projects)` — confirmed both `keywords` and `tags` exist
+2. `SELECT ... FROM projects` — confirmed `keywords` is null, `tags` has data
+3. `CREATE TABLE projects_new` — schema from migration 0004
+4. `INSERT INTO projects_new SELECT ... tags ...` — used `tags` not `keywords`
+5. Verified data in `projects_new`
+6. `DROP TABLE projects`
+7. `ALTER TABLE projects_new RENAME TO projects`
+8. Recreated indexes and trigger
+9. Verified final schema with `sqlite_master`
+
+**Status:** Completed
+
+---
+
 ## [2026-02-12] Decision: Unidirectional Data Flow for Auto-Rotate Sync
 
 **Context:**
