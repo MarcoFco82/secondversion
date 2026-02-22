@@ -27,6 +27,7 @@ export function useMobileDetect() {
       enableBloom: false,
       enableActivityRing: false,
       enablePostProcessing: false,
+      enableText3D: false,
     },
     tablet: {
       dpr: [1, 1.5],
@@ -34,6 +35,7 @@ export function useMobileDetect() {
       enableBloom: true,
       enableActivityRing: false,
       enablePostProcessing: true,
+      enableText3D: true,
     },
     desktop: {
       dpr: [1, 2],
@@ -41,6 +43,7 @@ export function useMobileDetect() {
       enableBloom: true,
       enableActivityRing: true,
       enablePostProcessing: true,
+      enableText3D: true,
     },
   };
 

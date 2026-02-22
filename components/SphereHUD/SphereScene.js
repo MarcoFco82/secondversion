@@ -2,15 +2,15 @@ import { Suspense, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
-import HolographicSphere from './HolographicSphere';
-import ProjectNode from './ProjectNode';
+import GhostSphere from './GhostSphere';
+import ProjectFace from './ProjectFace';
 import ParticleSystem from './ParticleSystem';
 import ActivityRing from './ActivityRing';
-import { fibonacciSphere } from './utils/fibonacciSphere';
+import { generateFaceGeometry } from './utils/generateFaceGeometry';
 
 /**
- * Main R3F Canvas scene containing the holographic sphere,
- * project nodes, particles, activity ring, and post-processing.
+ * Main R3F Canvas scene — sphere of project faces,
+ * ghost wireframe, particles, activity ring, and post-processing.
  */
 export default function SphereScene({
   projects,
@@ -23,13 +23,13 @@ export default function SphereScene({
   autoRotate,
   performanceConfig,
 }) {
-  const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing } =
+  const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D } =
     performanceConfig;
 
-  // Calculate node positions using fibonacci distribution
-  const nodePositions = useMemo(() => {
+  // Generate face geometry for each project
+  const faceGeometries = useMemo(() => {
     if (projects.length === 0) return [];
-    return fibonacciSphere(projects.length, 1.55);
+    return generateFaceGeometry(projects.length, 1.5);
   }, [projects.length]);
 
   return (
@@ -56,20 +56,21 @@ export default function SphereScene({
           dampingFactor={0.05}
         />
 
-        {/* Core sphere */}
-        <HolographicSphere />
+        {/* Ghost wireframe sphere */}
+        <GhostSphere radius={1.5} />
 
-        {/* Project nodes */}
+        {/* Project faces */}
         {projects.map((project, i) => (
-          <ProjectNode
+          <ProjectFace
             key={project.id}
             project={project}
-            position={nodePositions[i] || [0, 0, 0]}
+            faceData={faceGeometries[i]}
             isSelected={selectedProject?.id === project.id}
             isHovered={hoveredProject?.id === project.id}
             onClick={onNodeClick}
             onHover={onNodeHover}
             onUnhover={onNodeUnhover}
+            enableText3D={enableText3D}
           />
         ))}
 
@@ -84,14 +85,14 @@ export default function SphereScene({
           <EffectComposer>
             {enableBloom && (
               <Bloom
-                luminanceThreshold={0.8}
+                luminanceThreshold={1.2}
                 luminanceSmoothing={0.3}
-                intensity={0.6}
+                intensity={0.4}
                 mipmapBlur
               />
             )}
             <Noise opacity={0.02} />
-            <Vignette eskil={false} offset={0.1} darkness={0.8} />
+            <Vignette eskil={false} offset={0.1} darkness={0.6} />
           </EffectComposer>
         )}
       </Suspense>
