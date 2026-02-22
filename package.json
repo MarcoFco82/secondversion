@@ -9,14 +9,19 @@
     "deploy": "bash deploy.sh"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@react-three/postprocessing": "^3.0.4",
     "formidable": "^3.5.2",
     "framer-motion": "^12.27.5",
     "lodash": "^4.17.21",
     "next": "^15.5.9",
+    "postprocessing": "^6.38.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-icons": "^4.8.0",
     "react-tsparticles": "^2.0.6",
+    "three": "^0.183.1",
     "tsparticles": "^3.8.1",
     "tsparticles-slim": "^2.0.6"
   },

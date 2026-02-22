@@ -1,5 +1,74 @@
 # Changelog
 
+## [2026-02-22] Sphere HUD — Lab Terminal Replacement
+
+### Added
+- **Sphere HUD (3D)**: Replaced 2D Lab Terminal with interactive Three.js holographic sphere visualization
+- **14 new component files** in `components/SphereHUD/`:
+  - `SphereHUD.js` — Orchestrator: data fetching, state management, layout
+  - `SphereScene.js` — R3F Canvas with full 3D scene (lights, controls, post-processing)
+  - `HolographicSphere.js` — Wireframe icosahedron (80 triangles) with cyan glow, slow self-rotation
+  - `ProjectNode.js` — Interactive octahedron nodes per project with hover (scale 1.3), select (pulsing), and Html labels (code, alias, progress%)
+  - `ParticleSystem.js` — 200 orbital particles with tangential velocity, additive blending
+  - `ActivityRing.js` — Torus with 14 bar segments showing daily activity, slow rotation
+  - `ProjectDetailPanel.js` — DOM overlay modal with project info (progress bar, tech stack, latest log)
+  - `SphereIntro.js` — Heading section ("What I'm building right now")
+  - `hooks/useProjectData.js` — Fetches `/api/projects`, `/api/logs`, `/api/activity` with parallel Promise.all
+  - `hooks/useSphereInteraction.js` — Selected node, hover, filters, auto-rotate pause/resume (8s timeout)
+  - `hooks/useMobileDetect.js` — Progressive quality degradation (mobile: no bloom/80 particles, tablet: bloom/120, desktop: full/200)
+  - `utils/fibonacciSphere.js` — Golden angle distribution algorithm for uniform node placement
+  - `SphereHUD.module.css`, `SphereIntro.module.css`, `ProjectDetailPanel.module.css`
+- **5 new dependencies**: `three`, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `postprocessing`
+
+### Changed
+- **`pages/index.js`**: Replaced `import LabTerminalHUD` with `dynamic(() => import('SphereHUD'), { ssr: false })` — prevents SSR hydration issues with Three.js
+- **`<LabTerminalHUD lang={language} />`** → **`<SphereHUD lang={language} />`** at line ~500
+
+### Preserved (NOT deleted)
+- All files in `components/LabTerminal/` remain as backup (16 files)
+- All APIs unchanged (`/api/projects`, `/api/logs`, `/api/activity`, `/api/media`)
+- `styles/variables.css` untouched — SphereHUD references existing CSS custom properties
+
+### Technical Details
+- **Sphere geometry**: IcosahedronGeometry(1.5, 2) — 80 triangles, wireframe via Drei `<Wireframe>`
+- **Node distribution**: Fibonacci/golden angle algorithm on radius 1.55
+- **Lighting**: ambient(0.15) + pointLight cyan(#38bdf8) + pointLight orange(#ffa742)
+- **Post-processing** (desktop only): Bloom(threshold 0.8), Noise(0.02), Vignette(0.8)
+- **OrbitControls**: auto-rotate(0.5 speed), min/max distance 3-7, no pan, damping
+- **Filters**: [All] [Build] [Ship] [Experiment] [Polish] — filter projects by category
+- **Build verified**: `next build` ✓ (75.8kB page), `pages:build` ✓ (OpenNext bundle)
+
+### Files Changed
+- `pages/index.js` — dynamic import of SphereHUD, replaced LabTerminalHUD usage
+- `package.json` — 5 new dependencies (three, R3F ecosystem)
+- 14 new files in `components/SphereHUD/`
+
+---
+
+## [2026-02-22]
+
+### Fixed
+- **Progress bar showing wrong values**: `/api/logs` now returns `project_progress`, `project_tech_stack`, `project_category` directly from SQL JOIN. Client-side enrichment uses `log.project_progress` as primary source instead of relying on `projects.find()` match. Each log now displays its own project's progress correctly.
+- **ProgressBar defensive defaults**: Added `progress = 0` default parameter and `typeof` guard to prevent NaN/undefined rendering.
+- **CORS verified as resolved**: Confirmed R2 bucket `marcomotion-media` returns `Access-Control-Allow-Origin: *` on actual image files. Removed from Known Issues and In Progress.
+
+### Changed
+- **Slider speed**: Auto-rotate interval reduced from 8000ms to 4000ms, resume delay from 4000ms to 3000ms.
+- **Favicon regenerated**: `favicon.ico` rebuilt from `mm.svg` with updated accent color (`#f93`).
+- **CLAUDE.md**: Added mandatory workflow rules (session logs, no scope creep without approval). Updated sprint status.
+
+### Infrastructure
+- **Deployed to production**: Commits `1c37793` and `0ca428f` deployed via `npm run deploy`.
+
+### Files Changed
+- `pages/api/logs/index.js` — SQL JOIN now includes progress, tech_stack, category
+- `components/LabTerminal/LabTerminalHUD.js` — enrichment uses log.project_progress, slider 4s
+- `components/LabTerminal/LogDetailsPanel.js` — defensive ProgressBar
+- `public/favicon.ico` — regenerated
+- `CLAUDE.md` — workflow rules, sprint update
+- `docs/changelog.md` — this entry
+- `docs/decisions.md` — new entry
+
 ## [2026-02-21]
 
 ### Fixed

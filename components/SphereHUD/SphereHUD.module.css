@@ -1,0 +1,178 @@
+.sphereWrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 1.5rem auto 0;
+  padding: 0 20px;
+}
+
+.sphereContainer {
+  position: relative;
+  background: var(--terminal-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-terminal);
+}
+
+.canvasWrapper {
+  width: 100%;
+  height: 600px;
+  position: relative;
+}
+
+/* HUD Overlay — filters and header on top of canvas */
+.hudOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.hudHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.hudTitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-gray-400);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hudVersion {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-gray-600);
+}
+
+.liveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-success);
+  letter-spacing: 1px;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-success);
+  border-radius: 50%;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.filterBar {
+  display: flex;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.filterBtn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-gray-500);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.5px;
+}
+
+.filterBtn:hover {
+  color: var(--color-light);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filterActive {
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+  background: var(--color-primary-subtle);
+}
+
+/* Project count badge */
+.projectCount {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  z-index: 5;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-gray-500);
+  pointer-events: none;
+}
+
+/* Loading state */
+.loadingState {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-gray-500);
+  background: var(--terminal-bg);
+  border-radius: var(--radius-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sphereWrapper {
+    padding: 0 12px;
+  }
+
+  .canvasWrapper {
+    height: 400px;
+  }
+
+  .hudOverlay {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+
+  .filterBar {
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .filterBtn {
+    font-size: 0.6rem;
+    padding: 3px 7px;
+  }
+
+  .loadingState {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvasWrapper {
+    height: 350px;
+  }
+
+  .loadingState {
+    height: 350px;
+  }
+}

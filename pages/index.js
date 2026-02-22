@@ -2,7 +2,11 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Head from 'next/head';
 import ParticlesBackground from '../components/ParticlesBackground.js';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import LabTerminalHUD from '../components/LabTerminal/LabTerminalHUD';
+import dynamic from 'next/dynamic';
+const SphereHUD = dynamic(() => import('../components/SphereHUD/SphereHUD'), {
+  ssr: false,
+  loading: () => <div style={{ background: '#2a2f38', borderRadius: '12px', height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>Initializing 3D environment...</div>
+});
 import { useLanguage } from '../context/LanguageContext';
 import { debounce } from 'lodash';
 import GoogleAnalytics from '../components/GoogleAnalytics';
@@ -494,7 +498,7 @@ export default function Home() {
         </div>
 
         {/* LAB TERMINAL - Integrado después del video */}
-        <LabTerminalHUD lang={language} />
+        <SphereHUD lang={language} />
       </div>
 
       <div className="particle-container">

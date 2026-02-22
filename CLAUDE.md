@@ -19,10 +19,10 @@
 ---
 
 ## Project Overview
-Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Pages. Features a Lab Terminal interface showing live project development logs, admin panel for content management, and social media post generator.
+Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Pages. Features a 3D Sphere HUD (Three.js) showing live project development, admin panel for content management, and social media post generator.
 
 ## Tech Stack
-- **Frontend:** Next.js 15.5.9 (Pages Router), React 19, Framer Motion
+- **Frontend:** Next.js 15.5.9 (Pages Router), React 19, Framer Motion, Three.js / React Three Fiber
 - **Backend:** Cloudflare Pages, Workers, D1 (SQLite), R2 (Object Storage)
 - **Deployment:** Auto-deploy from GitHub via Cloudflare Pages integration
 - **Build Tool:** @opennextjs/cloudflare for Next.js → Cloudflare adaptation
@@ -30,7 +30,7 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 ## Repository
 - **GitHub:** https://github.com/MarcoFco82/secondversion
 - **Production:** marcomotion.com, marcomotion.pages.dev
-- **Current Deployment:** Manual deploy via `npm run deploy` (commit 686c2c9). GitHub auto-deploy is broken.
+- **Current Deployment:** Manual deploy via `npm run deploy` (commit 0ca428f). GitHub auto-deploy is broken.
 - **Working Branch:** main
 
 ## Current Sprint
@@ -46,6 +46,11 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-02-12]** Fixed `.sort()` mutating React state in MediaPreview
 - **[2026-02-12]** Deployed fixes manually (commits 8a8b37e → 686c2c9)
 - **[2026-02-20]** Fixed admin "Create Project" 500 error — executed migration 0004 on production D1 (removed restrictive category CHECK constraint, cleaned up keywords→tags column)
+- **[2026-02-22]** Fixed progress bar — `/api/logs` now returns progress from SQL JOIN, no client-side lookup needed
+- **[2026-02-22]** Slider speed reduced to 4s, favicon regenerated with updated colors
+- **[2026-02-22]** Verified and closed CORS issue — R2 bucket already configured correctly
+- **[2026-02-22]** Deployed all pending commits to production (0ca428f)
+- **[2026-02-22]** Replaced Lab Terminal with Sphere HUD (Three.js/R3F) — 14 new files, builds verified
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -53,18 +58,25 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~Auto-rotate not syncing image/progress~~ → Fixed via ref-based unidirectional flow
 - ~~Admin Create Project returning 500~~ → Migration 0004 applied to production D1
 - ~~CORS for Social Generator canvas~~ → R2 bucket responds with `Access-Control-Allow-Origin: *`, verified 2026-02-22
+- ~~Progress bar wrong values~~ → Fixed via SQL JOIN in /api/logs (2026-02-22)
+- ~~Lab Terminal bugs~~ → Replaced entirely with Sphere HUD (2026-02-22)
 
 ### In Progress 🔄
+- Sphere HUD: needs visual testing in browser (`npm run dev`) and production deploy
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
-1. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
-2. **Medium-term:** Consider App Router migration if Edge Runtime issues return
-3. **Backlog:** Add navigation controls to Lab Terminal (lost in rollback, code in stash)
+1. **Immediate:** Run `npm run dev` and visually test Sphere HUD (rotate, click nodes, hover labels, filters, detail panel)
+2. **Immediate:** Test mobile responsiveness (375px, 768px, 1024px)
+3. **Short-term:** Deploy Sphere HUD to production via `npm run deploy`
+4. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
+5. **Medium-term:** Consider App Router migration if Edge Runtime issues return
+6. **Backlog:** WebGL fallback for devices without GPU support
 
 ## Key Files
-- `/pages/api/**/*.js` - API routes (currently blocking deployments)
-- `/components/LabTerminal/` - Terminal UI components
+- `/components/SphereHUD/` - 3D Sphere HUD (active, replaces Lab Terminal)
+- `/components/LabTerminal/` - Legacy Terminal UI (preserved as backup, not imported)
+- `/pages/api/**/*.js` - API routes
 - `/data/projects.js` - Static project data
 - `/migrations/*.sql` - D1 database migrations
 - `fix-media-urls.sql` - Emergency media URL fix (executed 2026-02-10)
@@ -94,3 +106,5 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - GitHub auto-deployments are BROKEN as of 2026-02-12 — use `npm run deploy`
 - MediaPreview now prioritizes dynamic mediaHistory over static featured_media_url
 - LogDetailsPanel uses `lastNotifiedProjectRef` to prevent circular sync — do not remove
+- SphereHUD uses `dynamic(() => import(...), { ssr: false })` — Three.js cannot render server-side
+- Lab Terminal files preserved in `components/LabTerminal/` as backup — not imported anywhere

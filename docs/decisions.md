@@ -1,5 +1,75 @@
 # Architecture Decisions Log
 
+## [2026-02-22] Decision: Replace Lab Terminal with 3D Sphere HUD (Three.js)
+
+**Context:**
+The Lab Terminal (2D panel-based UI) accumulated bugs and incomplete features over multiple sessions: auto-rotate sync issues, progress bar mismatches, media preview timing problems, circular useEffect dependencies. Each fix introduced complexity to an already tightly-coupled component tree (LabTerminalHUD → LogDetailsPanel → MediaPreview → ProjectRadarExpanded → ActivityPulse).
+
+**Decision:**
+Replace the entire Lab Terminal with a new 3D holographic sphere visualization using Three.js / React Three Fiber. Reuse the same API data layer (no backend changes). Keep all old Lab Terminal files as backup.
+
+**Rationale:**
+- Fresh architecture: clean separation of concerns (data hooks, interaction hooks, 3D scene, DOM overlays)
+- Simpler data flow: `useProjectData` hook fetches all data, `useSphereInteraction` manages UI state — no circular dependencies
+- Better visual impact: 3D sphere with project nodes is more engaging for a portfolio than a terminal panel
+- Progressive degradation: `useMobileDetect` hook adapts quality per device tier (mobile/tablet/desktop)
+- SSR-safe: `dynamic(() => import(...), { ssr: false })` prevents Three.js hydration issues
+
+**Architecture:**
+```
+SphereHUD (orchestrator)
+├── useProjectData()          → fetch /api/projects, /api/logs, /api/activity
+├── useSphereInteraction()    → selected node, filters, auto-rotate
+├── useMobileDetect()         → performance tier
+├── SphereIntro               → heading (DOM)
+├── SphereScene (R3F Canvas)
+│   ├── HolographicSphere     → wireframe icosahedron
+│   ├── ProjectNode[]         → octahedron per project (fibonacci distribution)
+│   ├── ParticleSystem        → orbital particles
+│   ├── ActivityRing          → 14-day torus
+│   └── EffectComposer        → bloom, noise, vignette
+├── HUD overlay (DOM)         → filters, live indicator
+└── ProjectDetailPanel (DOM)  → modal on node click
+```
+
+**Key Technical Decisions:**
+- Fibonacci sphere distribution instead of random placement (uniform visual density)
+- `ssr: false` dynamic import (Three.js cannot run server-side)
+- `e.stopPropagation()` on node clicks (prevents OrbitControls from consuming the event)
+- Auto-rotate pauses 8s on interaction, then resumes
+- Html labels via Drei `<Html>` (DOM elements anchored to 3D positions)
+
+**Risks:**
+- WebGL not available on some devices → Canvas `fallback` prop can be added
+- Bundle size increase (~60 packages added) — mitigated by dynamic import (not in initial load)
+- Performance on low-end devices → mitigated by `useMobileDetect` tier system
+
+**Status:** Implemented, builds verified (next build + pages:build). Not yet deployed to production. Lab Terminal files preserved as backup.
+
+---
+
+## [2026-02-22] Decision: Progress Data from SQL JOIN Instead of Client-Side Lookup
+
+**Context:**
+Lab Terminal ProgressBar was displaying incorrect progress values. The `enrichedLogs` in LabTerminalHUD relied on `projects.find(p => p.id === log.project_id)` to get each log's project progress. This client-side lookup could fail or produce stale results due to timing, React batching, or data inconsistencies.
+
+**Decision:**
+Move progress (and other project fields) into the `/api/logs` SQL JOIN query, so each log arrives from the API with its project's progress already attached. Client-side enrichment uses `log.project_progress` as primary source with `project?.progress` as fallback.
+
+**Rationale:**
+- Single source of truth: D1 JOIN guarantees correct project-to-log association
+- Eliminates race condition between projects and logs fetch
+- Reduces dependency on client-side `projects.find()` matching
+- Minimal API response size increase (3 extra fields per log)
+
+**Implementation:**
+- `/api/logs` SQL: added `p.progress as project_progress`, `p.tech_stack as project_tech_stack`, `p.category as project_category`
+- `enrichedLogs`: `progress: log.project_progress ?? project?.progress ?? 0`
+
+**Status:** Implemented (commit 0ca428f), deployed
+
+---
+
 ## [2026-02-21] Decision: Log-Driven Flow with Fallback for No-Log Projects
 
 **Context:**

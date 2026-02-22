@@ -1,0 +1,163 @@
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 24px;
+  pointer-events: none;
+}
+
+.panel {
+  background: rgba(42, 47, 56, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 340px;
+  width: 100%;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.1), 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.projectCode {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.closeBtn {
+  background: none;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: var(--color-gray-400);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-light);
+}
+
+.projectAlias {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-light);
+  margin: 0 0 4px 0;
+}
+
+.category {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.progressSection {
+  margin-bottom: 16px;
+}
+
+.progressLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-gray-400);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progressBar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.techStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.techTag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-gray-400);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.latestLog {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.logLabel {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.logEntry {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-light);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.logDate {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-gray-500);
+  margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .panel {
+    max-width: 100%;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
