@@ -79,7 +79,7 @@ export default function SphereHUD({ lang = 'en' }) {
             {/* HUD overlay */}
             <div className={styles.hudOverlay}>
               <div className={styles.hudHeader}>
-                <span className={styles.hudTitle}>SPHERE HUD</span>
+                <span className={styles.hudTitle}>LAB TERMINAL</span>
                 <span className={styles.hudVersion}>v2.0</span>
                 <span className={styles.liveIndicator}>
                   <span className={styles.liveDot} />

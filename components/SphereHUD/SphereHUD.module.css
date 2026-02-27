@@ -141,7 +141,7 @@
   }
 
   .canvasWrapper {
-    height: 400px;
+    height: 80vh;
   }
 
   .hudOverlay {
@@ -162,16 +162,16 @@
   }
 
   .loadingState {
-    height: 400px;
+    height: 80vh;
   }
 }
 
 @media (max-width: 480px) {
   .canvasWrapper {
-    height: 350px;
+    height: 85vh;
   }
 
   .loadingState {
-    height: 350px;
+    height: 85vh;
   }
 }

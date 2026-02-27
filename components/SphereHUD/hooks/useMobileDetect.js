@@ -24,10 +24,11 @@ export function useMobileDetect() {
     mobile: {
       dpr: [1, 1],
       particleCount: 80,
-      enableBloom: false,
+      enableBloom: true,
       enableActivityRing: false,
-      enablePostProcessing: false,
-      enableText3D: false,
+      enablePostProcessing: true,
+      enableText3D: true,
+      mobileBloomIntensity: 0.8,
     },
     tablet: {
       dpr: [1, 1.5],

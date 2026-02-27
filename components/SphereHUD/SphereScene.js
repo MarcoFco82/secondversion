@@ -24,7 +24,7 @@ export default function SphereScene({
   performanceConfig,
   sphereConfig,
 }) {
-  const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D } =
+  const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D, mobileBloomIntensity } =
     performanceConfig;
 
   const hexCount = sphereConfig.hexCount || 30;
@@ -49,7 +49,7 @@ export default function SphereScene({
   return (
     <Canvas
       dpr={dpr}
-      camera={{ position: [0, 0, 3.2], fov: 45 }}
+      camera={{ position: [0, 0, 4.3], fov: 45 }}
       style={{ background: 'transparent' }}
       gl={{ alpha: true, antialias: true }}
     >
@@ -119,7 +119,7 @@ export default function SphereScene({
               <Bloom
                 luminanceThreshold={sphereConfig.bloomThreshold}
                 luminanceSmoothing={sphereConfig.bloomSmoothing}
-                intensity={sphereConfig.bloomIntensity}
+                intensity={mobileBloomIntensity ?? sphereConfig.bloomIntensity}
                 mipmapBlur
               />
             )}
