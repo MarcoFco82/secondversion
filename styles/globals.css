@@ -1,6 +1,5 @@
 @import './variables.css';
-/* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@100;300;400&display=swap');
+/* Fonts loaded via <link> in _document.js for reliable mobile loading */
 
 /* Base Styles */
 * {
