@@ -1,16 +1,15 @@
 .sphereWrapper {
   width: 100%;
-  max-width: 1200px;
-  margin: 1.5rem auto 0;
-  padding: 0 20px;
+  margin: 1.5rem 0 4rem;
+  padding: 0;
 }
 
 .sphereContainer {
   position: relative;
   background: var(--terminal-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: var(--shadow-terminal);
+  box-shadow: none;
 }
 
 .canvasWrapper {
@@ -138,7 +137,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .sphereWrapper {
-    padding: 0 12px;
+    padding: 0;
   }
 
   .canvasWrapper {

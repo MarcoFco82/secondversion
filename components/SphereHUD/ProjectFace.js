@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 
 /**
@@ -201,20 +201,21 @@ export default function ProjectFace({
         <lineBasicMaterial color={color} transparent opacity={0.8} />
       </lineLoop>
 
-      {/* 3D Text label — only on tablet/desktop + active faces */}
+      {/* 3D Text label — billboard: always faces camera */}
       {enableText3D && (
-        <Text
-          ref={textRef}
-          position={textPosition}
-          fontSize={faceRadius * 0.35}
-          color={color}
-          anchorX="center"
-          anchorY="middle"
-          fillOpacity={1}
-          outlineWidth={0}
-        >
-          {project.code || project.alias || '???'}
-        </Text>
+        <Billboard position={textPosition} follow lockX={false} lockY={false} lockZ={false}>
+          <Text
+            ref={textRef}
+            fontSize={faceRadius * 0.35}
+            color={color}
+            anchorX="center"
+            anchorY="middle"
+            fillOpacity={1}
+            outlineWidth={0}
+          >
+            {project.code || project.alias || '???'}
+          </Text>
+        </Billboard>
       )}
     </group>
   );

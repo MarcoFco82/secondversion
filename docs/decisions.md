@@ -1,5 +1,64 @@
 # Architecture Decisions Log
 
+## [2026-02-26] Decision: Billboard Text for Project Labels
+
+**Context:**
+Project name labels on hexagonal faces were rendered as 3D text aligned to the face normal. When the sphere rotates, text on the far side becomes unreadable (viewed edge-on or backwards).
+
+**Decision:**
+Wrap `<Text>` in drei's `<Billboard>` component so labels always face the camera.
+
+**Rationale:**
+- Billboard is the standard technique for readable labels in 3D scenes
+- drei's `<Billboard>` handles the camera-facing math automatically
+- Labels remain anchored at their hex position but rotate to face the viewer
+- No performance cost — Billboard is just a matrix update per frame
+
+**Status:** Implemented, deployed
+
+---
+
+## [2026-02-26] Decision: Even Distribution of Active Projects on Sphere
+
+**Context:**
+Fibonacci sphere distribution assigns index 0 to the north pole, index 1 nearby, etc. Active projects were mapped to the first N indices (`i < projects.length`), causing all active hexagons to cluster at the top of the sphere — invisible without manual rotation.
+
+**Decision:**
+Distribute active projects across evenly spaced face indices using `step = hexCount / projectCount`, placing each project at `floor(j * step + step/2)`.
+
+**Rationale:**
+- Even spacing ensures projects appear across all latitudes of the sphere
+- The `+ step/2` offset avoids placing the first project exactly at the pole
+- Works dynamically with any number of projects and hexCount
+- Minimal code change — just a Map lookup instead of array index comparison
+
+**Status:** Implemented, deployed
+
+---
+
+## [2026-02-22] Decision: Sphere Visual Config in D1 + Admin Panel
+
+**Context:**
+Sphere HUD visual tuning (bloom, colors, opacities, hex count) required code changes and redeploy for every tweak. Marco needs to iterate on the visual style without touching code.
+
+**Decision:**
+Store all sphere visual parameters as a JSON blob in D1 (`sphere_config` table). Expose via public GET API and admin POST API. Admin panel at `/admin/sphere` with sliders and color pickers.
+
+**Rationale:**
+- JSON blob in single row = simple schema, no migrations for new fields
+- Public GET with hardcoded fallback = sphere works even if D1 is empty
+- Admin panel = Marco can tune visuals live after deploy
+- Config merges `{ ...DEFAULTS, ...stored }` so new fields auto-fallback
+
+**Key Design Choices:**
+- Color picker uses `defaultValue` (uncontrolled) + native `change` event to avoid React re-render closing the native picker
+- `generateFaceGeometry` accepts dynamic `totalFaces` with faceRadius scaling: `0.22 * sqrt(30/N)`
+- Floating animation phase/speed derived from face center coordinates (deterministic, no Math.random)
+
+**Status:** Implemented, deployed
+
+---
+
 ## [2026-02-22] Decision: Replace Lab Terminal with 3D Sphere HUD (Three.js)
 
 **Context:**

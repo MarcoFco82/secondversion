@@ -19,8 +19,8 @@ export default function ParticleSystem({
     const vel = [];
 
     for (let i = 0; i < count; i++) {
-      // Random position on a shell between radius 1.7 and 2.3
-      const r = 1.7 + Math.random() * 0.6;
+      // Random position on a shell between radius 2.0 and 3.8
+      const r = 2.0 + Math.random() * 1.8;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -59,7 +59,7 @@ export default function ParticleSystem({
 
       // Keep particles in range
       const y = posArray[idx + 1];
-      if (Math.abs(y) > 2.3) {
+      if (Math.abs(y) > 3.8) {
         velocities[i].drift *= -1;
       }
     }

@@ -497,9 +497,10 @@ export default function Home() {
           ></iframe>
         </div>
 
-        {/* LAB TERMINAL - Integrado después del video */}
-        <SphereHUD lang={language} />
       </div>
+
+      {/* SPHERE HUD - Full width, fuera de main-section */}
+      <SphereHUD lang={language} />
 
       <div className="particle-container">
         <ParticlesBackground theme="light" size={size} speed={speed} key="intro-particles-2" />

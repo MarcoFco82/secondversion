@@ -33,10 +33,23 @@ export default function SphereScene({
   // Generate face geometries based on dynamic hexCount and hexSize
   const faceGeometries = useMemo(() => generateFaceGeometry(1.5, hexCount, hexSize), [hexCount, hexSize]);
 
+  // Map projects to evenly spaced face indices (avoids clustering at north pole)
+  const projectByFaceIndex = useMemo(() => {
+    const map = new Map();
+    if (projects.length === 0 || hexCount === 0) return map;
+    const step = hexCount / projects.length;
+    for (let j = 0; j < projects.length; j++) {
+      // Offset by half-step to skip pole (index 0), spread across full sphere
+      const faceIdx = Math.min(Math.floor(j * step + step / 2), hexCount - 1);
+      map.set(faceIdx, projects[j]);
+    }
+    return map;
+  }, [projects, hexCount]);
+
   return (
     <Canvas
       dpr={dpr}
-      camera={{ position: [0, 0, 4.5], fov: 45 }}
+      camera={{ position: [0, 0, 3.2], fov: 45 }}
       style={{ background: 'transparent' }}
       gl={{ alpha: true, antialias: true }}
     >
@@ -51,11 +64,14 @@ export default function SphereScene({
           autoRotate={autoRotate}
           autoRotateSpeed={0.5}
           enablePan={false}
-          minDistance={3}
-          maxDistance={7}
+          minDistance={2.5}
+          maxDistance={6}
           enableDamping
           dampingFactor={0.05}
         />
+
+        {/* Tilted group — diagonal rotation effect */}
+        <group rotation={[0.35, 0, 0.15]}>
 
         {/* Ghost wireframe sphere */}
         <GhostSphere
@@ -64,9 +80,9 @@ export default function SphereScene({
           opacity={sphereConfig.ghostSphereOpacity}
         />
 
-        {/* Hexagonal faces — first N are active projects, rest are inactive */}
+        {/* Hexagonal faces — projects distributed evenly, rest are inactive */}
         {faceGeometries.map((faceData, i) => {
-          const project = i < projects.length ? projects[i] : null;
+          const project = projectByFaceIndex.get(i) || null;
           return (
             <ProjectFace
               key={`${hexCount}-${i}`}
@@ -93,6 +109,8 @@ export default function SphereScene({
 
         {/* Activity ring (desktop only) */}
         {enableActivityRing && <ActivityRing activityData={activityData} />}
+
+        </group>
 
         {/* Post-processing */}
         {enablePostProcessing && (

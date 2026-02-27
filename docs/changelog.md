@@ -1,5 +1,78 @@
 # Changelog
 
+## [2026-02-26] Sphere HUD — Full-Width Layout, Diagonal Rotation, Billboard Text
+
+### Changed
+- **Sphere HUD full-width**: Removed `max-width: 1200px` constraint. Moved `<SphereHUD>` out of `div.main-section` in `pages/index.js` so it renders edge-to-edge across the viewport. Removed `border-radius` and `box-shadow` from container.
+- **Margin bottom**: Added `4rem` bottom margin to `.sphereWrapper` to separate Sphere HUD from next section.
+- **Camera closer**: Camera position `[0, 0, 4.5]` → `[0, 0, 3.2]`, minDistance `3` → `2.5`. Sphere fills more of the viewport.
+- **Diagonal rotation**: Wrapped entire 3D scene in `<group rotation={[0.35, 0, 0.15]}>` — sphere is tilted ~20 degrees so OrbitControls auto-rotate produces a diagonal orbit that enhances the 3D feel.
+- **Particles spread further**: Particle shell radius `1.7-2.3` → `2.0-3.8` (nearly double max distance). Y-axis boundary `2.3` → `3.8`.
+- **Project distribution**: Active project hexagons now evenly distributed across the sphere using `step = hexCount / projects.length` spacing. Previously clustered at the north pole (fibonacci indices 0, 1, 2...).
+- **Billboard text labels**: Project name labels now use drei `<Billboard>` component — always face the camera regardless of sphere rotation. Previously text was unreadable when rotated away.
+
+### Files Changed
+- `components/SphereHUD/SphereHUD.module.css` — full-width, margin-bottom, no border-radius
+- `components/SphereHUD/SphereScene.js` — camera closer, diagonal tilt group, even project distribution, bloom restored
+- `components/SphereHUD/ParticleSystem.js` — wider particle spread
+- `components/SphereHUD/ProjectFace.js` — Billboard import + wrapping Text in Billboard
+- `pages/index.js` — SphereHUD moved outside main-section div
+
+### Infrastructure
+- 4 deploys to Cloudflare Pages production via `npm run deploy`
+
+---
+
+## [2026-02-22] Sphere HUD — Glow Estilizado + Admin Controls + Floating Hexagons
+
+### Added
+- **Sphere Config Admin Panel** (`/admin/sphere`): Full visual control panel with sliders and color pickers for all sphere parameters (hexCount, bloom, colors, opacities, emissive, background gradient)
+- **sphere_config D1 table**: Migration 0006 — stores config as JSON blob, seeded with defaults
+- **API endpoints**: `GET /api/sphere-config` (public), `POST /api/admin/sphere-config` (auth required)
+- **useSphereConfig hook**: Fetches config from API with hardcoded fallback defaults
+- **Floating hexagon animation**: All faces oscillate along their normal vector with sinusoidal motion — each face has unique phase/speed derived from position (organic water-surface feel)
+- **AdminLayout nav**: Added "Sphere Config" link with ◎ icon
+
+### Changed
+- **Bloom aggressivo**: threshold 1.2→0.1, intensity 0.4→1.5, smoothing 0.3→0.5 — everything glows
+- **Ghost sphere**: opacity 0.04→0.1 (wireframe contributes to bloom)
+- **Particles**: opacity 0.6→0.8, size 0.008→0.01 (brighter, bigger)
+- **Active emissive**: base 0.3→0.5, hover 0.6→1.2, selected 1.5→2.5
+- **Inactive fill**: opacity 0.04→0.03
+- **generateFaceGeometry**: Now accepts `totalFaces` param (was hardcoded 30), faceRadius scales with `sqrt(30/totalFaces)`
+- **SphereScene**: Receives `sphereConfig` prop, passes bloom/color/opacity values to all children
+- **ProjectFace**: Uses sphereConfig for all visual params; both active and inactive faces float
+- **ParticleSystem**: Accepts color/size/opacity as props from config
+- **GhostSphere**: Accepts color/opacity as props from config
+- **SphereHUD**: Background gradient rendered inline from config
+
+### Fixed
+- **Admin color picker closing on click**: Changed from controlled `value` to uncontrolled `defaultValue` input. Uses native DOM `change` event (fires once on picker close) instead of React's synthetic `onChange` (fires continuously). Component wrapped in `React.memo` with custom comparator to prevent re-renders that destroy the picker.
+
+### Files Created
+- `migrations/0006_sphere_config.sql`
+- `pages/api/sphere-config/index.js`
+- `pages/api/admin/sphere-config/index.js`
+- `components/SphereHUD/hooks/useSphereConfig.js`
+- `pages/admin/sphere.js`
+- `styles/AdminSphere.module.css`
+
+### Files Modified
+- `components/SphereHUD/SphereHUD.js`
+- `components/SphereHUD/SphereScene.js`
+- `components/SphereHUD/ProjectFace.js`
+- `components/SphereHUD/ParticleSystem.js`
+- `components/SphereHUD/GhostSphere.js`
+- `components/SphereHUD/utils/generateFaceGeometry.js`
+- `components/Admin/AdminLayout.js`
+
+### Infrastructure
+- Migration 0006 applied to production D1
+- D1 config_json updated with aggressive glow defaults
+- Deployed commits 5508f7f and 3ab9bea to production
+
+---
+
 ## [2026-02-22] Sphere HUD — Lab Terminal Replacement
 
 ### Added

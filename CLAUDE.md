@@ -51,6 +51,18 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-02-22]** Verified and closed CORS issue — R2 bucket already configured correctly
 - **[2026-02-22]** Deployed all pending commits to production (0ca428f)
 - **[2026-02-22]** Replaced Lab Terminal with Sphere HUD (Three.js/R3F) — 14 new files, builds verified
+- **[2026-02-22]** Sphere HUD glow estilizado — bloom threshold 0.1, intensity 1.5, todo el entorno brilla
+- **[2026-02-22]** Admin panel `/admin/sphere` — sliders y color pickers para config visual completa
+- **[2026-02-22]** Hexágonos flotantes — movimiento sinusoidal orgánico sobre la superficie de la esfera
+- **[2026-02-22]** Fix color picker admin — input descontrolado + evento nativo change (ya no se cierra al drag)
+- **[2026-02-22]** Migration 0006 (sphere_config table) aplicada a producción D1
+- **[2026-02-22]** Deployed commits 5508f7f, 3ab9bea to production
+- **[2026-02-26]** Sphere HUD full-width — removed max-width, moved out of main-section container
+- **[2026-02-26]** Camera closer (4.5→3.2), diagonal rotation via tilted group
+- **[2026-02-26]** Particles spread wider (radius 2.0-3.8), no longer hugging sphere
+- **[2026-02-26]** Active projects distributed evenly across sphere (no longer clustered at north pole)
+- **[2026-02-26]** Billboard text — project labels always face camera
+- **[2026-02-26]** 4 production deploys via npm run deploy
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -60,32 +72,35 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~CORS for Social Generator canvas~~ → R2 bucket responds with `Access-Control-Allow-Origin: *`, verified 2026-02-22
 - ~~Progress bar wrong values~~ → Fixed via SQL JOIN in /api/logs (2026-02-22)
 - ~~Lab Terminal bugs~~ → Replaced entirely with Sphere HUD (2026-02-22)
+- ~~Sphere HUD needs deploy~~ → Deployed with glow + admin controls (2026-02-22)
 
 ### In Progress 🔄
-- Sphere HUD: needs visual testing in browser (`npm run dev`) and production deploy
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
-1. **Immediate:** Run `npm run dev` and visually test Sphere HUD (rotate, click nodes, hover labels, filters, detail panel)
-2. **Immediate:** Test mobile responsiveness (375px, 768px, 1024px)
-3. **Short-term:** Deploy Sphere HUD to production via `npm run deploy`
-4. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
-5. **Medium-term:** Consider App Router migration if Edge Runtime issues return
-6. **Backlog:** WebGL fallback for devices without GPU support
+1. **Immediate:** Test mobile responsiveness (375px, 768px, 1024px) — full-width layout may need tweaks
+2. **Immediate:** Fine-tune bloom/glow via `/admin/sphere` — verify moiré is acceptable at current settings
+3. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
+4. **Medium-term:** Consider App Router migration if Edge Runtime issues return
+5. **Backlog:** WebGL fallback for devices without GPU support
 
 ## Key Files
 - `/components/SphereHUD/` - 3D Sphere HUD (active, replaces Lab Terminal)
+- `/components/SphereHUD/hooks/useSphereConfig.js` - Fetches sphere visual config from API
+- `/pages/admin/sphere.js` - Admin panel for sphere visual controls
+- `/pages/api/sphere-config/` - Public GET for sphere config
+- `/pages/api/admin/sphere-config/` - Auth POST for saving sphere config
 - `/components/LabTerminal/` - Legacy Terminal UI (preserved as backup, not imported)
 - `/pages/api/**/*.js` - API routes
 - `/data/projects.js` - Static project data
 - `/migrations/*.sql` - D1 database migrations
-- `fix-media-urls.sql` - Emergency media URL fix (executed 2026-02-10)
 
 ## Database Schema
 - **projects** - Project metadata (D1)
 - **project_media** - Media files linked to projects (D1 + R2)
 - **dev_logs** - Development log entries (D1)
 - **admin_users** - Admin authentication (D1)
+- **sphere_config** - Sphere HUD visual config as JSON blob (D1, migration 0006)
 
 ## Known Issues
 1. **Edge Runtime (Monitoring):** Keep watch for any Edge Runtime incompatibility issues with future Next.js/Cloudflare updates
