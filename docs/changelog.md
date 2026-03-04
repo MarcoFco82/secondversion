@@ -1,5 +1,43 @@
 # Changelog
 
+## [2026-03-04] Category Filters, Slideshow Cards, Video Cover
+
+### Changed (Fase 1: Categorías en Admin)
+- **Admin categories restored**: Replaced 6 hardcoded categories with full 49-category set from `data/projects.js`, organized in 9 `<optgroup>` groups (Development, Design, Motion, Video, Interactive, AI, 3D, Audio, Content)
+- **Import from data layer**: Admin now uses `CATEGORY_GROUPS` and `getCategoriesByGroup` from `data/projects.js` instead of local array
+
+### Added (Fase 2: Filtro por categoría público)
+- **Category filter on public page**: Colored buttons grouped by `CATEGORY_GROUPS` before the tag filter. Only shows categories that have actual projects. "All" button to reset.
+- **Translations**: `categoryFilterTitle`, `allCategoriesBtn` added (EN+ES). `filterTitle` renamed to "FILTER BY TAGS"
+- **CSS**: `.category-filter-container`, `.category-group`, `.category-btn` with group colors, responsive styles
+
+### Added (Fase 3+4: Slideshow + intervalo configurable)
+- **ProjectCard component** (`components/ProjectCard.js`): Extracted from `renderProjectItem`. Auto-slideshow rotating images/gifs with configurable interval. Pause on hover. Dot navigation. Video cover support.
+- **Slideshow CSS**: `.slideshow-container` (absolute positioned layers), `.slideshow-image` (opacity transition 0.6s), `.slideshow-dots`, `.slideshow-video-cover`
+- **Configurable interval**: `slideshowInterval` added to sphere_config DEFAULTS (default 4s). Admin slider (1-15s) at `/admin/sphere`. Public page fetches interval from `/api/sphere-config`.
+
+### Added (Fase 5: Video como portada)
+- **Set as Cover button**: In admin media tab, each existing media item shows "Set as Cover" button. Sets `featuredMediaUrl` and `featuredMediaType` on the project. Active cover shows "COVER" badge.
+- **Video cover rendering**: ProjectCard renders `<video autoPlay muted loop playsInline>` when `featuredMediaType === 'video'`, disabling slideshow.
+- **Admin CSS**: `.coverBtn` (green) and `.coverBadge` styles in AdminProjects.module.css
+
+### Files Created
+- `components/ProjectCard.js`
+
+### Files Modified
+- `pages/admin/projects.js` — category optgroups, cover button, featured media fields
+- `pages/index.js` — category filter, ProjectCard usage, sphere-config fetch
+- `locales/translations.js` — new translation keys
+- `styles/globals.css` — category filter + slideshow CSS
+- `styles/AdminProjects.module.css` — cover button/badge styles
+- `pages/api/sphere-config/index.js` — slideshowInterval default
+- `pages/admin/sphere.js` — slideshow interval slider
+
+### Infrastructure
+- Deployed to Cloudflare Pages production (commit d241b25)
+
+---
+
 ## [2026-02-27] Creative Terminology Overhaul + Video in Sphere + Professional Log
 
 ### Changed (Fase 1: Terminología)

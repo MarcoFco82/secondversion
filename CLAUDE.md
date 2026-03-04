@@ -68,6 +68,12 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-02-27]** Professional Log: tabla, API CRUD, admin page, PDF generation con jspdf
 - **[2026-02-27]** Migraciones 0007 (terminología) y 0008 (professional_logs) aplicadas a producción D1
 - **[2026-02-27]** Deploy a producción con todas las fases
+- **[2026-03-04]** Restored 49 granular categories in admin (9 optgroups) — replaced hardcoded 6
+- **[2026-03-04]** Category filter on public page — colored buttons by group, derived from real projects
+- **[2026-03-04]** ProjectCard component with auto-slideshow, pause on hover, dot navigation
+- **[2026-03-04]** Slideshow interval configurable from admin sphere panel (1-15s)
+- **[2026-03-04]** Set as Cover button in admin media tab — video/image cover support
+- **[2026-03-04]** Deploy a producción (commit d241b25)
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -80,6 +86,10 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~Sphere HUD needs deploy~~ → Deployed with glow + admin controls (2026-02-22)
 - ~~Dev terminology in portfolio~~ → Replaced with creative terminology (2026-02-27)
 - ~~No video in Sphere HUD~~ → ProjectDetailPanel now shows media with autoplay (2026-02-27)
+- ~~Admin limited to 6 categories~~ → Restored 49 categories in 9 optgroups (2026-03-04)
+- ~~No category filter on public page~~ → Colored filter buttons by group (2026-03-04)
+- ~~Static project card images~~ → Auto-slideshow with configurable interval (2026-03-04)
+- ~~No video cover support~~ → Set as Cover button + video autoplay in cards (2026-03-04)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
@@ -92,6 +102,7 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 5. **Backlog:** WebGL fallback for devices without GPU support
 
 ## Key Files
+- `/components/ProjectCard.js` - Project card with auto-slideshow, video cover, pause on hover
 - `/components/SphereHUD/` - 3D Sphere HUD (active, replaces Lab Terminal)
 - `/components/SphereHUD/hooks/useSphereConfig.js` - Fetches sphere visual config from API
 - `/components/SphereHUD/ProjectDetailPanel.js` - Shows media (video/image/embed) + project details

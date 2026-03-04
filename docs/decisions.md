@@ -1,5 +1,42 @@
 # Architecture Decisions Log
 
+## [2026-03-04] Decision: Re-expand Categories to 49 While Keeping 6 as Entry Types
+
+**Context:**
+Session 2026-02-27 simplified categories from 49 to 6 (interactive, commercial, tools, experimental, storytelling, videogame). However, the 6 categories are too coarse for a portfolio that spans SaaS, motion graphics, 3D, AI tools, etc. The 6 values work well as creative log entry types but not as project categories.
+
+**Decision:**
+Restore the full 49 categories (9 groups) in the admin project form using `<optgroup>`. Keep the 6 values as `ENTRY_TYPES` for dev logs only. Add a public category filter that only shows categories with actual projects.
+
+**Rationale:**
+- 49 categories allow precise project classification (e.g., "SaaS Platform" vs just "Tools")
+- `<optgroup>` provides good UX for selecting from 49 options
+- Public filter derives active categories from real data — empty categories are hidden
+- No migration needed — `category` column has no CHECK constraint (removed in migration 0004)
+- ENTRY_TYPES remain at 6 for creative log simplicity
+
+**Status:** Implemented, deployed
+
+---
+
+## [2026-03-04] Decision: Extract ProjectCard Component with Auto-Slideshow
+
+**Context:**
+Project cards on the public page used an inline `renderProjectItem` callback. Adding slideshow functionality (per-card state, intervals, hover pause) would make the callback unmanageable.
+
+**Decision:**
+Extract to a separate `components/ProjectCard.js` component with internal state for slideshow index, hover detection, and interval management.
+
+**Rationale:**
+- Each card needs independent state (currentMediaIndex, isHovered)
+- useEffect intervals need proper cleanup per card
+- Separating concerns: parent manages filtering/layout, card manages its own media display
+- Slideshow interval is configurable from sphere_config (JSON blob, no migration)
+
+**Status:** Implemented, deployed
+
+---
+
 ## [2026-02-27] Decision: Simplify Categories from 50+ to 6 Creative Types
 
 **Context:**
