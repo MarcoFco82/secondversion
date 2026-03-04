@@ -1,5 +1,58 @@
 # Changelog
 
+## [2026-02-27] Creative Terminology Overhaul + Video in Sphere + Professional Log
+
+### Changed (Fase 1: Terminología)
+- **Sphere HUD filters**: Build/Ship/Experiment/Polish → Interactive/Commercial/Tools/Experimental/StoryTelling/VideoGame
+- **SphereIntro**: "LIVE DEV FEED" → "CREATIVE PORTFOLIO", "building" → "creating" (EN+ES)
+- **Admin ENTRY_TYPES**: 6 nuevos tipos creativos con colores (interactive cyan, commercial orange, tools blue, experimental purple, storytelling red, videogame green)
+- **Admin CATEGORIES**: 50+ granulares → 6 simplificadas (Interactive, Commercial, Tools, Experimental, StoryTelling, VideoGame)
+- **Admin labels**: "Dev Logs" → "Creative Logs", "DEVLOG" → "STUDIO", "What did you build?" → "Describe your progress"
+- **Dashboard**: "Dev Logs" → "Creative Logs", "New Dev Log" → "New Log", colores actualizados con legacy compatibility
+- **Social Generator**: "Dev Log" → "Creative Log", AI note actualizada
+- **Translations (EN+ES)**: "Code-Driven Animation" → "Motion & Interactive Design", "AI-Powered Tools" → "AI-Integrated Creative Tools", "Visual Systems Developer" → "Visual Systems Creator"
+- **data/projects.js**: ENTRY_TYPES actualizados con 6 nuevos + legacy compatibility
+
+### Added (Fase 2: Video en Sphere)
+- **ProjectDetailPanel media section**: Detecta image/video/gif/vimeo/youtube del array `project.media`. Video con autoPlay/loop/muted. Iframes para Vimeo/YouTube embeds. Dot navigation para múltiple media. Reset al cambiar proyecto.
+- **CSS media styles**: mediaSection, mediaContainer (border-radius, overflow hidden, max-height 200px), mediaDots navigation, responsive
+
+### Added (Fase 3: Professional Log + PDF)
+- **professional_logs table**: migration 0008 — id, content, category (7 values), mood, energy (1-5), media_url, media_type, log_date, timestamps + indexes
+- **API routes**: GET `/api/professional-logs` (público, filtros fecha/categoría), POST `/api/admin/professional-logs` (auth), PUT/DELETE `/api/admin/professional-logs/[id]` (auth)
+- **Admin page** `/admin/professional-log`: Form completo (fecha, contenido, categoría, mood, energy, media), lista de entries con edit/delete, generador de PDF con rango de fechas
+- **PDF generation**: jspdf client-side — header con nombre/rango, entries cronológicas con badges, footer con conteo
+- **AdminLayout nav**: Agregado "Pro Log" con icono ◉
+
+### Infrastructure
+- Migration 0007 applied to production D1 (14 queries, 41 rows written — entry_type CHECK ampliado, categories mapeadas)
+- Migration 0008 applied to production D1 (tabla professional_logs creada)
+- jspdf dependency added
+- Deployed to Cloudflare Pages production
+
+### Files Created
+- `migrations/0007_creative_terminology.sql`
+- `migrations/0008_professional_logs.sql`
+- `pages/api/professional-logs/index.js`
+- `pages/api/admin/professional-logs/index.js`
+- `pages/api/admin/professional-logs/[id].js`
+- `pages/admin/professional-log.js`
+- `styles/AdminProfessionalLog.module.css`
+
+### Files Modified
+- `components/SphereHUD/hooks/useSphereInteraction.js`
+- `components/SphereHUD/SphereIntro.js`
+- `components/SphereHUD/ProjectDetailPanel.js`
+- `components/SphereHUD/ProjectDetailPanel.module.css`
+- `pages/admin/projects.js`
+- `components/Admin/AdminLayout.js`
+- `pages/admin/index.js`
+- `pages/admin/social.js`
+- `locales/translations.js`
+- `data/projects.js`
+
+---
+
 ## [2026-02-26] Sphere HUD — Full-Width Layout, Diagonal Rotation, Billboard Text
 
 ### Changed

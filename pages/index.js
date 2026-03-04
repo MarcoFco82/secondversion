@@ -10,6 +10,8 @@ const SphereHUD = dynamic(() => import('../components/SphereHUD/SphereHUD'), {
 import { useLanguage } from '../context/LanguageContext';
 import { debounce } from 'lodash';
 import GoogleAnalytics from '../components/GoogleAnalytics';
+import { CATEGORY_GROUPS, getCategoriesByGroup, getCategoryBySlug } from '../data/projects';
+import ProjectCard from '../components/ProjectCard';
 
 // Media data for professional experience (no translation needed)
 const experienceMedia = [
@@ -42,6 +44,8 @@ export default function Home() {
   // Projects from API
   const [projects, setProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [slideshowInterval, setSlideshowInterval] = useState(4);
 
   // Fetch projects from API
   useEffect(() => {
@@ -95,6 +99,22 @@ export default function Home() {
     fetchProjects();
   }, []);
 
+  // Fetch slideshow interval from sphere config
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch('/api/sphere-config');
+        const data = await res.json();
+        if (data.success && data.data?.slideshowInterval) {
+          setSlideshowInterval(data.data.slideshowInterval);
+        }
+      } catch (err) {
+        // Keep default
+      }
+    };
+    fetchConfig();
+  }, []);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -112,13 +132,28 @@ export default function Home() {
     return Array.from(tagSet);
   }, [projects]);
 
-  // Filter projects by selected keywords
+  // Derive active categories from real projects
+  const activeCategories = useMemo(() => {
+    const catSet = new Set();
+    projects.forEach(p => {
+      if (p.category) catSet.add(p.category);
+    });
+    return catSet;
+  }, [projects]);
+
+  // Filter projects by category + keywords
   const filteredProjects = useMemo(() => {
-    if (selectedKeywords.length === 0) return projects;
-    return projects.filter(p => 
-      p.tags?.some(tag => selectedKeywords.includes(tag))
-    );
-  }, [projects, selectedKeywords]);
+    let result = projects;
+    if (selectedCategory !== 'all') {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+    if (selectedKeywords.length > 0) {
+      result = result.filter(p =>
+        p.tags?.some(tag => selectedKeywords.includes(tag))
+      );
+    }
+    return result;
+  }, [projects, selectedCategory, selectedKeywords]);
 
   const toggleKeyword = useCallback((keyword) => {
     setSelectedKeywords(prev => 
@@ -130,6 +165,10 @@ export default function Home() {
 
   const resetKeywords = useCallback(() => {
     setSelectedKeywords([]);
+  }, []);
+
+  const handleCategorySelect = useCallback((slug) => {
+    setSelectedCategory(slug);
   }, []);
 
   const handlePasswordSubmit = useCallback((e) => {
@@ -265,98 +304,61 @@ export default function Home() {
     );
   }, [selectedMedia, selectedProjectMedia, closeMediaModal]);
 
-  const renderProjectItem = useCallback((project) => {
-    // Get localized display name and description from unified model
-    const displayName = project.displayName?.[language] || project.displayName?.en || 'Untitled';
-    const description = project.description?.[language] || project.description?.en || [];
-    
-    // Get thumbnail - fallback to first media if no thumbnail
-    const thumbnailUrl = project.thumbnailUrl || 
-      (project.media?.length > 0 ? project.media[0].url : null);
-    
-    // Check if project has multiple media items for slideshow
-    const hasMultipleMedia = project.media?.length > 1;
-    
-    const handleProjectClick = () => {
-      // If project has external URL, open in new tab
-      if (project.externalUrl) {
-        window.open(project.externalUrl, '_blank', 'noopener,noreferrer');
-      } else {
-        // Open media modal with all project media
-        setSelectedMedia({
-          type: project.featuredMediaType || (project.media?.[0]?.type),
-          url: project.featuredMediaUrl || (project.media?.[0]?.url),
-          projectId: project.id,
-          projectName: displayName,
-          accentColor: project.accentColor,
-        });
-        // Store all project media for gallery navigation
-        setSelectedProjectMedia(project.media || []);
-      }
-    };
+  const handleProjectClick = useCallback((project, displayName) => {
+    setSelectedMedia({
+      type: project.featuredMediaType || (project.media?.[0]?.type),
+      url: project.featuredMediaUrl || (project.media?.[0]?.url),
+      projectId: project.id,
+      projectName: displayName,
+      accentColor: project.accentColor,
+    });
+    setSelectedProjectMedia(project.media || []);
+  }, []);
 
-    return (
-      <div key={project.id} className="project-item">
-        <div 
-          className={`project-image ${!thumbnailUrl ? 'project-image-empty' : ''}`}
-          style={{ 
-            backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none',
-            borderColor: project.accentColor,
-          }}
-          onClick={handleProjectClick}
-          role="button"
-          tabIndex={0}
-          onKeyPress={(e) => e.key === 'Enter' && handleProjectClick()}
-        >
-          {/* No thumbnail placeholder */}
-          {!thumbnailUrl && (
-            <div className="project-image-placeholder">
-              <span style={{ color: project.accentColor }}>{project.code || project.alias}</span>
-            </div>
-          )}
-          
-          {/* Progress indicator */}
-          {project.status === 'active' && project.progress > 0 && (
-            <div 
-              className="project-progress-badge"
-              style={{ backgroundColor: project.accentColor }}
-            >
-              {project.progress}%
-            </div>
-          )}
-          
-          {/* Media count badge */}
-          {hasMultipleMedia && (
-            <div 
-              className="project-media-count"
-              style={{ backgroundColor: project.accentColor }}
-            >
-              {project.media.length}
-            </div>
-          )}
-        </div>
-        <div className="project-info">
-          <h3 style={{ color: project.accentColor }}>{displayName}</h3>
-          <div className="project-description">
-            {description.map((line, idx) => (
-              <p key={idx} className="description-line">{line}</p>
-            ))}
-          </div>
-          <div className="project-keywords">
-            {project.keywords?.map((keyword, idx) => (
-              <span 
-                key={idx} 
-                className="keyword-badge"
-                style={{ borderColor: project.accentColor }}
-              >
-                {keyword}
-              </span>
-            ))}
-          </div>
-        </div>
+  const renderCategoryFilter = useCallback(() => (
+    <div className="category-filter-container">
+      <div className="category-filter-header">
+        <h3>{t.categoryFilterTitle}</h3>
+        {selectedCategory !== 'all' && (
+          <button onClick={() => handleCategorySelect('all')} className="reset-keywords-btn">
+            {t.resetFiltersBtn}
+          </button>
+        )}
       </div>
-    );
-  }, [language]);
+      <div className="category-groups">
+        <button
+          className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
+          onClick={() => handleCategorySelect('all')}
+        >
+          {t.allCategoriesBtn}
+        </button>
+        {Object.entries(CATEGORY_GROUPS).map(([groupKey, group]) => {
+          const groupCats = getCategoriesByGroup(groupKey).filter(cat => activeCategories.has(cat.slug));
+          if (groupCats.length === 0) return null;
+          return (
+            <div key={groupKey} className="category-group">
+              <span className="category-group-label" style={{ color: group.color }}>{language === 'es' ? group.labelEs : group.label}</span>
+              <div className="category-group-buttons">
+                {groupCats.map(cat => (
+                  <button
+                    key={cat.slug}
+                    className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
+                    style={{
+                      borderColor: group.color,
+                      ...(selectedCategory === cat.slug ? { backgroundColor: group.color, color: '#1a1f27' } : { color: group.color }),
+                    }}
+                    onClick={() => handleCategorySelect(cat.slug)}
+                  >
+                    {language === 'es' ? cat.labelEs : cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ), [selectedCategory, activeCategories, handleCategorySelect, language, t]);
 
   const renderKeywordFilter = useCallback(() => (
     <div className="keyword-filter-container">
@@ -523,11 +525,20 @@ export default function Home() {
             ))}
           </p>
           
+          {renderCategoryFilter()}
           {renderKeywordFilter()}
-          
+
           <div className="projects-grid">
             {filteredProjects.length > 0 ? (
-              filteredProjects.map(renderProjectItem)
+              filteredProjects.map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  language={language}
+                  slideshowInterval={slideshowInterval}
+                  onProjectClick={handleProjectClick}
+                />
+              ))
             ) : (
               <div className="no-projects-message">
                 <p>{t.noProjectsMessage}</p>

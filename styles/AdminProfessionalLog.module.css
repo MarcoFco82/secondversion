@@ -1,0 +1,331 @@
+/* ===========================================
+   ADMIN PROFESSIONAL LOG
+   =========================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.sectionTitle {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e8e8e8;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.success {
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  color: #4ade80;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* ===========================================
+   FORM
+   =========================================== */
+
+.formSection,
+.pdfSection,
+.entriesSection {
+  background: #0f0f0f;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input,
+.select,
+.textarea {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: #e8e8e8;
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: #ffa742;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.range {
+  width: 100%;
+  accent-color: #ffa742;
+  margin-top: 0.25rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.submitBtn {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0a0a0a;
+  background: #ffa742;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #ffb86c;
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: #888;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+  border-color: #444;
+  color: #e8e8e8;
+}
+
+/* ===========================================
+   PDF SECTION
+   =========================================== */
+
+.pdfSection .formRow {
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+}
+
+.pdfBtn {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e8e8e8;
+  background: #1a1a1a;
+  border: 1px solid #ffa742;
+  border-radius: 6px;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.pdfBtn:hover:not(:disabled) {
+  background: rgba(255, 167, 66, 0.15);
+}
+
+.pdfBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   ENTRIES LIST
+   =========================================== */
+
+.empty {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: #555;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.entriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.entryCard {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  transition: border-color 0.2s ease;
+}
+
+.entryCard:hover {
+  border-color: #2a2a2a;
+}
+
+.entryHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.entryDate {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.entryCategory {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.entryMeta {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.entryMood,
+.entryEnergy {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: #666;
+  background: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.entryActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editBtn,
+.deleteBtn {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.65rem;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editBtn {
+  color: #ffa742;
+}
+
+.editBtn:hover {
+  background: rgba(255, 167, 66, 0.1);
+  border-color: #ffa742;
+}
+
+.deleteBtn {
+  color: #ef4444;
+}
+
+.deleteBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}
+
+.entryContent {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .pdfSection .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .entryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .entryMeta {
+    margin-left: 0;
+  }
+}

@@ -562,6 +562,37 @@
   background: rgba(239, 68, 68, 0.1);
 }
 
+.coverBtn {
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: #4ade80;
+  cursor: pointer;
+}
+
+.coverBtn:hover {
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.coverBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.coverBadge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+
 .addBtn {
   padding: 1rem;
   background: transparent;

@@ -14,6 +14,7 @@
     "@react-three/postprocessing": "^3.0.4",
     "formidable": "^3.5.2",
     "framer-motion": "^12.27.5",
+    "jspdf": "^4.2.0",
     "lodash": "^4.17.21",
     "next": "^15.5.9",
     "postprocessing": "^6.38.3",

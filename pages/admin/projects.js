@@ -2,88 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import AdminLayout from '../../components/Admin/AdminLayout';
 import styles from '../../styles/AdminProjects.module.css';
-
-const CATEGORIES = [
-  // Development & Engineering
-  { slug: 'saas', label: 'SaaS Platform', group: 'dev' },
-  { slug: 'web', label: 'Web App', group: 'dev' },
-  { slug: 'apps', label: 'Apps', group: 'dev' },
-  { slug: 'frontend', label: 'Frontend', group: 'dev' },
-  { slug: 'backend', label: 'Backend', group: 'dev' },
-  { slug: 'fullstack', label: 'Full Stack', group: 'dev' },
-  { slug: 'api', label: 'API', group: 'dev' },
-  { slug: 'tool', label: 'Dev Tool', group: 'dev' },
-  { slug: 'automation', label: 'Automation', group: 'dev' },
-  { slug: 'scripting', label: 'Scripting', group: 'dev' },
-  
-  // Design & UX
-  { slug: 'uiux', label: 'UI/UX', group: 'design' },
-  { slug: 'design', label: 'Design', group: 'design' },
-  { slug: 'branding', label: 'Branding', group: 'design' },
-  { slug: 'typography', label: 'Typography', group: 'design' },
-  { slug: 'illustration', label: 'Illustration', group: 'design' },
-  
-  // Motion & Animation
-  { slug: 'motion', label: 'Motion Graphics', group: 'motion' },
-  { slug: 'animation', label: 'Animation', group: 'motion' },
-  { slug: 'vfx', label: 'VFX', group: 'motion' },
-  { slug: 'compositing', label: 'Compositing', group: 'motion' },
-  { slug: 'kinetic', label: 'Kinetic Type', group: 'motion' },
-  { slug: 'transitions', label: 'Transitions', group: 'motion' },
-  
-  // Video & Film
-  { slug: 'editing', label: 'Editing', group: 'video' },
-  { slug: 'color-grading', label: 'Color Grading', group: 'video' },
-  { slug: 'storytelling', label: 'Storytelling', group: 'video' },
-  { slug: 'documentary', label: 'Documentary', group: 'video' },
-  { slug: 'commercial', label: 'Commercial', group: 'video' },
-  { slug: 'music-video', label: 'Music Video', group: 'video' },
-  { slug: 'short-film', label: 'Short Film', group: 'video' },
-  
-  // Interactive & Web
-  { slug: 'interactive-motion', label: 'Interactive Motion', group: 'interactive' },
-  { slug: 'creative-coding', label: 'Creative Coding', group: 'interactive' },
-  { slug: 'threejs', label: '3D / WebGL', group: 'interactive' },
-  { slug: 'generative', label: 'Generative Art', group: 'interactive' },
-  { slug: 'data-viz', label: 'Data Visualization', group: 'interactive' },
-  
-  // AI & Emerging Tech
-  { slug: 'ai-image', label: 'AI Image', group: 'ai' },
-  { slug: 'ai-video', label: 'AI Video', group: 'ai' },
-  { slug: 'ai-audio', label: 'AI Audio', group: 'ai' },
-  { slug: 'prompt-engineering', label: 'Prompt Engineering', group: 'ai' },
-  
-  // 3D & Realtime
-  { slug: '3d', label: '3D', group: '3d' },
-  { slug: 'modeling', label: '3D Modeling', group: '3d' },
-  { slug: 'shaders', label: 'Shaders', group: '3d' },
-  { slug: 'realtime', label: 'Real-time', group: '3d' },
-  
-  // Audio & Sound
-  { slug: 'sound-design', label: 'Sound Design', group: 'audio' },
-  { slug: 'audio-visual', label: 'Audio Visual', group: 'audio' },
-  
-  // Content Type
-  { slug: 'experiment', label: 'Experiment', group: 'content' },
-  { slug: 'product', label: 'Product', group: 'content' },
-  { slug: 'prototype', label: 'Prototype', group: 'content' },
-  { slug: 'template', label: 'Template', group: 'content' },
-  { slug: 'plugin', label: 'Plugin', group: 'content' },
-  { slug: 'tutorial', label: 'Tutorial', group: 'content' },
-];
-
-// Category groups for organized dropdown
-const CATEGORY_GROUPS = {
-  dev: { label: 'Development' },
-  design: { label: 'Design' },
-  motion: { label: 'Motion' },
-  video: { label: 'Video' },
-  interactive: { label: 'Interactive' },
-  ai: { label: 'AI & ML' },
-  '3d': { label: '3D & Realtime' },
-  audio: { label: 'Audio' },
-  content: { label: 'Content Type' },
-};
+import { CATEGORY_GROUPS, getCategoriesByGroup } from '../../data/projects';
 
 // Extended tags organized by group
 const TAG_GROUPS = {
@@ -146,12 +65,12 @@ const TAG_GROUPS = {
 };
 
 const ENTRY_TYPES = [
-  { type: 'build', label: 'BUILD', color: '#ffa742' },
-  { type: 'ship', label: 'SHIP', color: '#4ade80' },
-  { type: 'experiment', label: 'EXPERIMENT', color: '#06b6d4' },
-  { type: 'polish', label: 'POLISH', color: '#a78bfa' },
-  { type: 'study', label: 'STUDY', color: '#3b82f6' },
-  { type: 'wire', label: 'WIRE', color: '#f59e0b' },
+  { type: 'interactive', label: 'INTERACTIVE', color: '#06b6d4' },
+  { type: 'commercial', label: 'COMMERCIAL', color: '#ffa742' },
+  { type: 'tools', label: 'TOOLS', color: '#3b82f6' },
+  { type: 'experimental', label: 'EXPERIMENTAL', color: '#a78bfa' },
+  { type: 'storytelling', label: 'STORYTELLING', color: '#ef4444' },
+  { type: 'videogame', label: 'VIDEOGAME', color: '#4ade80' },
 ];
 
 const MEDIA_TYPES = [
@@ -176,10 +95,12 @@ const emptyProject = {
   tags: [],
   externalUrl: '',
   isFeatured: false,
+  featuredMediaUrl: '',
+  featuredMediaType: '',
 };
 
 const emptyLog = {
-  entryType: 'build',
+  entryType: 'interactive',
   oneLiner: '',
   challengeAbstract: '',
   mentalNote: '',
@@ -264,6 +185,8 @@ export default function AdminProjects() {
       tags: JSON.parse(project.tags || '[]'),
       externalUrl: project.external_url || '',
       isFeatured: project.is_featured === 1,
+      featuredMediaUrl: project.featured_media_url || '',
+      featuredMediaType: project.featured_media_type || '',
     });
     setLogs([]);
     setExistingLogs([]);
@@ -501,6 +424,8 @@ export default function AdminProjects() {
         tags: projectForm.tags,
         externalUrl: projectForm.externalUrl || null,
         isFeatured: projectForm.isFeatured,
+        featuredMediaUrl: projectForm.featuredMediaUrl || null,
+        featuredMediaType: projectForm.featuredMediaType || null,
       };
 
       let response;
@@ -719,7 +644,7 @@ export default function AdminProjects() {
                   className={`${styles.tab} ${activeTab === 'logs' ? styles.tabActive : ''}`}
                   onClick={() => setActiveTab('logs')}
                 >
-                  Dev Logs ({existingLogs.length + logs.length})
+                  Creative Logs ({existingLogs.length + logs.length})
                 </button>
                 <button 
                   className={`${styles.tab} ${activeTab === 'media' ? styles.tabActive : ''}`}
@@ -759,9 +684,9 @@ export default function AdminProjects() {
                         value={projectForm.category}
                         onChange={(e) => handleProjectChange('category', e.target.value)}
                       >
-                        {Object.entries(CATEGORY_GROUPS).map(([groupKey, group]) => (
-                          <optgroup key={groupKey} label={group.label}>
-                            {CATEGORIES.filter(cat => cat.group === groupKey).map(cat => (
+                        {Object.entries(CATEGORY_GROUPS).map(([key, group]) => (
+                          <optgroup key={key} label={group.label}>
+                            {getCategoriesByGroup(key).map(cat => (
                               <option key={cat.slug} value={cat.slug}>{cat.label}</option>
                             ))}
                           </optgroup>
@@ -948,7 +873,7 @@ export default function AdminProjects() {
 
                     {/* New logs */}
                     <h4 className={styles.subSectionTitle}>
-                      {editingProject ? 'Add New Logs' : 'Dev Logs'}
+                      {editingProject ? 'Add New Logs' : 'Creative Logs'}
                     </h4>
                     {logs.map((log, index) => (
                       <div key={log.id} className={styles.logCard}>
@@ -977,13 +902,13 @@ export default function AdminProjects() {
                           </div>
 
                           <div className={styles.formGroupFull}>
-                            <label className={styles.label}>One-liner (BUILD) *</label>
+                            <label className={styles.label}>One-liner *</label>
                             <input
                               type="text"
                               className={styles.input}
                               value={log.oneLiner}
                               onChange={(e) => updateLog(index, 'oneLiner', e.target.value)}
-                              placeholder="What did you build?"
+                              placeholder="Describe your progress"
                             />
                           </div>
 
@@ -1013,7 +938,7 @@ export default function AdminProjects() {
                     ))}
 
                     <button className={styles.addBtn} onClick={addLog}>
-                      + Add Dev Log
+                      + Add Log
                     </button>
                   </div>
                 )}
@@ -1027,13 +952,33 @@ export default function AdminProjects() {
                     {media.map((m, index) => (
                       <div key={m.id} className={styles.mediaCard}>
                         <div className={styles.mediaHeader}>
-                          <span className={styles.mediaNumber}>Media #{index + 1}</span>
-                          <button 
-                            className={styles.removeBtn}
-                            onClick={() => removeMedia(index)}
-                          >
-                            Remove
-                          </button>
+                          <span className={styles.mediaNumber}>
+                            Media #{index + 1}
+                            {m.existing && m.mediaUrl === projectForm.featuredMediaUrl && (
+                              <span className={styles.coverBadge}>COVER</span>
+                            )}
+                          </span>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            {m.existing && m.mediaUrl && (
+                              <button
+                                type="button"
+                                className={styles.coverBtn}
+                                onClick={() => {
+                                  handleProjectChange('featuredMediaUrl', m.mediaUrl);
+                                  handleProjectChange('featuredMediaType', m.mediaType);
+                                }}
+                                disabled={m.mediaUrl === projectForm.featuredMediaUrl}
+                              >
+                                {m.mediaUrl === projectForm.featuredMediaUrl ? 'Cover Set' : 'Set as Cover'}
+                              </button>
+                            )}
+                            <button
+                              className={styles.removeBtn}
+                              onClick={() => removeMedia(index)}
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
 
                         <div className={styles.mediaGrid}>

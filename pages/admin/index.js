@@ -56,6 +56,13 @@ export default function AdminDashboard() {
 
   const getEntryTypeColor = (type) => {
     const colors = {
+      interactive: '#06b6d4',
+      commercial: '#ffa742',
+      tools: '#3b82f6',
+      experimental: '#a78bfa',
+      storytelling: '#ef4444',
+      videogame: '#4ade80',
+      // Legacy compatibility
       build: '#ffa742',
       ship: '#4ade80',
       experiment: '#06b6d4',
@@ -94,7 +101,7 @@ export default function AdminDashboard() {
                 <div className={styles.statIcon}>▣</div>
                 <div className={styles.statContent}>
                   <div className={styles.statValue}>{stats.logs.total}</div>
-                  <div className={styles.statLabel}>Dev Logs</div>
+                  <div className={styles.statLabel}>Creative Logs</div>
                   <div className={styles.statMeta}>
                     {stats.logs.today} today
                   </div>
@@ -153,7 +160,7 @@ export default function AdminDashboard() {
                 <div className={styles.logsList}>
                   {recentLogs.length === 0 ? (
                     <div className={styles.emptyState}>
-                      No logs yet. Create your first dev log.
+                      No logs yet. Create your first log.
                     </div>
                   ) : (
                     recentLogs.map((log) => (
@@ -182,7 +189,7 @@ export default function AdminDashboard() {
                 <div className={styles.actionsList}>
                   <Link href="/admin/logs?action=new" className={styles.actionBtn}>
                     <span className={styles.actionIcon}>+</span>
-                    <span className={styles.actionText}>New Dev Log</span>
+                    <span className={styles.actionText}>New Log</span>
                   </Link>
                   <Link href="/admin/projects?action=new" className={styles.actionBtn}>
                     <span className={styles.actionIcon}>+</span>

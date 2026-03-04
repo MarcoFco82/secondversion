@@ -76,6 +76,60 @@
   margin-bottom: 16px;
 }
 
+/* Media section */
+.mediaSection {
+  margin-bottom: 16px;
+}
+
+.mediaContainer {
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 200px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.mediaImage,
+.mediaVideo,
+.mediaEmbed {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaEmbed {
+  height: 190px;
+  border: none;
+}
+
+.mediaDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.mediaDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.mediaDot:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.mediaDotActive {
+  border-color: transparent;
+  transform: scale(1.2);
+}
+
 .progressSection {
   margin-bottom: 16px;
 }

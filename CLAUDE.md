@@ -63,6 +63,11 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-02-26]** Active projects distributed evenly across sphere (no longer clustered at north pole)
 - **[2026-02-26]** Billboard text — project labels always face camera
 - **[2026-02-26]** 4 production deploys via npm run deploy
+- **[2026-02-27]** Terminología creativa: filtros, SphereIntro, ENTRY_TYPES, categorías (50→6), labels admin, traducciones EN+ES
+- **[2026-02-27]** Video en Sphere HUD: ProjectDetailPanel muestra media (image/video/gif/vimeo/youtube) con dot navigation
+- **[2026-02-27]** Professional Log: tabla, API CRUD, admin page, PDF generation con jspdf
+- **[2026-02-27]** Migraciones 0007 (terminología) y 0008 (professional_logs) aplicadas a producción D1
+- **[2026-02-27]** Deploy a producción con todas las fases
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -73,6 +78,8 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~Progress bar wrong values~~ → Fixed via SQL JOIN in /api/logs (2026-02-22)
 - ~~Lab Terminal bugs~~ → Replaced entirely with Sphere HUD (2026-02-22)
 - ~~Sphere HUD needs deploy~~ → Deployed with glow + admin controls (2026-02-22)
+- ~~Dev terminology in portfolio~~ → Replaced with creative terminology (2026-02-27)
+- ~~No video in Sphere HUD~~ → ProjectDetailPanel now shows media with autoplay (2026-02-27)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
@@ -87,18 +94,23 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 ## Key Files
 - `/components/SphereHUD/` - 3D Sphere HUD (active, replaces Lab Terminal)
 - `/components/SphereHUD/hooks/useSphereConfig.js` - Fetches sphere visual config from API
+- `/components/SphereHUD/ProjectDetailPanel.js` - Shows media (video/image/embed) + project details
 - `/pages/admin/sphere.js` - Admin panel for sphere visual controls
+- `/pages/admin/professional-log.js` - Professional Log admin (CRUD + PDF)
 - `/pages/api/sphere-config/` - Public GET for sphere config
 - `/pages/api/admin/sphere-config/` - Auth POST for saving sphere config
+- `/pages/api/professional-logs/` - Public GET for professional logs
+- `/pages/api/admin/professional-logs/` - Auth CRUD for professional logs
 - `/components/LabTerminal/` - Legacy Terminal UI (preserved as backup, not imported)
 - `/pages/api/**/*.js` - API routes
-- `/data/projects.js` - Static project data
-- `/migrations/*.sql` - D1 database migrations
+- `/data/projects.js` - Static project data + ENTRY_TYPES (6 creative + legacy)
+- `/migrations/*.sql` - D1 database migrations (0001-0008)
 
 ## Database Schema
-- **projects** - Project metadata (D1)
+- **projects** - Project metadata (D1) — categories: interactive, commercial, tools, experimental, storytelling, videogame
 - **project_media** - Media files linked to projects (D1 + R2)
-- **dev_logs** - Development log entries (D1)
+- **dev_logs** - Creative log entries (D1) — entry_types: interactive, commercial, tools, experimental, storytelling, videogame + legacy
+- **professional_logs** - Personal diary entries (D1, migration 0008) — category, mood, energy, media
 - **admin_users** - Admin authentication (D1)
 - **sphere_config** - Sphere HUD visual config as JSON blob (D1, migration 0006)
 

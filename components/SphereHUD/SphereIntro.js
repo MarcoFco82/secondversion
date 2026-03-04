@@ -3,14 +3,14 @@ import styles from './SphereIntro.module.css';
 
 const translations = {
   en: {
-    badge: 'LIVE DEV FEED',
-    headline: "What I'm building right now",
-    subline: 'Real projects, real progress — updated as I code.',
+    badge: 'CREATIVE PORTFOLIO',
+    headline: "What I'm creating right now",
+    subline: 'Real projects, real progress — updated as I create.',
   },
   es: {
-    badge: 'EN DESARROLLO',
-    headline: 'Lo que estoy construyendo ahora',
-    subline: 'Proyectos reales, progreso real — actualizado mientras programo.',
+    badge: 'PORTAFOLIO CREATIVO',
+    headline: 'Lo que estoy creando ahora',
+    subline: 'Proyectos reales, progreso real — actualizado mientras creo.',
   },
 };
 

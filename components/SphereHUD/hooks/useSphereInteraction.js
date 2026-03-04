@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-const FILTERS = ['All', 'Build', 'Ship', 'Experiment', 'Polish'];
+const FILTERS = ['All', 'Interactive', 'Commercial', 'Tools', 'Experimental', 'StoryTelling', 'VideoGame'];
 
 /**
  * Hook: manages sphere interaction state — selected node, filters, auto-rotate.

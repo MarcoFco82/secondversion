@@ -407,7 +407,7 @@ textures.forEach(tex => {
                 </select>
               </div>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Dev Log</label>
+                <label className={styles.label}>Creative Log</label>
                 <select className={styles.select} value={selectedLog?.id || ''} onChange={(e) => {
                   const log = logs.find(l => l.id === e.target.value);
                   if (log) loadLogContent(log);
@@ -632,7 +632,7 @@ textures.forEach(tex => {
 
             <section className={styles.section}>
               <h3 className={styles.sectionTitle}>AI Suggestions</h3>
-              <p className={styles.aiNote}>Select a dev log to generate AI headlines.</p>
+              <p className={styles.aiNote}>Select a log to generate AI headlines.</p>
               <button className={styles.aiBtn} disabled={!selectedLog}>Generate Headlines</button>
             </section>
           </div>

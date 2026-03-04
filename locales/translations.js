@@ -10,19 +10,21 @@ export const translations = {
     },
     mainDescription: [
       "Creative Technologist",
-      "Code-Driven Animation & Interactivity",
-      "AI-Powered Tools & Workflows",
-      "Visual Systems Developer"
+      "Motion & Interactive Design",
+      "AI-Integrated Creative Tools",
+      "Visual Systems Creator"
     ],
     
     // Apps & Projects Section
     projectsTitle: "APPS &\nPROJECTS",
     projectsDescription: [
       "Interactive experiences, tools, and visual systems.",
-      "Built with code, animation, and AI integration.",
+      "Built with motion, interactivity, and AI.",
       "Bridging design and development."
     ],
-    filterTitle: "FILTER BY CATEGORY",
+    filterTitle: "FILTER BY TAGS",
+    categoryFilterTitle: "FILTER BY CATEGORY",
+    allCategoriesBtn: "All",
     noProjectsMessage: "No projects match the selected filters.",
     resetFiltersBtn: "Reset Filters",
     
@@ -148,19 +150,21 @@ export const translations = {
     },
     mainDescription: [
       "Tecnólogo Creativo",
-      "Animación e Interactividad con Código",
-      "Herramientas y Flujos con IA",
-      "Desarrollador de Sistemas Visuales"
+      "Motion y Diseño Interactivo",
+      "Herramientas Creativas con IA",
+      "Creador de Sistemas Visuales"
     ],
     
     // Apps & Projects Section
     projectsTitle: "APPS Y\nPROYECTOS",
     projectsDescription: [
       "Experiencias interactivas, herramientas y sistemas visuales.",
-      "Construidos con código, animación e integración de IA.",
+      "Construidos con motion, interactividad e IA.",
       "Conectando diseño y desarrollo."
     ],
-    filterTitle: "FILTRAR POR CATEGORÍA",
+    filterTitle: "FILTRAR POR TAGS",
+    categoryFilterTitle: "FILTRAR POR CATEGORÍA",
+    allCategoriesBtn: "Todas",
     noProjectsMessage: "No hay proyectos que coincidan con los filtros seleccionados.",
     resetFiltersBtn: "Resetear Filtros",
     

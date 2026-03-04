@@ -24,6 +24,7 @@ const DEFAULTS = {
   activeEmissiveSelected: 2.5,
   bgGradientTop: '#0f1923',
   bgGradientBottom: '#0a0a0a',
+  slideshowInterval: 4,
 };
 
 export default async function handler(req, res) {

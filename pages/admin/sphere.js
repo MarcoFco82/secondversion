@@ -21,6 +21,7 @@ const DEFAULTS = {
   activeEmissiveSelected: 2.5,
   bgGradientTop: '#0f1923',
   bgGradientBottom: '#0a0a0a',
+  slideshowInterval: 4,
 };
 
 /**
@@ -206,6 +207,12 @@ export default function AdminSpherePage() {
               background: `linear-gradient(180deg, ${config.bgGradientTop} 0%, ${config.bgGradientBottom} 100%)`,
             }}
           />
+        </div>
+
+        {/* SLIDESHOW */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Slideshow (Project Cards)</h3>
+          <SliderField label="Interval (seconds)" field="slideshowInterval" min={1} max={15} step={1} />
         </div>
 
         {/* ACTIONS */}

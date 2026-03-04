@@ -204,6 +204,13 @@ export function getTagBySlug(slug) {
 // Motion Dev Artist focused
 // ===========================================
 export const ENTRY_TYPES = {
+  interactive: { type: 'interactive', label: 'INTERACTIVE', color: '#06b6d4' },
+  commercial: { type: 'commercial', label: 'COMMERCIAL', color: '#ffa742' },
+  tools: { type: 'tools', label: 'TOOLS', color: '#3b82f6' },
+  experimental: { type: 'experimental', label: 'EXPERIMENTAL', color: '#a78bfa' },
+  storytelling: { type: 'storytelling', label: 'STORYTELLING', color: '#ef4444' },
+  videogame: { type: 'videogame', label: 'VIDEOGAME', color: '#4ade80' },
+  // Legacy compatibility
   build: { type: 'build', label: 'BUILD', color: '#ffa742' },
   ship: { type: 'ship', label: 'SHIP', color: '#4ade80' },
   experiment: { type: 'experiment', label: 'EXPERIMENT', color: '#06b6d4' },

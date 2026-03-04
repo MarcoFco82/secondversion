@@ -1,5 +1,50 @@
 # Architecture Decisions Log
 
+## [2026-02-27] Decision: Simplify Categories from 50+ to 6 Creative Types
+
+**Context:**
+The admin had 50+ granular categories organized in 9 groups (dev, design, motion, video, interactive, ai, 3d, audio, content). This level of granularity was developer-oriented and didn't match Marco's identity as a creative professional. Categories like "Backend", "API", "Scripting" are irrelevant for a portfolio.
+
+**Decision:**
+Collapse all categories into 6 creative-focused types: Interactive, Commercial, Tools, Experimental, StoryTelling, VideoGame. Keep the old 50+ values in `data/projects.js` as tags reference.
+
+**Mapping:**
+- Interactive ← motion, animation, web, saas, apps, frontend, fullstack, uiux, design, interactive-motion, creative-coding, threejs, generative, data-viz
+- Commercial ← commercial, branding, product
+- Tools ← tool, automation, plugin, template, scripting, api, backend
+- Experimental ← experiment, prototype, vfx, shaders, ai-*, 3d, modeling, realtime, sound-design
+- StoryTelling ← storytelling, documentary, editing, color-grading, short-film, music-video, tutorial
+- VideoGame ← new (no existing projects mapped)
+
+**Rationale:**
+- 6 categories are memorable and can be used as sphere filters
+- Each maps to a creative discipline, not a technical domain
+- Migration 0007 handles data mapping in production D1
+- Legacy entry_types kept in CHECK constraint for backward compatibility
+
+**Status:** Implemented, deployed
+
+---
+
+## [2026-02-27] Decision: Professional Log as Separate System from Project Logs
+
+**Context:**
+Dev logs (now Creative Logs) are always tied to a specific project. Marco needs a personal diary for daily reflections, mood tracking, and energy logging that isn't project-specific.
+
+**Decision:**
+Create a separate `professional_logs` table and independent CRUD system. Use jspdf for client-side PDF generation (no server dependency — compatible with Cloudflare Pages).
+
+**Rationale:**
+- Decoupled from projects: a log about "meeting with client" doesn't belong to any project
+- Mood/energy tracking adds personal insight dimension
+- PDF export provides shareable/printable format
+- jspdf runs entirely client-side — no server-side PDF libraries needed (Cloudflare Workers limitation)
+- Dynamic import of jspdf (`await import('jspdf')`) keeps it out of the initial bundle
+
+**Status:** Implemented, deployed
+
+---
+
 ## [2026-02-26] Decision: Billboard Text for Project Labels
 
 **Context:**
