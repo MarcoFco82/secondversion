@@ -149,14 +149,16 @@ export default async function handler(req, res) {
         ).bind(id).first();
 
         if (media && r2) {
-          // Extract R2 key from URL
+          // Extract R2 key from URL (public R2 URL format: https://pub-xxx.r2.dev/key)
           const url = media.media_url;
-          if (url && url.includes('marcomotion-media')) {
-            const key = url.split('/').pop();
-            try {
-              await r2.delete(key);
-            } catch (e) {
-              console.log('R2 delete error (non-fatal):', e);
+          if (url && url.includes('.r2.dev/')) {
+            const key = url.split('.r2.dev/')[1];
+            if (key) {
+              try {
+                await r2.delete(key);
+              } catch (e) {
+                console.log('R2 delete error (non-fatal):', e);
+              }
             }
           }
         }

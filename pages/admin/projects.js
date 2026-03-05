@@ -82,6 +82,7 @@ const MEDIA_TYPES = [
 ];
 
 const emptyProject = {
+  code: '',
   alias: '',
   displayNameEn: '',
   displayNameEs: '',
@@ -172,6 +173,7 @@ export default function AdminProjects() {
   const openEditProject = async (project) => {
     setEditingProject(project);
     setProjectForm({
+      code: project.code || '',
       alias: project.alias || '',
       displayNameEn: project.display_name_en || '',
       displayNameEs: project.display_name_es || '',
@@ -296,7 +298,34 @@ export default function AdminProjects() {
     ));
   };
 
-  const removeMedia = (index) => {
+  const removeMedia = async (index) => {
+    const item = media[index];
+
+    // If it's an existing media in DB/R2, call the DELETE API
+    if (item && item.existing && item.id) {
+      if (!confirm('Delete this media permanently? This will also remove the file from storage.')) {
+        return;
+      }
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`/api/admin/media?id=${item.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (!result.success) {
+          setError(`Failed to delete media: ${result.error}`);
+          return;
+        }
+      } catch (err) {
+        console.error('Delete media error:', err);
+        setError('Failed to delete media from server');
+        return;
+      }
+    }
+
     setMedia(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -411,6 +440,7 @@ export default function AdminProjects() {
 
       // Prepare payload
       const payload = {
+        code: projectForm.code || undefined,
         alias: projectForm.alias,
         displayNameEn: projectForm.displayNameEn,
         displayNameEs: projectForm.displayNameEs || null,
@@ -675,6 +705,19 @@ export default function AdminProjects() {
                         onChange={(e) => handleProjectChange('alias', e.target.value)}
                         placeholder="CHAR-GEN"
                       />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>Code</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={projectForm.code}
+                        onChange={(e) => handleProjectChange('code', e.target.value.toUpperCase())}
+                        placeholder="Auto from alias (e.g. MC-COM)"
+                        maxLength={10}
+                      />
+                      <small style={{ color: '#888', fontSize: '0.75rem' }}>Leave empty to auto-generate from alias</small>
                     </div>
 
                     <div className={styles.formGroup}>

@@ -138,6 +138,7 @@ export default async function handler(req, res) {
         const values = [];
 
         const fieldMap = {
+          code: 'code',
           alias: 'alias',
           displayNameEn: 'display_name_en',
           displayNameEs: 'display_name_es',
@@ -236,6 +237,7 @@ export default async function handler(req, res) {
         }
 
         const fieldMap = {
+          code: 'code',
           alias: 'alias',
           displayNameEn: 'display_name_en',
           displayNameEs: 'display_name_es',

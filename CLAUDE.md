@@ -74,6 +74,9 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-04]** Slideshow interval configurable from admin sphere panel (1-15s)
 - **[2026-03-04]** Set as Cover button in admin media tab — video/image cover support
 - **[2026-03-04]** Deploy a producción (commit d241b25)
+- **[2026-03-05]** Refactored project codes: random `PRJ-XXX` replaced with alias-based initials (e.g. `SAA-NAV`)
+- **[2026-03-05]** Admin: editable Code field in project form (auto-uppercase, max 10 chars)
+- **[2026-03-05]** Updated 3 existing codes in D1 + deployed to production
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -90,6 +93,7 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~No category filter on public page~~ → Colored filter buttons by group (2026-03-04)
 - ~~Static project card images~~ → Auto-slideshow with configurable interval (2026-03-04)
 - ~~No video cover support~~ → Set as Cover button + video autoplay in cards (2026-03-04)
+- ~~Random project codes (PRJ-XXX)~~ → Alias-based initials + editable field (2026-03-05)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages

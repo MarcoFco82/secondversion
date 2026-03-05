@@ -24,13 +24,23 @@ const generateId = (prefix = '') => {
   return prefix ? `${prefix}-${timestamp}${random}` : `${timestamp}${random}`;
 };
 
-// Generate project code
-const generateProjectCode = () => {
-  const greekLetters = ['A', 'B', 'G', 'D', 'E', 'Z', 'H', 'Q', 'I', 'K', 'L', 'M', 'N', 'X', 'O', 'P', 'R', 'S', 'T', 'Y', 'F', 'C', 'Y', 'W'];
-  const greek = greekLetters[Math.floor(Math.random() * greekLetters.length)];
-  const num = Math.floor(Math.random() * 10);
-  const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-  return `PRJ-${greek}${num}${letter}`;
+// Generate project code from alias (e.g. "marcomotion.com" → "MC-COM")
+const generateProjectCode = (alias = '') => {
+  const clean = alias.replace(/[^a-zA-Z0-9\s.-]/g, '').trim();
+  if (!clean) {
+    const r = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return `PRJ-${r}`;
+  }
+  // Split by spaces, dots, hyphens
+  const words = clean.split(/[\s.\-]+/).filter(Boolean);
+  if (words.length === 1) {
+    const w = words[0].toUpperCase();
+    return w.length <= 6 ? w : w.substring(0, 3) + '-' + w.substring(3, 6);
+  }
+  // Two or more words: first 2-3 chars of first word + first 2-3 chars of second
+  const a = words[0].substring(0, 3).toUpperCase();
+  const b = words[1].substring(0, 3).toUpperCase();
+  return `${a}-${b}`;
 };
 
 // In-memory store fallback for local development
@@ -69,7 +79,7 @@ export default async function handler(req, res) {
       }
 
       const id = generateId('proj');
-      const code = body.code || generateProjectCode();
+      const code = body.code || generateProjectCode(body.alias);
       const now = new Date().toISOString();
 
       // Try to get D1 database from Cloudflare context
