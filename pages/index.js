@@ -5,7 +5,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import dynamic from 'next/dynamic';
 const SphereHUD = dynamic(() => import('../components/SphereHUD/SphereHUD'), {
   ssr: false,
-  loading: () => <div style={{ background: '#2a2f38', borderRadius: '12px', height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>Initializing 3D environment...</div>
+  loading: () => <div className="sphere-loading-placeholder">Initializing 3D environment...</div>
 });
 import { useLanguage } from '../context/LanguageContext';
 import { debounce } from 'lodash';
@@ -13,7 +13,7 @@ import GoogleAnalytics from '../components/GoogleAnalytics';
 import { CATEGORY_GROUPS, getCategoriesByGroup, getCategoryBySlug } from '../data/projects';
 import ProjectCard from '../components/ProjectCard';
 
-// Media data for professional experience (no translation needed)
+// Media data for professional experience (legacy, kept as fallback)
 const experienceMedia = [
   { type: "image", url: "/awards.jpg" },
   { type: "youtube", url: "https://www.youtube.com/embed/5veKZq1OXsk?si=jENuT3qe-45Tw9j2" },
@@ -25,6 +25,29 @@ const experienceMedia = [
   { type: "image", url: "/notaroja.jpg" },
   { type: "none", url: "" }
 ];
+
+const CV_LABELS = {
+  en: {
+    experience: 'PROFESSIONAL EXPERIENCE',
+    freelance: 'FREELANCE & INDEPENDENT',
+    education: 'EDUCATION',
+    skills: 'SKILLS',
+    awards: 'AWARDS',
+    recentActivity: 'RECENT ACTIVITY',
+    downloadCV: 'DOWNLOAD CV (PDF)',
+    present: 'Present',
+  },
+  es: {
+    experience: 'EXPERIENCIA PROFESIONAL',
+    freelance: 'FREELANCE E INDEPENDIENTE',
+    education: 'EDUCACION',
+    skills: 'HABILIDADES',
+    awards: 'PREMIOS',
+    recentActivity: 'ACTIVIDAD RECIENTE',
+    downloadCV: 'DESCARGAR CV (PDF)',
+    present: 'Presente',
+  },
+};
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -46,6 +69,10 @@ export default function Home() {
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [slideshowInterval, setSlideshowInterval] = useState(4);
+
+  // CV data from API
+  const [cvData, setCvData] = useState(null);
+  const [recentLogs, setRecentLogs] = useState([]);
 
   // Fetch projects from API
   useEffect(() => {
@@ -171,6 +198,27 @@ export default function Home() {
     setSelectedCategory(slug);
   }, []);
 
+  // Fetch CV data
+  const fetchCvData = useCallback(async (lang) => {
+    try {
+      const [cvRes, logsRes] = await Promise.all([
+        fetch(`/api/cv?lang=${lang}`),
+        fetch('/api/professional-logs?category=all'),
+      ]);
+      const cv = await cvRes.json();
+      const logs = await logsRes.json();
+      if (cv.success) setCvData(cv.data);
+      if (logs.success) setRecentLogs((logs.data || []).slice(0, 5));
+    } catch (err) {
+      console.error('Error fetching CV:', err);
+    }
+  }, []);
+
+  // Re-fetch CV when language changes (only if section is unlocked)
+  useEffect(() => {
+    if (showExperienceSection) fetchCvData(language);
+  }, [language, showExperienceSection, fetchCvData]);
+
   const handlePasswordSubmit = useCallback((e) => {
     if (e) e.preventDefault();
     if (password.toLowerCase() === 'caputdraconis') {
@@ -179,11 +227,12 @@ export default function Home() {
       setPasswordError(false);
       setPassword('');
       setExpandedExperienceId(0);
+      fetchCvData(language);
     } else {
       setPasswordError(true);
       setPassword('');
     }
-  }, [password]);
+  }, [password, language, fetchCvData]);
   
   const handlePasswordChange = useCallback((e) => {
     setPassword(e.target.value);
@@ -384,58 +433,323 @@ export default function Home() {
     </div>
   ), [selectedKeywords, resetKeywords, toggleKeyword, t]);
 
+  const cvLabels = CV_LABELS[language] || CV_LABELS.en;
+
+  // Generate ATS PDF client-side
+  const handleDownloadCV = useCallback(async () => {
+    if (!cvData) return;
+    const { default: jsPDF } = await import('jspdf');
+    const doc = new jsPDF();
+    const m = cvData.meta;
+    const s = cvData.sections;
+    let y = 20;
+    const lm = 20; // left margin
+    const pw = 170; // page width for text
+
+    const checkPage = (needed) => {
+      if (y + needed > 275) { doc.addPage(); y = 20; }
+    };
+
+    // Header
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text((m?.full_name || '').toUpperCase(), lm, y);
+    y += 7;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(m?.professional_title || '', lm, y);
+    y += 6;
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    const contact = [m?.email, m?.phone, m?.location, m?.website].filter(Boolean).join(' | ');
+    doc.text(contact, lm, y);
+    y += 8;
+    doc.setDrawColor(180);
+    doc.line(lm, y, 190, y);
+    y += 8;
+    doc.setTextColor(0);
+
+    const renderSection = (title, entries, type) => {
+      if (!entries || entries.length === 0) return;
+      checkPage(20);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, lm, y);
+      y += 8;
+
+      for (const entry of entries) {
+        checkPage(25);
+        if (type === 'skill_group') {
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${entry.title}:`, lm, y);
+          doc.setFont('helvetica', 'normal');
+          const skills = (entry.items || []).join(', ');
+          const lines = doc.splitTextToSize(skills, pw - 2);
+          let firstLine = true;
+          for (const line of lines) {
+            if (!firstLine) { checkPage(6); }
+            doc.text(line, firstLine ? lm + doc.getTextWidth(`${entry.title}: `) : lm, y);
+            y += 5;
+            firstLine = false;
+          }
+          y += 3;
+        } else if (type === 'award') {
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`${entry.title} (${entry.date_start || ''})`, lm, y);
+          y += 6;
+        } else {
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.text(entry.title || '', lm, y);
+          const dateStr = `${entry.date_start || ''}${entry.date_end ? ' - ' + entry.date_end : ''}`;
+          if (dateStr.trim()) {
+            const dateW = doc.getTextWidth(dateStr);
+            doc.setFont('helvetica', 'normal');
+            doc.text(dateStr, 190 - dateW, y);
+          }
+          y += 5;
+          doc.setFont('helvetica', 'italic');
+          doc.setFontSize(9);
+          const sub = [entry.subtitle, entry.location].filter(Boolean).join(' | ');
+          if (sub) { doc.text(sub, lm, y); y += 5; }
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          const bullets = entry.bullets || [];
+          for (const b of bullets) {
+            checkPage(6);
+            const bLines = doc.splitTextToSize(`- ${b}`, pw);
+            for (const bl of bLines) { doc.text(bl, lm, y); y += 4.5; }
+          }
+          y += 4;
+        }
+      }
+      doc.setDrawColor(200);
+      doc.line(lm, y, 190, y);
+      y += 8;
+    };
+
+    renderSection('PROFESSIONAL EXPERIENCE', s.experience, 'experience');
+    renderSection('FREELANCE', s.freelance, 'freelance');
+    renderSection('EDUCATION', s.education, 'education');
+    renderSection('SKILLS', s.skill_group, 'skill_group');
+    renderSection('AWARDS', s.award, 'award');
+
+    doc.setFontSize(8);
+    doc.setTextColor(150);
+    doc.text(`${m?.website || 'marcomotion.com'} | Generated ${new Date().toLocaleDateString()}`, lm, 285);
+
+    doc.save(`cv_marco_${language}.pdf`);
+  }, [cvData, language]);
+
+  // Fallback to hardcoded data if API hasn't loaded yet
+  const renderExperienceFallback = useCallback(() => (
+    <div className="experience-accordion">
+      {t.experience.map((exp, index) => {
+        const media = experienceMedia[index];
+        return (
+          <div key={exp.id} className="experience-item">
+            <div className="experience-header" onClick={() => toggleExperience(exp.id)}>
+              <div className="company-info">
+                <h3>{exp.company}</h3>
+                <p className="company-location">{exp.location}</p>
+              </div>
+              <span className="toggle-icon">{expandedExperienceId === exp.id ? '\u2212' : '+'}</span>
+            </div>
+            {expandedExperienceId === exp.id && (
+              <div className="experience-content">
+                <ul className="experience-bullets">
+                  {exp.bullets.map((bullet, idx) => <li key={idx}>{bullet}</li>)}
+                </ul>
+                {media && media.type !== 'none' && (
+                  <button className="resource-btn" onClick={() => setSelectedMedia(media)}>{t.viewResourceBtn}</button>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  ), [expandedExperienceId, toggleExperience, t]);
+
+  const renderCVSection = useCallback(() => {
+    if (!cvData || !cvData.sections) return renderExperienceFallback();
+    const s = cvData.sections;
+    const m = cvData.meta;
+
+    return (
+      <div className="cv-full-section">
+        {/* CV Header */}
+        {m && (
+          <div className="cv-header">
+            <h2 className="cv-name">{m.full_name}</h2>
+            <p className="cv-title-line">{m.professional_title}</p>
+            <div className="cv-contact">
+              {m.email && <span>{m.email}</span>}
+              {m.phone && <span>{m.phone}</span>}
+              {m.location && <span>{m.location}</span>}
+              {m.website && <span>{m.website}</span>}
+            </div>
+            {m.bio && <p className="cv-bio">{m.bio}</p>}
+          </div>
+        )}
+
+        {/* Experience Timeline */}
+        {s.experience && s.experience.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.experience}</h3>
+            <div className="cv-timeline">
+              {s.experience.map((exp, idx) => (
+                <div key={exp.id} className="cv-timeline-item">
+                  <div className="cv-timeline-dot" />
+                  <div className="cv-timeline-content">
+                    <div className="cv-timeline-header" onClick={() => toggleExperience(idx)}>
+                      <div>
+                        <h4 className="cv-company">{exp.title}</h4>
+                        <p className="cv-role">{exp.subtitle}</p>
+                        <p className="cv-location-date">
+                          {exp.location}{exp.location && exp.date_start ? ' | ' : ''}
+                          {exp.date_start}{exp.date_end ? ` - ${exp.date_end}` : ''}
+                        </p>
+                      </div>
+                      <span className="toggle-icon">{expandedExperienceId === idx ? '\u2212' : '+'}</span>
+                    </div>
+                    {expandedExperienceId === idx && exp.bullets && (
+                      <ul className="cv-bullets">
+                        {exp.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Freelance */}
+        {s.freelance && s.freelance.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.freelance}</h3>
+            <div className="cv-compact-list">
+              {s.freelance.map(f => (
+                <div key={f.id} className="cv-compact-item">
+                  <h4>{f.title}</h4>
+                  <p className="cv-role">{f.subtitle}</p>
+                  <p className="cv-location-date">
+                    {f.location}{f.location && f.date_start ? ' | ' : ''}
+                    {f.date_start}{f.date_end ? ` - ${f.date_end}` : ''}
+                  </p>
+                  {f.bullets && (
+                    <ul className="cv-bullets">
+                      {f.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Skills */}
+        {s.skill_group && s.skill_group.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.skills}</h3>
+            <div className="cv-skills-grid">
+              {s.skill_group.map(sg => (
+                <div key={sg.id} className="cv-skill-group">
+                  <h4 className="cv-skill-category">{sg.title}</h4>
+                  <div className="cv-skill-tags">
+                    {(sg.items || []).map((item, i) => (
+                      <span key={i} className="cv-skill-tag">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Education */}
+        {s.education && s.education.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.education}</h3>
+            <div className="cv-compact-list">
+              {s.education.map(ed => (
+                <div key={ed.id} className="cv-compact-item">
+                  <h4>{ed.title}</h4>
+                  <p className="cv-role">{ed.subtitle}</p>
+                  <p className="cv-location-date">
+                    {ed.location}{ed.location && ed.date_start ? ' | ' : ''}
+                    {ed.date_start}{ed.date_end ? ` - ${ed.date_end}` : ''}
+                  </p>
+                  {ed.bullets && (
+                    <ul className="cv-bullets">
+                      {ed.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Awards */}
+        {s.award && s.award.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.awards}</h3>
+            <div className="cv-awards-row">
+              {s.award.map(a => (
+                <div key={a.id} className="cv-award-item">
+                  <span className="cv-award-icon">&#9670;</span>
+                  <span className="cv-award-text">{a.title}</span>
+                  <span className="cv-award-year">{a.date_start}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Recent Activity */}
+        {recentLogs.length > 0 && (
+          <div className="cv-block">
+            <h3 className="cv-block-title">{cvLabels.recentActivity}</h3>
+            <div className="cv-activity-list">
+              {recentLogs.map(log => (
+                <div key={log.id} className="cv-activity-item">
+                  <span className="cv-activity-date">{log.log_date}</span>
+                  <span className="cv-activity-cat">{(log.category || 'general').toUpperCase()}</span>
+                  <p className="cv-activity-text">{log.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Download CV */}
+        <div className="cv-download">
+          <button className="cv-download-btn" onClick={handleDownloadCV}>
+            {cvLabels.downloadCV}
+          </button>
+        </div>
+      </div>
+    );
+  }, [cvData, recentLogs, expandedExperienceId, toggleExperience, cvLabels, handleDownloadCV, renderExperienceFallback]);
+
   const renderExperienceSection = useCallback(() => (
     <div className="experience-section">
       {!showExperienceSection ? (
-        <button 
+        <button
           className="toggle-experience-btn"
           onClick={handleOpenPasswordModal}
         >
           {t.viewExperienceBtn}
         </button>
       ) : (
-        <div className="experience-accordion">
-          {t.experience.map((exp, index) => {
-            const media = experienceMedia[index];
-            return (
-              <div key={exp.id} className="experience-item">
-                <div 
-                  className="experience-header"
-                  onClick={() => toggleExperience(exp.id)}
-                >
-                  <div className="company-info">
-                    <h3>{exp.company}</h3>
-                    <p className="company-location">{exp.location}</p>
-                  </div>
-                  <span className="toggle-icon">
-                    {expandedExperienceId === exp.id ? '−' : '+'}
-                  </span>
-                </div>
-                
-                {expandedExperienceId === exp.id && (
-                  <div className="experience-content">
-                    <ul className="experience-bullets">
-                      {exp.bullets.map((bullet, idx) => (
-                        <li key={idx}>{bullet}</li>
-                      ))}
-                    </ul>
-                    {media && media.type !== 'none' && (
-                      <button
-                        className="resource-btn"
-                        onClick={() => setSelectedMedia(media)}
-                      >
-                        {t.viewResourceBtn}
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        renderCVSection()
       )}
     </div>
-  ), [showExperienceSection, expandedExperienceId, toggleExperience, handleOpenPasswordModal, t]);
+  ), [showExperienceSection, handleOpenPasswordModal, t, renderCVSection]);
 
   return (
     <div className="container">
