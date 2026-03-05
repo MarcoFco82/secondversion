@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, data: [] });
     }
 
-    const { category, from, to } = req.query;
+    const { category, from, to, projectId } = req.query;
 
     let sql = 'SELECT * FROM professional_logs';
     const conditions = [];
@@ -33,6 +33,10 @@ export default async function handler(req, res) {
     if (category && category !== 'all') {
       conditions.push('category = ?');
       params.push(category);
+    }
+    if (projectId) {
+      conditions.push('project_id = ?');
+      params.push(projectId);
     }
     if (from) {
       conditions.push('log_date >= ?');

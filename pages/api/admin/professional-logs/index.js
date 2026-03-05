@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { content, category, mood, energy, media_url, media_type, log_date } = req.body;
+      const { content, category, project_id, mood, energy, media_url, media_type, log_date } = req.body;
 
       if (!content || !content.trim()) {
         return res.status(400).json({ success: false, error: 'Content is required' });
@@ -51,12 +51,13 @@ export default async function handler(req, res) {
       const date = log_date || new Date().toISOString().split('T')[0];
 
       await db.prepare(`
-        INSERT INTO professional_logs (id, content, category, mood, energy, media_url, media_type, log_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO professional_logs (id, content, category, project_id, mood, energy, media_url, media_type, log_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).bind(
         id,
         content.trim(),
         category || 'general',
+        project_id || null,
         mood || null,
         energy || null,
         media_url || null,

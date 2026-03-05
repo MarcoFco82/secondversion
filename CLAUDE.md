@@ -77,6 +77,8 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-05]** Refactored project codes: random `PRJ-XXX` replaced with alias-based initials (e.g. `SAA-NAV`)
 - **[2026-03-05]** Admin: editable Code field in project form (auto-uppercase, max 10 chars)
 - **[2026-03-05]** Updated 3 existing codes in D1 + deployed to production
+- **[2026-03-05]** Fix: Admin media delete now calls API + deletes from R2 (was UI-only, R2 key extraction broken)
+- **[2026-03-05]** Deploy to production (commit 038c0b8)
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -94,14 +96,21 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~Static project card images~~ → Auto-slideshow with configurable interval (2026-03-04)
 - ~~No video cover support~~ → Set as Cover button + video autoplay in cards (2026-03-04)
 - ~~Random project codes (PRJ-XXX)~~ → Alias-based initials + editable field (2026-03-05)
+- ~~Admin media delete not working~~ → Frontend calls DELETE API + backend R2 key extraction fixed (2026-03-05)
 
 ### In Progress 🔄
+- **Sphere HUD Upgrade** — 4-phase plan documented in `docs/session_004.md`:
+  1. Toggle "Show in Sphere" in admin (migration 0009)
+  2. Professional Logs linked to projects (project_id column)
+  3. Redesigned modal overlay with blur (desktop horizontal / mobile vertical, neon orange)
+  4. Deploy + migration
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
-1. **Immediate:** Test mobile responsiveness (375px, 768px, 1024px) — full-width layout may need tweaks
-2. **Immediate:** Fine-tune bloom/glow via `/admin/sphere` — verify moiré is acceptable at current settings
-3. **Short-term:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
+1. **Next session:** Execute Sphere HUD Upgrade plan (4 phases — see `docs/session_004.md`)
+2. **After:** Test mobile responsiveness (375px, 768px, 1024px)
+3. **After:** Fine-tune bloom/glow via `/admin/sphere`
+4. **Backlog:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
 4. **Medium-term:** Consider App Router migration if Edge Runtime issues return
 5. **Backlog:** WebGL fallback for devices without GPU support
 

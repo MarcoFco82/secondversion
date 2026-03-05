@@ -174,6 +174,10 @@ export default async function handler(req, res) {
           updates.push('is_featured = ?');
           values.push(body.isFeatured ? 1 : 0);
         }
+        if (body.showInSphere !== undefined) {
+          updates.push('show_in_sphere = ?');
+          values.push(body.showInSphere ? 1 : 0);
+        }
 
         updates.push('updated_at = ?');
         values.push(now);
@@ -268,6 +272,9 @@ export default async function handler(req, res) {
         }
         if (body.isFeatured !== undefined) {
           global.devProjects[projectIndex].is_featured = body.isFeatured ? 1 : 0;
+        }
+        if (body.showInSphere !== undefined) {
+          global.devProjects[projectIndex].show_in_sphere = body.showInSphere ? 1 : 0;
         }
 
         global.devProjects[projectIndex].updated_at = now;

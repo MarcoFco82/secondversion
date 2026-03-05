@@ -71,5 +71,10 @@ export function useProjectData() {
     return activity.map((a) => a.entry_count || 0);
   }, [activity]);
 
-  return { projects, enrichedLogs, activity, activityArray, loading };
+  // Filter projects visible in sphere
+  const sphereProjects = useMemo(() => {
+    return projects.filter(p => p.show_in_sphere !== 0);
+  }, [projects]);
+
+  return { projects, sphereProjects, enrichedLogs, activity, activityArray, loading };
 }

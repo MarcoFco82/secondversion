@@ -16,7 +16,7 @@ import { useSphereConfig } from './hooks/useSphereConfig';
  * sphere with project nodes, particles, and activity ring.
  */
 export default function SphereHUD({ lang = 'en' }) {
-  const { projects, enrichedLogs, activityArray, loading } = useProjectData();
+  const { sphereProjects, enrichedLogs, activityArray, loading } = useProjectData();
   const performanceConfig = useMobileDetect();
   const { config: sphereConfig } = useSphereConfig();
   const {
@@ -34,12 +34,12 @@ export default function SphereHUD({ lang = 'en' }) {
 
   // Filter projects by category
   const filteredProjects = useMemo(() => {
-    if (activeFilter === 'All') return projects;
-    return projects.filter((p) => {
+    if (activeFilter === 'All') return sphereProjects;
+    return sphereProjects.filter((p) => {
       const cat = (p.category || '').toLowerCase();
       return cat === activeFilter.toLowerCase();
     });
-  }, [projects, activeFilter]);
+  }, [sphereProjects, activeFilter]);
 
   // Background gradient from config
   const bgGradient = `linear-gradient(180deg, ${sphereConfig.bgGradientTop} 0%, ${sphereConfig.bgGradientBottom} 100%)`;

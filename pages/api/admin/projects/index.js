@@ -102,8 +102,8 @@ export default async function handler(req, res) {
             description_en, description_es, accent_color,
             thumbnail_url, featured_media_url, featured_media_type,
             category, status, progress, tech_stack, tags,
-            external_url, is_featured, display_order, created_at, updated_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            external_url, is_featured, show_in_sphere, display_order, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           id,
           code,
@@ -123,6 +123,7 @@ export default async function handler(req, res) {
           JSON.stringify(body.tags || []),
           body.externalUrl || null,
           body.isFeatured ? 1 : 0,
+          body.showInSphere === false ? 0 : 1,
           body.displayOrder || 0,
           now,
           now
@@ -171,6 +172,7 @@ export default async function handler(req, res) {
           tags: JSON.stringify(body.tags || []),
           external_url: body.externalUrl || null,
           is_featured: body.isFeatured ? 1 : 0,
+          show_in_sphere: body.showInSphere === false ? 0 : 1,
           display_order: body.displayOrder || 0,
           created_at: now,
           updated_at: now,

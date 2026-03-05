@@ -96,6 +96,7 @@ const emptyProject = {
   tags: [],
   externalUrl: '',
   isFeatured: false,
+  showInSphere: true,
   featuredMediaUrl: '',
   featuredMediaType: '',
 };
@@ -187,6 +188,7 @@ export default function AdminProjects() {
       tags: JSON.parse(project.tags || '[]'),
       externalUrl: project.external_url || '',
       isFeatured: project.is_featured === 1,
+      showInSphere: project.show_in_sphere !== 0,
       featuredMediaUrl: project.featured_media_url || '',
       featuredMediaType: project.featured_media_type || '',
     });
@@ -454,6 +456,7 @@ export default function AdminProjects() {
         tags: projectForm.tags,
         externalUrl: projectForm.externalUrl || null,
         isFeatured: projectForm.isFeatured,
+        showInSphere: projectForm.showInSphere,
         featuredMediaUrl: projectForm.featuredMediaUrl || null,
         featuredMediaType: projectForm.featuredMediaType || null,
       };
@@ -885,6 +888,17 @@ export default function AdminProjects() {
                           onChange={(e) => handleProjectChange('isFeatured', e.target.checked)}
                         />
                         <span>Featured project</span>
+                      </label>
+                    </div>
+
+                    <div className={styles.formGroupFull}>
+                      <label className={styles.checkbox}>
+                        <input
+                          type="checkbox"
+                          checked={projectForm.showInSphere}
+                          onChange={(e) => handleProjectChange('showInSphere', e.target.checked)}
+                        />
+                        <span>Show in Sphere HUD</span>
                       </label>
                     </div>
                   </div>

@@ -1,151 +1,198 @@
+/* Modal overlay with backdrop blur */
 .overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 24px;
-  pointer-events: none;
 }
 
-.panel {
-  background: rgba(42, 47, 56, 0.95);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  max-width: 340px;
+/* Modal container — horizontal on desktop */
+.modal {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  background: rgba(20, 22, 28, 0.96);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 860px;
   width: 100%;
-  pointer-events: auto;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 30px rgba(56, 189, 248, 0.1), 0 25px 50px rgba(0, 0, 0, 0.4);
+  max-height: 80vh;
+  box-shadow:
+    0 0 40px rgba(255, 107, 0, 0.12),
+    0 25px 60px rgba(0, 0, 0, 0.5);
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.projectCode {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
+/* Close button */
 .closeBtn {
-  background: none;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: var(--color-gray-400);
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  transition: all var(--transition-fast);
+  font-size: 18px;
+  transition: all 0.2s ease;
 }
 
 .closeBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-light);
+  background: rgba(255, 107, 0, 0.2);
+  color: #ff6b00;
+  border-color: rgba(255, 107, 0, 0.4);
 }
 
-.projectAlias {
-  font-family: var(--font-body);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-light);
-  margin: 0 0 4px 0;
-}
-
-.category {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--color-gray-400);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-}
-
-/* Media section */
+/* Media section — left on desktop */
 .mediaSection {
-  margin-bottom: 16px;
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.3);
+  min-height: 300px;
 }
 
 .mediaContainer {
-  border-radius: 8px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  max-height: 200px;
-  background: rgba(0, 0, 0, 0.3);
 }
 
-.mediaImage,
-.mediaVideo,
-.mediaEmbed {
+.mediaContent {
   width: 100%;
-  height: auto;
-  max-height: 200px;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
 .mediaEmbed {
-  height: 190px;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
   border: none;
+}
+
+.mediaPlaceholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 107, 0, 0.04);
+}
+
+.placeholderCode {
+  font-family: var(--font-mono, monospace);
+  font-size: 2.5rem;
+  font-weight: 700;
+  opacity: 0.3;
 }
 
 .mediaDots {
   display: flex;
   justify-content: center;
   gap: 6px;
-  padding-top: 8px;
+  padding: 10px 0;
 }
 
 .mediaDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 167, 66, 0.4);
+  background: rgba(255, 167, 66, 0.15);
   cursor: pointer;
   padding: 0;
   transition: all 0.2s ease;
 }
 
 .mediaDot:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 167, 66, 0.4);
 }
 
 .mediaDotActive {
-  border-color: transparent;
-  transform: scale(1.2);
+  background: #ff6b00 !important;
+  border-color: #ff6b00;
+  transform: scale(1.3);
 }
 
+/* Info section — right on desktop */
+.infoSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.infoHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.projectCode {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.category {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.projectName {
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+/* Progress */
 .progressSection {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .progressLabel {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--color-gray-400);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  letter-spacing: 0.5px;
 }
 
 .progressBar {
   height: 4px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -156,62 +203,116 @@
   transition: width 0.6s ease;
 }
 
+/* Tech stack */
 .techStack {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 5px;
+  margin-bottom: 14px;
 }
 
 .techTag {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--color-gray-400);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  color: rgba(255, 167, 66, 0.7);
+  background: rgba(255, 107, 0, 0.08);
+  border: 1px solid rgba(255, 107, 0, 0.15);
+  padding: 2px 7px;
+  border-radius: 4px;
 }
 
-.latestLog {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+/* Scrollable logs area */
+.logsArea {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid rgba(255, 107, 0, 0.12);
   padding-top: 12px;
 }
 
-.logLabel {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--color-gray-500);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+.logGroup {
+  margin-bottom: 14px;
 }
 
-.logEntry {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--color-light);
-  line-height: 1.5;
-  margin: 0;
+.logGroupTitle {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  color: rgba(255, 107, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.logItem {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  align-items: flex-start;
 }
 
 .logDate {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--color-gray-500);
-  margin-top: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-top: 2px;
 }
 
+.logText {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.noLogs {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Scrollbar styling */
+.logsArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logsArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logsArea::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* Mobile — vertical layout */
 @media (max-width: 768px) {
   .overlay {
-    align-items: flex-end;
-    justify-content: center;
     padding: 12px;
+    align-items: flex-end;
   }
 
-  .panel {
+  .modal {
+    flex-direction: column;
+    max-height: 85vh;
     max-width: 100%;
-    max-height: 60vh;
+  }
+
+  .mediaSection {
+    flex: 0 0 auto;
+    min-height: 200px;
+    max-height: 35vh;
+  }
+
+  .infoSection {
+    flex: 1;
     overflow-y: auto;
+    padding: 16px;
   }
 }

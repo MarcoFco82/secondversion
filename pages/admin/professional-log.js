@@ -33,9 +33,12 @@ export default function AdminProfessionalLog() {
   const [success, setSuccess] = useState('');
 
   // Form state
+  const [projects, setProjects] = useState([]);
+
   const [form, setForm] = useState({
     content: '',
     category: 'general',
+    project_id: '',
     mood: '',
     energy: 3,
     media_url: '',
@@ -62,12 +65,18 @@ export default function AdminProfessionalLog() {
 
   useEffect(() => {
     fetchEntries();
+    // Fetch projects for dropdown
+    fetch('/api/projects')
+      .then(r => r.json())
+      .then(data => { if (data.success) setProjects(data.data || []); })
+      .catch(() => {});
   }, [fetchEntries]);
 
   const resetForm = () => {
     setForm({
       content: '',
       category: 'general',
+      project_id: '',
       mood: '',
       energy: 3,
       media_url: '',
@@ -125,6 +134,7 @@ export default function AdminProfessionalLog() {
     setForm({
       content: entry.content,
       category: entry.category || 'general',
+      project_id: entry.project_id || '',
       mood: entry.mood || '',
       energy: entry.energy || 3,
       media_url: entry.media_url || '',
@@ -300,6 +310,22 @@ export default function AdminProfessionalLog() {
                     >
                       {CATEGORIES.map(c => (
                         <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Project (optional)</label>
+                    <select
+                      className={styles.select}
+                      value={form.project_id}
+                      onChange={(e) => setForm(f => ({ ...f, project_id: e.target.value }))}
+                    >
+                      <option value="">No project</option>
+                      {projects.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.code} — {p.display_name_en}
+                        </option>
                       ))}
                     </select>
                   </div>

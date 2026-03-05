@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PUT') {
-      const { content, category, mood, energy, media_url, media_type, log_date } = req.body;
+      const { content, category, project_id, mood, energy, media_url, media_type, log_date } = req.body;
 
       if (!content || !content.trim()) {
         return res.status(400).json({ success: false, error: 'Content is required' });
@@ -46,11 +46,12 @@ export default async function handler(req, res) {
 
       await db.prepare(`
         UPDATE professional_logs
-        SET content = ?, category = ?, mood = ?, energy = ?, media_url = ?, media_type = ?, log_date = ?
+        SET content = ?, category = ?, project_id = ?, mood = ?, energy = ?, media_url = ?, media_type = ?, log_date = ?
         WHERE id = ?
       `).bind(
         content.trim(),
         category || 'general',
+        project_id || null,
         mood || null,
         energy || null,
         media_url || null,
