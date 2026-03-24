@@ -79,6 +79,25 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-05]** Updated 3 existing codes in D1 + deployed to production
 - **[2026-03-05]** Fix: Admin media delete now calls API + deletes from R2 (was UI-only, R2 key extraction broken)
 - **[2026-03-05]** Deploy to production (commit 038c0b8)
+- **[2026-03-05]** Sphere HUD Upgrade — 4-phase implementation (show_in_sphere, project_id, modal rewrite, deploy)
+- **[2026-03-05]** Migration 0009 applied: `projects.show_in_sphere` + `professional_logs.project_id`
+- **[2026-03-05]** ProjectDetailPanel rewritten: modal with backdrop blur, neon orange, horizontal/vertical responsive
+- **[2026-03-05]** Professional Logs linked to projects (dropdown in admin, `?projectId` filter in API)
+- **[2026-03-05]** Created `docs/professional_logs.md` — strategic direction log (mandatory on /done)
+- **[2026-03-05]** Deploy to production (commit 3652a6c)
+- **[2026-03-05]** Fix: React hooks violation — useMemo after conditional return caused crash on hexagon click
+- **[2026-03-05]** Fix: SAA-NAV blob URL in D1 replaced with real R2 video URL
+- **[2026-03-05]** Fix: SAA-NAV tech_stack asterisk prefixes cleaned
+- **[2026-03-05]** Modal UX upgrade — 92vw x 88vh, slide animations (in/out), overlay blur transition
+- **[2026-03-05]** Media nav: diamond indicators with honey glow + SVG chevron arrows (replaces tiny dots)
+- **[2026-03-05]** Typography scaled for larger modal, info section scrollable
+- **[2026-03-05]** 4 production deploys
+- **[2026-03-05]** CV System spec documented (`docs/cv-implementation-spec.md`) — 5-phase plan, DB schema, API design, ATS PDF format
+- **[2026-03-05]** CV System implemented — migration 0010 (cv_sections + cv_meta), 6 API endpoints, admin `/admin/cv` with 6 tabs + EN/ES toggle
+- **[2026-03-05]** Public CV section — API-driven (timeline, freelance, skills grid, education, awards, recent activity, PDF download)
+- **[2026-03-05]** ATS-friendly PDF generator — jspdf client-side, single-column, parseable by ATS
+- **[2026-03-05]** CV data seeded EN + ES — 8 experience, 4 freelance, 2 education, 4 skill groups, 4 awards per language
+- **[2026-03-05]** Deploy to production (migration 0010 + full CV system)
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -97,22 +116,26 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~No video cover support~~ → Set as Cover button + video autoplay in cards (2026-03-04)
 - ~~Random project codes (PRJ-XXX)~~ → Alias-based initials + editable field (2026-03-05)
 - ~~Admin media delete not working~~ → Frontend calls DELETE API + backend R2 key extraction fixed (2026-03-05)
+- ~~Sphere HUD Upgrade~~ → 4-phase implementation complete (2026-03-05): show_in_sphere, project_id, modal rewrite, migration 0009
+- ~~ProjectDetailPanel crashes~~ → Full rewrite as modal with backdrop blur (2026-03-05)
+- ~~Hexagon click crashes site (React #310)~~ → Hooks violation fixed: useMemo moved before early return (2026-03-05)
+- ~~SAA-NAV blob URL in D1~~ → Replaced with actual R2 video URL (2026-03-05)
+- ~~Modal tiny and abrupt~~ → 92vw x 88vh with slide + blur animations (2026-03-05)
+- ~~Media dots too small~~ → Diamond indicators with honey glow + chevron arrows (2026-03-05)
+- ~~CV System~~ → Full implementation: migration 0010, admin CRUD, public section, PDF generator, seed EN+ES, deployed (2026-03-05)
+- ~~Professional Experience hardcoded~~ → API-driven from D1, with fallback to translations.js (2026-03-05)
 
 ### In Progress 🔄
-- **Sphere HUD Upgrade** — 4-phase plan documented in `docs/session_004.md`:
-  1. Toggle "Show in Sphere" in admin (migration 0009)
-  2. Professional Logs linked to projects (project_id column)
-  3. Redesigned modal overlay with blur (desktop horizontal / mobile vertical, neon orange)
-  4. Deploy + migration
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
-1. **Next session:** Execute Sphere HUD Upgrade plan (4 phases — see `docs/session_004.md`)
-2. **After:** Test mobile responsiveness (375px, 768px, 1024px)
-3. **After:** Fine-tune bloom/glow via `/admin/sphere`
+1. **Test mobile responsiveness** (375px, 768px, 1024px) — deferred 7+ sessions, critical debt
+2. **Add content** — portfolio has 4 projects, needs more to justify the infrastructure
+3. **CV polish** — test PDF in ATS simulators, verify mobile layout of CV section, test language switching
 4. **Backlog:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
-4. **Medium-term:** Consider App Router migration if Edge Runtime issues return
 5. **Backlog:** WebGL fallback for devices without GPU support
+6. **Backlog:** Production error monitoring (Sentry or similar)
+7. **Backlog:** R2 storage audit — reconcile D1 records vs actual R2 objects
 
 ## Key Files
 - `/components/ProjectCard.js` - Project card with auto-slideshow, video cover, pause on hover
@@ -128,7 +151,16 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - `/components/LabTerminal/` - Legacy Terminal UI (preserved as backup, not imported)
 - `/pages/api/**/*.js` - API routes
 - `/data/projects.js` - Static project data + ENTRY_TYPES (6 creative + legacy)
-- `/migrations/*.sql` - D1 database migrations (0001-0008)
+- `/docs/professional_logs.md` - Strategic direction log (updated every session)
+- `/pages/admin/cv.js` - Admin CV management (6 tabs, EN/ES toggle, seed, CRUD, reorder)
+- `/styles/AdminCV.module.css` - Admin CV styling
+- `/pages/api/cv/index.js` - Public GET for full CV data (meta + sections by type)
+- `/pages/api/admin/cv/meta.js` - Auth POST for CV personal info
+- `/pages/api/admin/cv/sections/index.js` - Auth GET/POST for CV sections
+- `/pages/api/admin/cv/sections/[id].js` - Auth PUT/DELETE for CV section by ID
+- `/pages/api/admin/cv/reorder.js` - Auth POST for bulk sort_order update
+- `/docs/cv-implementation-spec.md` - CV System spec (5 phases, DB schema, API, PDF format)
+- `/migrations/*.sql` - D1 database migrations (0001-0010)
 
 ## Database Schema
 - **projects** - Project metadata (D1) — categories: interactive, commercial, tools, experimental, storytelling, videogame
@@ -137,6 +169,8 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **professional_logs** - Personal diary entries (D1, migration 0008) — category, mood, energy, media
 - **admin_users** - Admin authentication (D1)
 - **sphere_config** - Sphere HUD visual config as JSON blob (D1, migration 0006)
+- **cv_meta** - CV personal info per language (D1, migration 0010)
+- **cv_sections** - CV entries by type: experience, freelance, education, skill_group, award (D1, migration 0010)
 
 ## Known Issues
 1. **Edge Runtime (Monitoring):** Keep watch for any Edge Runtime incompatibility issues with future Next.js/Cloudflare updates

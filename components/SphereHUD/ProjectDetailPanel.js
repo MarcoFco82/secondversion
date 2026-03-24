@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import styles from './ProjectDetailPanel.module.css';
 
 /**
@@ -36,11 +36,14 @@ function getEmbedUrl(item) {
 export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en' }) {
   const [mediaIndex, setMediaIndex] = useState(0);
   const [professionalLogs, setProfessionalLogs] = useState([]);
+  const [closing, setClosing] = useState(false);
+  const closingTimer = useRef(null);
 
   // Reset state when project changes
   useEffect(() => {
     setMediaIndex(0);
     setProfessionalLogs([]);
+    setClosing(false);
 
     if (project?.id) {
       fetch(`/api/professional-logs?projectId=${project.id}`)
@@ -52,28 +55,46 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
     }
   }, [project?.id]);
 
-  if (!project) return null;
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(closingTimer.current);
+  }, []);
 
-  const color = project.accent_color || '#ffa742';
-  const mediaItems = project.media || [];
-
-  // Dev logs for this project
+  // ALL hooks MUST be before any conditional return (React rules of hooks)
   const projectLogs = useMemo(() => {
-    if (!logs || !Array.isArray(logs)) return [];
+    if (!project || !logs || !Array.isArray(logs)) return [];
     return logs.filter(
       (l) => l.projectCode === project.code || l.projectId === project.id
     );
   }, [logs, project]);
 
-  // Parse tech stack
   const techStack = useMemo(() => {
-    if (Array.isArray(project.tech_stack)) return project.tech_stack;
+    if (!project?.tech_stack) return [];
+    if (Array.isArray(project.tech_stack)) return project.tech_stack.map(String);
     try {
-      return JSON.parse(project.tech_stack || '[]');
+      return JSON.parse(project.tech_stack).map(String);
     } catch {
       return [];
     }
-  }, [project.tech_stack]);
+  }, [project?.tech_stack]);
+
+  // Animated close — play exit animation, then call onClose
+  const handleClose = useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    closingTimer.current = setTimeout(() => {
+      setClosing(false);
+      onClose();
+    }, 350);
+  }, [closing, onClose]);
+
+  // Early return AFTER all hooks
+  if (!project) return null;
+
+  const color = project.accent_color || '#ffa742';
+  const mediaItems = Array.isArray(project.media) ? project.media : [];
+  const currentMedia = mediaItems[mediaIndex];
+  const mediaKind = currentMedia ? getMediaKind(currentMedia) : null;
 
   const formatDate = (iso) => {
     if (!iso) return '';
@@ -83,18 +104,18 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
     });
   };
 
-  const currentMedia = mediaItems[mediaIndex];
-  const mediaKind = currentMedia ? getMediaKind(currentMedia) : null;
-
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) handleClose();
   };
 
   return (
-    <div className={styles.overlay} onClick={handleBackdropClick}>
-      <div className={styles.modal}>
+    <div
+      className={`${styles.overlay} ${closing ? styles.overlayClosing : ''}`}
+      onClick={handleBackdropClick}
+    >
+      <div className={`${styles.modal} ${closing ? styles.modalClosing : ''}`}>
         {/* Close button */}
-        <button className={styles.closeBtn} onClick={onClose}>
+        <button className={styles.closeBtn} onClick={handleClose}>
           &times;
         </button>
 
@@ -133,14 +154,31 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
               </div>
 
               {mediaItems.length > 1 && (
-                <div className={styles.mediaDots}>
-                  {mediaItems.map((_, i) => (
-                    <button
-                      key={i}
-                      className={`${styles.mediaDot} ${i === mediaIndex ? styles.mediaDotActive : ''}`}
-                      onClick={() => setMediaIndex(i)}
-                    />
-                  ))}
+                <div className={styles.mediaNav}>
+                  <button
+                    className={styles.mediaArrow}
+                    onClick={() => setMediaIndex((mediaIndex - 1 + mediaItems.length) % mediaItems.length)}
+                    aria-label="Previous"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <div className={styles.mediaIndicators}>
+                    {mediaItems.map((_, i) => (
+                      <button
+                        key={i}
+                        className={`${styles.mediaIndicator} ${i === mediaIndex ? styles.mediaIndicatorActive : ''}`}
+                        onClick={() => setMediaIndex(i)}
+                        aria-label={`Media ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    className={styles.mediaArrow}
+                    onClick={() => setMediaIndex((mediaIndex + 1) % mediaItems.length)}
+                    aria-label="Next"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 4L14 10L8 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
                 </div>
               )}
             </>

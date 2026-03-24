@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: '/admin/social', label: 'Social Generator', icon: '◩' },
   { href: '/admin/professional-log', label: 'Pro Log', icon: '◉' },
   { href: '/admin/sphere', label: 'Sphere Config', icon: '◎' },
-  { href: '/admin/cv', label: 'CV Generator', icon: '▧', disabled: true },
+  { href: '/admin/cv', label: 'CV Generator', icon: '▧' },
 ];
 
 export default function AdminLayout({ children, title = 'Admin' }) {
