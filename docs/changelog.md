@@ -1,5 +1,24 @@
 # Changelog
 
+## [2026-03-24] Session 009 — Mobile responsiveness overhaul (4 phases)
+- [css]: Projects grid minmax reduced from 300px to 260px — works on 320px devices
+- [css]: Particles container height `100dvh` with `100vh` fallback
+- [css]: Tap targets min 44px on keyword tags, category buttons, reset button
+- [css]: Slideshow dots enlarged to 8px (6px on 480px) for touch
+- [css]: New 600px breakpoint — intermediate tablet portrait coverage
+- [css]: New 320px breakpoint — smallest Android devices covered
+- [css]: @480px expanded: project-info padding/fonts, description, badges, filter headers, grid gap, experience content
+- [css]: @768px expanded: project-info, modal, keyword/category containers
+- [sphere]: SphereHUD filter buttons 0.55rem→0.65rem at 480px (was unreadable)
+- [sphere]: New 600px breakpoint: canvas 70vh, filterBtn 0.7rem + min-height 32px
+- [sphere]: New 320px breakpoint: canvas 55vh, compact filter layout
+- [sphere]: hudVersion hidden at 480px, projectCount repositioned
+- [sphere]: Loading placeholder heights match canvas at all 4 breakpoints
+- [cv]: New 600px breakpoint: header, timeline, skills, awards, activity all scaled
+- [cv]: New 480px breakpoint: full section compact, download btn full-width
+- [cv]: New 320px breakpoint: ultra compact — name 1.1rem, bullets 0.75rem, skill tags 0.6rem
+- [deploy]: Built and deployed to Cloudflare Pages (commit 0c4a6e9)
+
 ## [2026-03-05] Session 008 — CV System implementation (5 phases)
 - [migration]: 0010 applied to production D1 — `cv_sections` + `cv_meta` tables (9 total tables)
 - [api]: Public `GET /api/cv?lang=en|es` — returns full CV grouped by section_type with parsed JSON bullets/items

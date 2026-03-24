@@ -194,3 +194,21 @@ Se alimenta al cierre de cada sesión. No incluye detalles de implementación �
 2. **ATS validation** — el PDF se genera correctamente pero no se ha probado en simuladores de ATS reales. Herramientas como Jobscan o ResumeWorded podrian validar parseabilidad.
 3. **Content gap** — la infraestructura esta completa para 50+ proyectos, pero solo hay 4. El portfolio necesita contenido. La proxima prioridad deberia ser agregar proyectos reales, no mas features.
 4. **Deploy fragility** — el token de Wrangler volvio a expirar mid-session. Este es un patron recurrente que sugiere que el OAuth de Cloudflare tiene TTL corto. Considerar API tokens en lugar de OAuth para mayor estabilidad.
+
+---
+
+## 2026-03-24 | Session 009
+
+### Deuda tecnica pagada
+- Mobile responsiveness estaba diferida 8 sesiones. Cada sesion se priorizaba features sobre UX basica. Hoy se pago esa deuda: 4 breakpoints consistentes (768/600/480/320) en todas las paginas publicas. La leccion: la deuda de UX es invisible hasta que un usuario real la encuentra — y para un portfolio, el primer usuario real es el reclutador que lo abre en su telefono.
+
+### Estrategia de breakpoints
+- Se eligieron 4 breakpoints en lugar de los 2 que habia (768/480). La razon: el salto de 768 a 480 era demasiado abrupto — en 600px (tablet portrait) el sitio se veia desordenado. El breakpoint 320px cubre el edge case de dispositivos pequenos que aun son comunes en mercados emergentes.
+
+### Prioridad publica vs admin
+- Se decidio conscientemente NO tocar admin en esta sesion. El admin lo usa solo Marco desde desktop. Las paginas publicas las ve cualquiera desde cualquier dispositivo. La priorizacion fue correcta: maximo impacto con minimo scope.
+
+### Area de oportunidad
+1. **Testing en dispositivos reales** — DevTools no es igual que un telefono fisico. Los tap targets se sienten diferentes con dedos reales. Hay que probar en iPhone y Android antes de declarar victoria.
+2. **Performance 3D en mobile** — el SphereHUD ahora es responsive visualmente, pero no se ha verificado el rendimiento de Three.js/WebGL en telefonos de gama media. Podria necesitar reduccion de particulas o hexagonos en mobile.
+3. **Admin mobile** — eventualmente Marco podria querer editar contenido desde el telefono. Las paginas admin solo tienen cobertura parcial a 768px.

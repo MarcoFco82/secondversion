@@ -1,5 +1,13 @@
 # Architecture Decisions
 
+## [2026-03-24] Mobile responsiveness — breakpoint strategy
+- **Context:** 7+ sessions deferred. Partial coverage at 768px and 480px only, inconsistent across components. No 320px or 600px breakpoints. Filter buttons unreadable at 480px. CV section had only 768px coverage.
+- **Decision:** 4 consistent breakpoints across all public pages: 768px (tablet), 600px (tablet portrait), 480px (mobile), 320px (small mobile). Progressive scaling — each breakpoint reduces proportionally, no abrupt jumps.
+- **Why these breakpoints?** 768px is iPad portrait. 600px catches portrait tablets and large phones in landscape. 480px is standard mobile. 320px covers iPhone SE and smallest Androids. This covers 99%+ of real devices.
+- **Tap targets:** All interactive elements (filter buttons, keyword tags, reset btn) get `min-height: 44px` on desktop, scaling down to 36px minimum on 320px. Follows Apple HIG and WCAG 2.5.5 (Target Size).
+- **SphereHUD canvas:** Progressive height reduction (600px → 80vh → 70vh → 60vh → 55vh) instead of abrupt jumps. Keeps 3D scene visible but doesn't dominate small screens.
+- **Admin pages deferred:** Only public-facing pages addressed. Admin responsive is lower priority since admin is desktop-primary workflow.
+
 ## [2026-03-05] CV System — data architecture
 - **Context:** Professional Experience section is hardcoded in `locales/translations.js`. No way to update from admin. Need admin-managed CV with downloadable PDF.
 - **Decision:** Two new D1 tables: `cv_meta` (personal info per language) and `cv_sections` (typed entries: experience, freelance, education, skill_group, award). Each entry has `section_type`, `sort_order`, and `lang` fields. Skills and bullets stored as JSON arrays.

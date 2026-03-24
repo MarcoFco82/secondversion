@@ -98,6 +98,12 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-05]** ATS-friendly PDF generator — jspdf client-side, single-column, parseable by ATS
 - **[2026-03-05]** CV data seeded EN + ES — 8 experience, 4 freelance, 2 education, 4 skill groups, 4 awards per language
 - **[2026-03-05]** Deploy to production (migration 0010 + full CV system)
+- **[2026-03-24]** Mobile responsiveness overhaul — 4 breakpoints (768/600/480/320) across all public pages
+- **[2026-03-24]** Projects grid minmax 300→260px, tap targets 44px, slideshow dots enlarged
+- **[2026-03-24]** SphereHUD filter buttons legible at all sizes, progressive canvas height scaling
+- **[2026-03-24]** CV section fully responsive — 600px, 480px, 320px breakpoints added
+- **[2026-03-24]** Particles 100dvh with fallback, hudVersion hidden on mobile
+- **[2026-03-24]** Deployed to Cloudflare Pages + pushed to GitHub (commit 0c4a6e9)
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -124,18 +130,20 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~Media dots too small~~ → Diamond indicators with honey glow + chevron arrows (2026-03-05)
 - ~~CV System~~ → Full implementation: migration 0010, admin CRUD, public section, PDF generator, seed EN+ES, deployed (2026-03-05)
 - ~~Professional Experience hardcoded~~ → API-driven from D1, with fallback to translations.js (2026-03-05)
+- ~~Mobile responsiveness deferred~~ → 4 breakpoints (768/600/480/320) across all public pages (2026-03-24)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages
 
 ### Next Steps
-1. **Test mobile responsiveness** (375px, 768px, 1024px) — deferred 7+ sessions, critical debt
+1. **Test on real devices** — verify responsive changes on physical iPhone/Android, not just DevTools
 2. **Add content** — portfolio has 4 projects, needs more to justify the infrastructure
-3. **CV polish** — test PDF in ATS simulators, verify mobile layout of CV section, test language switching
-4. **Backlog:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
-5. **Backlog:** WebGL fallback for devices without GPU support
-6. **Backlog:** Production error monitoring (Sentry or similar)
-7. **Backlog:** R2 storage audit — reconcile D1 records vs actual R2 objects
+3. **CV polish** — test PDF in ATS simulators, test language switching on mobile
+4. **Admin mobile responsive** — admin pages only have partial 768px coverage, needs 480px+
+5. **Backlog:** Investigate and fix Cloudflare Pages auto-deploy from GitHub
+6. **Backlog:** WebGL fallback for devices without GPU support
+7. **Backlog:** Production error monitoring (Sentry or similar)
+8. **Backlog:** R2 storage audit — reconcile D1 records vs actual R2 objects
 
 ## Key Files
 - `/components/ProjectCard.js` - Project card with auto-slideshow, video cover, pause on hover
