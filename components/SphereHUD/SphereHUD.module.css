@@ -153,12 +153,12 @@
 
   .filterBar {
     flex-wrap: wrap;
-    gap: 3px;
+    gap: 4px;
   }
 
   .filterBtn {
     font-size: 0.6rem;
-    padding: 3px 7px;
+    padding: 4px 8px;
   }
 
   .loadingState {
@@ -166,13 +166,42 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .canvasWrapper {
-    height: 65vh;
+    height: 70vh;
   }
 
   .loadingState {
-    height: 65vh;
+    height: 70vh;
+  }
+
+  .hudOverlay {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .filterBar {
+    gap: 5px;
+  }
+
+  .filterBtn {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+    min-height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvasWrapper {
+    height: 60vh;
+  }
+
+  .loadingState {
+    height: 60vh;
+  }
+
+  .sphereWrapper {
+    margin: 1rem 0 2rem;
   }
 
   .hudOverlay {
@@ -181,10 +210,42 @@
 
   .hudTitle {
     font-size: 0.65rem;
+    letter-spacing: 1.5px;
+  }
+
+  .hudVersion {
+    display: none;
   }
 
   .filterBtn {
-    font-size: 0.55rem;
-    padding: 3px 6px;
+    font-size: 0.65rem;
+    padding: 5px 8px;
+    min-height: 30px;
+  }
+
+  .projectCount {
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .canvasWrapper {
+    height: 55vh;
+  }
+
+  .loadingState {
+    height: 55vh;
+  }
+
+  .filterBtn {
+    font-size: 0.6rem;
+    padding: 4px 6px;
+  }
+
+  .hudTitle {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
   }
 }
