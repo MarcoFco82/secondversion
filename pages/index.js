@@ -364,50 +364,60 @@ export default function Home() {
     setSelectedProjectMedia(project.media || []);
   }, []);
 
+  const [expandedGroup, setExpandedGroup] = useState(null);
+
+  const handleGroupClick = useCallback((groupKey) => {
+    setExpandedGroup(prev => prev === groupKey ? null : groupKey);
+  }, []);
+
   const renderCategoryFilter = useCallback(() => (
     <div className="category-filter-container">
       <div className="category-filter-header">
         <h3>{t.categoryFilterTitle}</h3>
         {selectedCategory !== 'all' && (
-          <button onClick={() => handleCategorySelect('all')} className="reset-keywords-btn">
+          <button onClick={() => { handleCategorySelect('all'); setExpandedGroup(null); }} className="reset-keywords-btn">
             {t.resetFiltersBtn}
           </button>
         )}
       </div>
-      <div className="category-groups">
+      {/* Row 1: ALL + group chips (horizontal scroll on mobile) */}
+      <div className="category-group-row">
         <button
-          className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-          onClick={() => handleCategorySelect('all')}
+          className={`category-group-chip ${selectedCategory === 'all' && !expandedGroup ? 'active' : ''}`}
+          onClick={() => { handleCategorySelect('all'); setExpandedGroup(null); }}
         >
           {t.allCategoriesBtn}
         </button>
         {Object.entries(CATEGORY_GROUPS).map(([groupKey, group]) => {
-          const groupCats = getCategoriesByGroup(groupKey).filter(cat => activeCategories.has(cat.slug));
-          if (groupCats.length === 0) return null;
+          const isGroupActive = expandedGroup === groupKey;
+          const hasActiveChild = getCategoriesByGroup(groupKey).some(c => c.slug === selectedCategory);
           return (
-            <div key={groupKey} className="category-group">
-              <span className="category-group-label" style={{ color: group.color }}>{language === 'es' ? group.labelEs : group.label}</span>
-              <div className="category-group-buttons">
-                {groupCats.map(cat => (
-                  <button
-                    key={cat.slug}
-                    className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
-                    style={{
-                      borderColor: group.color,
-                      ...(selectedCategory === cat.slug ? { backgroundColor: group.color, color: '#1a1f27' } : { color: group.color }),
-                    }}
-                    onClick={() => handleCategorySelect(cat.slug)}
-                  >
-                    {language === 'es' ? cat.labelEs : cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <button
+              key={groupKey}
+              className={`category-group-chip ${isGroupActive || hasActiveChild ? 'active' : ''}`}
+              onClick={() => handleGroupClick(groupKey)}
+            >
+              {language === 'es' ? group.labelEs : group.label}
+            </button>
           );
         })}
       </div>
+      {/* Row 2: expanded group categories */}
+      {expandedGroup && (
+        <div className="category-expanded-row">
+          {getCategoriesByGroup(expandedGroup).map(cat => (
+              <button
+                key={cat.slug}
+                className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
+                onClick={() => handleCategorySelect(cat.slug)}
+              >
+                {language === 'es' ? cat.labelEs : cat.label}
+              </button>
+          ))}
+        </div>
+      )}
     </div>
-  ), [selectedCategory, activeCategories, handleCategorySelect, language, t]);
+  ), [selectedCategory, expandedGroup, handleCategorySelect, handleGroupClick, language, t]);
 
   const renderKeywordFilter = useCallback(() => (
     <div className="keyword-filter-container">

@@ -21,7 +21,9 @@ const DEFAULTS = {
   activeEmissiveSelected: 2.5,
   bgGradientTop: '#0f1923',
   bgGradientBottom: '#0a0a0a',
+  tooltipBgColor: '#0a1628',
   slideshowInterval: 4,
+  bannerScrollSpeed: 18,
 };
 
 /**
@@ -173,6 +175,7 @@ export default function AdminSpherePage() {
             <ColorPickerField label="Particle" field="particleColor" value={config.particleColor} onChangeComplete={handleColorChange} />
             <ColorPickerField label="Stroke" field="strokeColor" value={config.strokeColor} onChangeComplete={handleColorChange} />
             <ColorPickerField label="Ghost Sphere" field="ghostSphereColor" value={config.ghostSphereColor} onChangeComplete={handleColorChange} />
+            <ColorPickerField label="Tooltip BG" field="tooltipBgColor" value={config.tooltipBgColor} onChangeComplete={handleColorChange} />
           </div>
         </div>
 
@@ -213,6 +216,12 @@ export default function AdminSpherePage() {
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>Slideshow (Project Cards)</h3>
           <SliderField label="Interval (seconds)" field="slideshowInterval" min={1} max={15} step={1} />
+        </div>
+
+        {/* CREATIVE LOGS BANNER */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Creative Logs Banner</h3>
+          <SliderField label="Scroll Speed (seconds)" field="bannerScrollSpeed" min={3} max={30} step={1} />
         </div>
 
         {/* ACTIONS */}

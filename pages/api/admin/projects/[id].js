@@ -157,8 +157,12 @@ export default async function handler(req, res) {
 
         for (const [jsField, dbField] of Object.entries(fieldMap)) {
           if (body[jsField] !== undefined) {
+            let val = body[jsField];
+            if (jsField === 'externalUrl' && val && !/^https?:\/\//i.test(val)) {
+              val = 'https://' + val;
+            }
             updates.push(`${dbField} = ?`);
-            values.push(body[jsField]);
+            values.push(val);
           }
         }
 

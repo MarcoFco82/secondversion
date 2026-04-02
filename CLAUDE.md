@@ -104,6 +104,10 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-24]** CV section fully responsive — 600px, 480px, 320px breakpoints added
 - **[2026-03-24]** Particles 100dvh with fallback, hudVersion hidden on mobile
 - **[2026-03-24]** Deployed to Cloudflare Pages + pushed to GitHub (commit 0c4a6e9)
+- **[2026-03-28]** Fix: External project URLs normalized — `https://` prepended if missing (3 points: ProjectCard, API create, API update)
+- **[2026-03-28]** Fix: Category filters now show all 49 categories in 9 groups (was dynamic, only showing categories with projects)
+- **[2026-03-28]** Feature: Sphere HUD hover tooltip — full project name + progress bar/COMPLETED, anchored to hexagon with Billboard
+- **[2026-03-28]** Deployed to Cloudflare Pages
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -131,6 +135,9 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~CV System~~ → Full implementation: migration 0010, admin CRUD, public section, PDF generator, seed EN+ES, deployed (2026-03-05)
 - ~~Professional Experience hardcoded~~ → API-driven from D1, with fallback to translations.js (2026-03-05)
 - ~~Mobile responsiveness deferred~~ → 4 breakpoints (768/600/480/320) across all public pages (2026-03-24)
+- ~~External URLs broken (relative path)~~ → Normalized with `https://` in frontend + API (2026-03-28)
+- ~~Category filters showing only 2 categories~~ → All 49 categories visible always (2026-03-28)
+- ~~Sphere HUD hover lacks info~~ → Tooltip with full name + progress bar (2026-03-28)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages

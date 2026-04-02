@@ -1,0 +1,184 @@
+/* Holographic banner container */
+.bannerContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  height: 130px;
+  overflow: hidden;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--accent-rgb, 56, 189, 248), 0.15);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 0 30px rgba(var(--accent-rgb, 56, 189, 248), 0.03);
+}
+
+/* Scanline overlay for holographic feel */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(var(--accent-rgb, 56, 189, 248), 0.015) 2px,
+    rgba(var(--accent-rgb, 56, 189, 248), 0.015) 4px
+  );
+}
+
+/* Top/bottom fade for smooth edges */
+.fadeTop,
+.fadeBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.fadeTop {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(10, 12, 18, 0.95), transparent);
+}
+
+.fadeBottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(10, 12, 18, 0.95), transparent);
+}
+
+/* Scrolling track */
+.bannerTrack {
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp var(--banner-speed, 18s) linear infinite;
+}
+
+.bannerTrack.paused {
+  animation-play-state: paused;
+}
+
+.bannerTrack.manualMode {
+  animation: none;
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* Individual log row */
+.bannerItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  min-height: 40px;
+  border-bottom: 1px solid rgba(var(--accent-rgb, 56, 189, 248), 0.06);
+  transition: background 0.2s ease;
+}
+
+.bannerItem:hover {
+  background: rgba(var(--accent-rgb, 56, 189, 248), 0.04);
+}
+
+/* Project code badge */
+.bannerCode {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 60px;
+  opacity: 0.85;
+}
+
+/* Date */
+.bannerDate {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Log text */
+.bannerText {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 768px) {
+  .bannerContainer {
+    height: 100px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .bannerItem {
+    padding: 8px 14px;
+    gap: 8px;
+    min-height: 32px;
+  }
+
+  .bannerCode {
+    font-size: 0.6rem;
+    min-width: 50px;
+  }
+
+  .bannerText {
+    font-size: 0.75rem;
+  }
+
+  .fadeTop,
+  .fadeBottom {
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bannerContainer {
+    height: 80px;
+  }
+
+  .bannerCode {
+    display: none;
+  }
+
+  .bannerItem {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .bannerText {
+    font-size: 0.7rem;
+  }
+
+  .bannerDate {
+    font-size: 0.55rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .bannerContainer {
+    height: 70px;
+  }
+}

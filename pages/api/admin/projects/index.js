@@ -121,7 +121,7 @@ export default async function handler(req, res) {
           body.progress || 0,
           JSON.stringify(body.techStack || []),
           JSON.stringify(body.tags || []),
-          body.externalUrl || null,
+          body.externalUrl ? (!/^https?:\/\//i.test(body.externalUrl) ? 'https://' + body.externalUrl : body.externalUrl) : null,
           body.isFeatured ? 1 : 0,
           body.showInSphere === false ? 0 : 1,
           body.displayOrder || 0,

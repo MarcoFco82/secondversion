@@ -174,6 +174,24 @@ Se alimenta al cierre de cada sesión. No incluye detalles de implementación �
 
 ---
 
+## 2026-03-28 | Session 010
+
+### Direccion de producto
+- La decision de mostrar las 49 categorias aunque no tengan proyectos es una decision de posicionamiento, no tecnica. El portfolio dice "hago todo esto" antes de tener evidencia de todo. Es una apuesta: si alguien llega buscando "Data Visualization" y no hay proyectos, es decepcionante. Pero si no aparece la categoria, nunca saben que Marco lo hace. Mejor over-promise y llenar despues que under-represent.
+
+### Insight UX: hover como preview
+- El tooltip en los hexagonos transforma la esfera de "cosa bonita que gira" a "interfaz navegable". Antes, el unico feedback era un glow mas intenso — cero informacion. Ahora el hover comunica: que proyecto es, en que estado esta. Esto reduce la friccion para hacer click. Leccion: **el hover es el pitch mas corto que existe — usalo para dar contexto, no solo feedback visual**.
+
+### Decision tecnica: normalizacion de URLs
+- El bug de URL relativa es clasico pero revela un patron: el admin no valida ni normaliza inputs. El campo `externalUrl` acepta cualquier string. La normalizacion en 3 puntos (frontend + 2 APIs) es un parche correcto pero el patron real seria validacion en el admin form. No se hizo porque el scope era el fix, no el refactor del form.
+
+### Areas de oportunidad
+1. **Contenido** — la infraestructura esta lista (49 categorias, tooltips, filtros, modal con media). Pero solo hay 4 proyectos. El bottleneck ya no es tech, es contenido. Necesita una sesion dedicada exclusivamente a agregar proyectos desde admin.
+2. **Touch hover** — en movil no hay hover. El tooltip solo funciona en desktop. Necesita una interaccion alternativa para movil (tap para tooltip, segundo tap para expandir, o long-press).
+3. **Admin validation** — el admin acepta datos sin normalizar (URLs, texto, etc.). No es critico ahora pero se acumulara.
+
+---
+
 ## 2026-03-05 | Session 008
 
 ### Ejecucion de plan: de spec a produccion

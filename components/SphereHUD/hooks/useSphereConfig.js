@@ -19,6 +19,8 @@ const DEFAULTS = {
   activeEmissiveSelected: 2.5,
   bgGradientTop: '#0f1923',
   bgGradientBottom: '#0a0a0a',
+  tooltipBgColor: '#0a1628',
+  bannerScrollSpeed: 18,
 };
 
 export { DEFAULTS as SPHERE_CONFIG_DEFAULTS };

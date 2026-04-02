@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-03-28] Session 010 — URL fix, category filters, Sphere HUD tooltip
+- [fix]: External project URLs normalized — prepends `https://` if missing (ProjectCard, API create, API update)
+- [fix]: Category filters show all 49 categories in 9 groups regardless of project count
+- [feature]: Sphere HUD hover tooltip — full project name + progress bar/COMPLETED anchored to hexagon
+- [refactor]: `language` prop passed through SphereHUD → SphereScene → ProjectFace for bilingual tooltip
+- [deploy]: Built and deployed to Cloudflare Pages
+
 ## [2026-03-24] Session 009 — Mobile responsiveness overhaul (4 phases)
 - [css]: Projects grid minmax reduced from 300px to 260px — works on 320px devices
 - [css]: Particles container height `100dvh` with `100vh` fallback

@@ -3,6 +3,7 @@ import styles from './SphereHUD.module.css';
 import SphereIntro from './SphereIntro';
 import SphereScene from './SphereScene';
 import ProjectDetailPanel from './ProjectDetailPanel';
+import CreativeLogsBanner from './CreativeLogsBanner';
 import { useProjectData } from './hooks/useProjectData';
 import { useSphereInteraction } from './hooks/useSphereInteraction';
 import { useMobileDetect } from './hooks/useMobileDetect';
@@ -74,6 +75,7 @@ export default function SphereHUD({ lang = 'en' }) {
               autoRotate={autoRotate}
               performanceConfig={performanceConfig}
               sphereConfig={sphereConfig}
+              language={lang}
             />
 
             {/* HUD overlay */}
@@ -116,6 +118,13 @@ export default function SphereHUD({ lang = 'en' }) {
             />
           </div>
         </div>
+
+        {/* Creative logs holographic banner */}
+        <CreativeLogsBanner
+          logs={enrichedLogs}
+          sphereConfig={sphereConfig}
+          lang={lang}
+        />
       </div>
     </>
   );

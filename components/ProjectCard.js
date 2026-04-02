@@ -41,7 +41,11 @@ export default function ProjectCard({ project, language, slideshowInterval = 4, 
 
   const handleClick = useCallback(() => {
     if (project.externalUrl) {
-      window.open(project.externalUrl, '_blank', 'noopener,noreferrer');
+      let url = project.externalUrl;
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
     } else if (onProjectClick) {
       onProjectClick(project, displayName);
     }

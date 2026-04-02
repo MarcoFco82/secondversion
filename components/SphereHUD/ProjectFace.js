@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
@@ -9,6 +9,7 @@ import * as THREE from 'three';
  * If project is null → inactive (dim wireframe, not interactive).
  *
  * ALL faces float along their normal like objects on water.
+ * Hover shows tooltip with full name + progress bar.
  */
 export default function ProjectFace({
   project,
@@ -20,11 +21,23 @@ export default function ProjectFace({
   onUnhover,
   enableText3D,
   sphereConfig,
+  language,
+  isMobile,
 }) {
   const groupRef = useRef();
   const meshRef = useRef();
   const textRef = useRef();
+  const tooltipRef = useRef();
   const [localHover, setLocalHover] = useState(false);
+  // Mobile: track if tooltip is showing (first tap), second tap expands
+  const [mobileTooltipVisible, setMobileTooltipVisible] = useState(false);
+
+  // Mobile: reset tooltip when this face loses parent hover (another hex tapped)
+  useEffect(() => {
+    if (isMobile && !isHovered && mobileTooltipVisible) {
+      setMobileTooltipVisible(false);
+    }
+  }, [isMobile, isHovered, mobileTooltipVisible]);
 
   const { center, normal, vertices, textPosition, faceRadius } = faceData;
   const normalVec = useMemo(() => new THREE.Vector3(...normal), [normal]);
@@ -75,7 +88,7 @@ export default function ProjectFace({
     const floatOffset = Math.sin(state.clock.elapsedTime * floatSpeed + floatPhase) * floatAmplitude;
 
     if (isActive) {
-      const active = isSelected || isHovered || localHover;
+      const active = isSelected || isHovered || localHover || mobileTooltipVisible;
 
       // Hover: extra displacement outward
       const targetHover = active ? 0.06 : 0;
@@ -97,11 +110,20 @@ export default function ProjectFace({
       }
 
       // Text opacity: dot product with camera direction
-      if (textRef.current && enableText3D) {
+      if (enableText3D) {
         const camDir = state.camera.position.clone().sub(centerVec).normalize();
         const dot = normalVec.dot(camDir);
         const opacity = THREE.MathUtils.smoothstep(dot, 0.0, 0.3);
-        textRef.current.fillOpacity = opacity;
+        if (textRef.current) textRef.current.fillOpacity = opacity;
+
+        // Tooltip: desktop = hover, mobile = first tap toggles
+        const showTooltip = isMobile
+          ? mobileTooltipVisible && dot > 0.1
+          : (localHover || isHovered) && dot > 0.1;
+        if (tooltipRef.current) {
+          tooltipRef.current.visible = showTooltip;
+          tooltipRef.current.userData.opacity = showTooltip ? opacity : 0;
+        }
       }
     } else {
       // Inactive faces: just float
@@ -151,8 +173,9 @@ export default function ProjectFace({
   }
 
   // --- ACTIVE FACE (has project) ---
-  const emissiveIntensity = isSelected ? emissiveSelected : (isHovered || localHover) ? emissiveHover : emissiveBase;
-  const opacity = (isHovered || localHover) ? 0.9 : 0.7;
+  const isActiveHover = isHovered || localHover || mobileTooltipVisible;
+  const emissiveIntensity = isSelected ? emissiveSelected : isActiveHover ? emissiveHover : emissiveBase;
+  const opacity = isActiveHover ? 0.9 : 0.7;
 
   return (
     <group ref={groupRef}>
@@ -162,15 +185,28 @@ export default function ProjectFace({
         geometry={geometry}
         onClick={(e) => {
           e.stopPropagation();
-          onClick(project);
+          if (isMobile) {
+            // Mobile: first tap = show tooltip, second tap = expand
+            if (!mobileTooltipVisible) {
+              setMobileTooltipVisible(true);
+              onHover(project);
+            } else {
+              setMobileTooltipVisible(false);
+              onClick(project);
+            }
+          } else {
+            onClick(project);
+          }
         }}
         onPointerOver={(e) => {
+          if (isMobile) return;
           e.stopPropagation();
           setLocalHover(true);
           onHover(project);
           document.body.style.cursor = 'pointer';
         }}
         onPointerOut={(e) => {
+          if (isMobile) return;
           e.stopPropagation();
           setLocalHover(false);
           onUnhover();
@@ -217,6 +253,176 @@ export default function ProjectFace({
           </Text>
         </Billboard>
       )}
+
+      {/* Hover tooltip — full name + progress bar */}
+      {enableText3D && project && (
+        <HoverTooltip
+          ref={tooltipRef}
+          project={project}
+          language={language}
+          textPosition={textPosition}
+          normalVec={normalVec}
+          faceRadius={faceRadius}
+          color={color}
+          tooltipBgColor={sphereConfig.tooltipBgColor || '#0a1628'}
+        />
+      )}
     </group>
   );
 }
+
+/**
+ * HoverTooltip — appears on hover, anchored to hexagon.
+ * Shows full project name + progress bar or "COMPLETED" on a contrast banner.
+ * Animates scale on appear. Uses useFrame to sync opacity + scale every frame.
+ */
+import React from 'react';
+
+const HoverTooltip = React.forwardRef(function HoverTooltip(
+  { project, language, textPosition, normalVec, faceRadius, color, tooltipBgColor },
+  ref,
+) {
+  const bannerMatRef = useRef();
+  const nameMatRef = useRef();
+  const progressMatRef = useRef();
+  const barBgMatRef = useRef();
+  const barFillMatRef = useRef();
+  const pctMatRef = useRef();
+  const scaleRef = useRef(0);
+
+  const progress = project.progress ?? 0;
+  const isCompleted = progress >= 100;
+  const displayName = (language === 'es' ? project.display_name_es : project.display_name_en)
+    || project.display_name_en || project.alias || project.code || '???';
+
+  // Position tooltip well in front of the hex (along normal, away from sphere)
+  const tooltipPos = useMemo(() => [
+    textPosition[0] + normalVec.x * faceRadius * 1.3,
+    textPosition[1] + normalVec.y * faceRadius * 1.3,
+    textPosition[2] + normalVec.z * faceRadius * 1.3,
+  ], [textPosition, normalVec, faceRadius]);
+
+  // Banner dimensions — all content must fit inside
+  const bannerWidth = faceRadius * 2.0;
+  const bannerHeight = faceRadius * 0.7;
+  const barWidth = bannerWidth * 0.7;
+  const barHeight = faceRadius * 0.04;
+  const fillWidth = barWidth * (progress / 100);
+  // Vertical layout: name at top third, progress at bottom third
+  const nameY = bannerHeight * 0.15;
+  const progressY = -bannerHeight * 0.2;
+
+  // Sync material opacity + scale animation every frame
+  useFrame(() => {
+    if (!ref?.current) return;
+    const visible = ref.current.visible;
+    const targetScale = visible ? 1 : 0;
+    scaleRef.current = THREE.MathUtils.lerp(scaleRef.current, targetScale, 0.18);
+    const s = scaleRef.current;
+    ref.current.scale.set(s, s, s);
+
+    const opacity = ref.current.userData?.opacity ?? 0;
+    if (bannerMatRef.current) bannerMatRef.current.opacity = opacity * 0.85;
+    if (nameMatRef.current) nameMatRef.current.opacity = opacity;
+    if (progressMatRef.current) progressMatRef.current.opacity = opacity;
+    if (barBgMatRef.current) barBgMatRef.current.opacity = opacity * 0.6;
+    if (barFillMatRef.current) barFillMatRef.current.opacity = opacity;
+    if (pctMatRef.current) pctMatRef.current.opacity = opacity;
+  });
+
+  return (
+    <Billboard
+      ref={ref}
+      position={tooltipPos}
+      follow
+      lockX={false}
+      lockY={false}
+      lockZ={false}
+      visible={false}
+    >
+      {/* Background banner for contrast */}
+      <mesh position={[0, 0, -0.001]}>
+        <planeGeometry args={[bannerWidth, bannerHeight, 1, 1]} />
+        <meshBasicMaterial
+          ref={bannerMatRef}
+          color={tooltipBgColor}
+          transparent
+          opacity={0}
+          depthWrite={false}
+        />
+      </mesh>
+
+      {/* Subtle border on banner */}
+      <lineLoop>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            array={new Float32Array([
+              -bannerWidth / 2, -bannerHeight / 2, 0,
+              bannerWidth / 2, -bannerHeight / 2, 0,
+              bannerWidth / 2, bannerHeight / 2, 0,
+              -bannerWidth / 2, bannerHeight / 2, 0,
+            ])}
+            count={4}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color={color} transparent opacity={0.3} />
+      </lineLoop>
+
+      {/* Full project name */}
+      <Text
+        fontSize={faceRadius * 0.13}
+        color={color}
+        anchorX="center"
+        anchorY="middle"
+        position={[0, nameY, 0.001]}
+        maxWidth={bannerWidth * 0.85}
+        textAlign="center"
+      >
+        {displayName}
+        <meshBasicMaterial ref={nameMatRef} transparent opacity={0} color={color} />
+      </Text>
+
+      {/* Progress section */}
+      {isCompleted ? (
+        <Text
+          fontSize={faceRadius * 0.1}
+          color={color}
+          anchorX="center"
+          anchorY="middle"
+          position={[0, progressY, 0.001]}
+        >
+          COMPLETED
+          <meshBasicMaterial ref={progressMatRef} transparent opacity={0} color={color} />
+        </Text>
+      ) : (
+        <group position={[0, progressY, 0.001]}>
+          {/* Progress bar background */}
+          <mesh>
+            <planeGeometry args={[barWidth, barHeight]} />
+            <meshBasicMaterial ref={barBgMatRef} color="#1a1f27" transparent opacity={0} />
+          </mesh>
+          {/* Progress bar fill */}
+          {fillWidth > 0 && (
+            <mesh position={[(fillWidth - barWidth) / 2, 0, 0.001]}>
+              <planeGeometry args={[fillWidth, barHeight]} />
+              <meshBasicMaterial ref={barFillMatRef} color={color} transparent opacity={0} />
+            </mesh>
+          )}
+          {/* Progress percentage text */}
+          <Text
+            fontSize={faceRadius * 0.07}
+            color={color}
+            anchorX="center"
+            anchorY="top"
+            position={[0, -barHeight * 1.5, 0.002]}
+          >
+            {`${Math.round(progress)}%`}
+            <meshBasicMaterial ref={pctMatRef} transparent opacity={0} color={color} />
+          </Text>
+        </group>
+      )}
+    </Billboard>
+  );
+});

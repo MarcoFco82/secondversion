@@ -1,5 +1,15 @@
 # Architecture Decisions
 
+## [2026-03-28] Category filters — show all vs dynamic
+- **Context:** Category filter buttons only showed categories that existed in current projects. With 4 projects and 2 categories, the filter section looked empty despite having 49 categories defined in code.
+- **Decision:** Show all 49 categories always, even if no projects match. A category with 0 results is better than a hidden category — the portfolio communicates "I do all of this" even before content fills in.
+- **Trade-off:** Some categories return empty results when clicked. Acceptable — better than appearing limited.
+
+## [2026-03-28] URL normalization — where to validate
+- **Context:** External project URLs stored without `https://` were treated as relative paths by the browser (`marcomotion.com/apartalafecha.vip`).
+- **Decision:** Normalize in 3 places: (1) frontend `window.open` for existing data, (2) API create, (3) API update. Belt-and-suspenders approach because existing D1 records can't be retroactively fixed without a migration.
+- **Why not migration?** Only 4 projects, and the frontend fix handles it. A migration would be overkill for 4 rows.
+
 ## [2026-03-24] Mobile responsiveness — breakpoint strategy
 - **Context:** 7+ sessions deferred. Partial coverage at 768px and 480px only, inconsistent across components. No 320px or 600px breakpoints. Filter buttons unreadable at 480px. CV section had only 768px coverage.
 - **Decision:** 4 consistent breakpoints across all public pages: 768px (tablet), 600px (tablet portrait), 480px (mobile), 320px (small mobile). Progressive scaling — each breakpoint reduces proportionally, no abrupt jumps.

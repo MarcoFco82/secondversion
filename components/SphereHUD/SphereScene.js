@@ -23,9 +23,11 @@ export default function SphereScene({
   autoRotate,
   performanceConfig,
   sphereConfig,
+  language,
 }) {
-  const { dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D, mobileBloomIntensity } =
+  const { tier, dpr, particleCount, enableBloom, enableActivityRing, enablePostProcessing, enableText3D, mobileBloomIntensity } =
     performanceConfig;
+  const isMobile = tier === 'mobile' || tier === 'tablet';
 
   const hexCount = sphereConfig.hexCount || 30;
   const hexSize = sphereConfig.hexSize ?? 0.22;
@@ -95,6 +97,8 @@ export default function SphereScene({
               onUnhover={onNodeUnhover}
               enableText3D={enableText3D}
               sphereConfig={sphereConfig}
+              language={language}
+              isMobile={isMobile}
             />
           );
         })}

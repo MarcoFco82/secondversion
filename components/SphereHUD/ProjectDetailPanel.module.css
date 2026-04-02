@@ -345,6 +345,46 @@
   gap: 8px;
   margin-bottom: 6px;
   align-items: flex-start;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Clickable log rows (professional logs with media) */
+.logClickable {
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.logClickable:hover {
+  background: rgba(255, 200, 120, 0.06);
+  border-color: rgba(255, 200, 120, 0.15);
+}
+
+/* Selected log highlight — light banner for contrast */
+.logSelected {
+  background: rgba(255, 255, 240, 0.1);
+  border-color: rgba(255, 200, 120, 0.4);
+  box-shadow: 0 0 16px rgba(255, 200, 120, 0.08);
+}
+
+/* Media indicator icon on log row */
+.logMediaIcon {
+  font-size: 0.55rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  align-self: center;
+}
+
+.logClickable:hover .logMediaIcon {
+  opacity: 0.9;
+}
+
+.logSelected .logMediaIcon {
+  opacity: 1;
 }
 
 .logDate {
