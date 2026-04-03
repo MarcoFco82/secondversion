@@ -41,7 +41,7 @@ export default async function handler(req, res) {
           p.category as project_category
         FROM dev_logs dl
         LEFT JOIN projects p ON dl.project_id = p.id
-        ORDER BY dl.created_at DESC
+        ORDER BY dl.sort_order ASC, dl.created_at DESC
       `).all();
       
       logs = result.results || [];

@@ -1,5 +1,43 @@
 # Changelog
 
+## [2026-04-02]
+
+### Session 012: Creative Logs priority system + Modal layout split
+
+- **feat(db):** Migration 0011 — `sort_order INTEGER DEFAULT 0` + `media_id TEXT` on `dev_logs` table
+- **feat(api):** New endpoint `POST /api/admin/dev-logs/reorder` — batch update sort_order + media_id (pattern from cv/reorder)
+- **feat(api):** `/api/logs` now orders by `sort_order ASC, created_at DESC` (manual priority over date)
+- **feat(api):** Admin projects PUT inserts `media_id` and `sort_order` on new dev_logs
+- **feat(sphere):** ProjectDetailPanel modal split — 2/3 creative logs + 1/3 professional logs, independent scroll
+- **feat(sphere):** Creative logs now clickable — linked to project_media via `media_id`, click changes media viewer
+- **feat(sphere):** Mutual exclusion: clicking creative log deselects professional log and vice versa
+- **feat(admin):** Existing creative logs editable with ▲▼ reorder arrows + priority number display
+- **feat(admin):** Media dropdown on each creative log — links to existing project_media items
+- **feat(admin):** New log form includes Linked Media dropdown
+- **refactor(sphere):** useProjectData hook enriches logs with `mediaId` and `sortOrder`, client-side sort respects priority
+- **refactor(css):** ProjectDetailPanel `.logsSplit` flex layout, `.logsScroll` independent scrollbars, mobile stacks vertical at 768px
+- **Archivos creados:** `migrations/0011_dev_logs_sort_media.sql`, `pages/api/admin/dev-logs/reorder.js`, `docs/sessions/session_012.md`
+- **Archivos modificados:** `pages/api/logs/index.js`, `pages/api/admin/projects/[id].js`, `components/SphereHUD/hooks/useProjectData.js`, `components/SphereHUD/ProjectDetailPanel.js`, `components/SphereHUD/ProjectDetailPanel.module.css`, `pages/admin/projects.js`
+- **Deploys:** 1 deploy to Cloudflare Pages (`dcf422ee`)
+
+## [2026-04-02]
+
+### Session 011: Interactive professional logs + Activity Log panel
+
+- **feat(sphere):** Professional logs in ProjectDetailPanel clickable when they have media — dual-mode media viewer + accent color highlight
+- **feat(sphere):** Activity Log panel below SphereHUD — professional logs with filter by project, sort toggle (latest/oldest), expand panel button, glow FX
+- **feat(sphere):** Project codes in Activity Log with text-shadow glow from admin-defined accent color
+- **feat(sphere):** Link buttons (orange glow) on logs with `media_url` — open in new window
+- **feat(admin):** Banner scroll speed slider (3-30s) in `/admin/sphere`, saved in sphere_config JSON
+- **refactor(sphere):** Removed `.slice(0, 5)` limit on modal logs — all logs scrollable
+- **refactor(sphere):** Activity Log panel iterated 5 times: absolute positioning → below container, creative logs → professional logs, auto-scroll ticker → static scrollable panel, individual expand → panel expand, truncated → full text wrap
+- **fix(admin):** Removed broken `/admin/logs` sidebar link + dashboard links → `/admin/projects`
+- **fix(admin):** Professional log entries show project code instead of "GENERAL" category
+- **refactor(admin):** Removed Category, Mood, Energy, Media Type fields from professional-log form. Re-added Link URL field. Links visible in entry cards.
+- **Archivos creados:** `components/SphereHUD/CreativeLogsBanner.js`, `components/SphereHUD/CreativeLogsBanner.module.css`, `docs/session_011.md`
+- **Archivos modificados:** `components/SphereHUD/ProjectDetailPanel.js`, `ProjectDetailPanel.module.css`, `SphereHUD.js`, `hooks/useSphereConfig.js`, `pages/admin/sphere.js`, `pages/admin/professional-log.js`, `styles/AdminProfessionalLog.module.css`, `components/Admin/AdminLayout.js`, `pages/admin/index.js`
+- **Deploys:** 7 deploys to Cloudflare Pages (iterative — `4f1a971` initial commit + 6 uncommitted deploy iterations)
+
 ## [2026-03-28] Session 010 — URL fix, category filters, Sphere HUD tooltip
 - [fix]: External project URLs normalized — prepends `https://` if missing (ProjectCard, API create, API update)
 - [fix]: Category filters show all 49 categories in 9 groups regardless of project count

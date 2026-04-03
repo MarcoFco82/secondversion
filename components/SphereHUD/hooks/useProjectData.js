@@ -49,6 +49,8 @@ export function useProjectData() {
           entryType: log.entry_type,
           oneLiner: log.one_liner,
           createdAt: log.created_at,
+          mediaId: log.media_id || null,
+          sortOrder: log.sort_order ?? 0,
           projectCode: log.project_code || project?.code,
           projectAlias: log.project_alias || project?.alias,
           accentColor: log.project_color || project?.accent_color,
@@ -63,7 +65,11 @@ export function useProjectData() {
           category: log.project_category || project?.category,
         };
       })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      .sort((a, b) => {
+        const so = (a.sortOrder || 0) - (b.sortOrder || 0);
+        if (so !== 0) return so;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
   }, [logs, projects]);
 
   // Activity as simple number array

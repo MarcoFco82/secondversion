@@ -108,6 +108,18 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - **[2026-03-28]** Fix: Category filters now show all 49 categories in 9 groups (was dynamic, only showing categories with projects)
 - **[2026-03-28]** Feature: Sphere HUD hover tooltip — full project name + progress bar/COMPLETED, anchored to hexagon with Billboard
 - **[2026-03-28]** Deployed to Cloudflare Pages
+- **[2026-04-02]** Feature: Professional logs clickable in ProjectDetailPanel — media viewer shows log media, highlight with accent color
+- **[2026-04-02]** Feature: Activity Log panel below SphereHUD — professional logs with filter by project, sort toggle, expand panel, link buttons, glow FX
+- **[2026-04-02]** Feature: Admin slider "Banner Scroll Speed" (3-30s) in `/admin/sphere`
+- **[2026-04-02]** Removed `.slice(0, 5)` limit on logs in modal — all logs scrollable
+- **[2026-04-02]** Fix: Removed broken `/admin/logs` sidebar link + redirected dashboard links to `/admin/projects`
+- **[2026-04-02]** Refactor: Professional log admin — removed category/mood/energy/mediaType, re-added Link URL, entries show project code
+- **[2026-04-02]** Deployed to Cloudflare Pages (7 deploys, iterative)
+- **[2026-04-02]** Migration 0011 applied: `dev_logs.sort_order` + `dev_logs.media_id` — manual priority + media linking
+- **[2026-04-02]** Feature: Creative logs priority system — admin reorder with arrows, media dropdown, sort_order ASC ordering
+- **[2026-04-02]** Feature: ProjectDetailPanel split layout — 2/3 creative logs (clickable) + 1/3 professional logs, independent scroll
+- **[2026-04-02]** New endpoint: `POST /api/admin/dev-logs/reorder` — batch sort_order + media_id update
+- **[2026-04-02]** Deployed to Cloudflare Pages (deploy dcf422ee)
 
 ### Resolved 🟢
 - ~~Deployment pipeline broken~~ → Reactivated (but auto-deploy still failing, use manual)
@@ -138,6 +150,9 @@ Next.js 15.5.9 portfolio and project management site deployed to Cloudflare Page
 - ~~External URLs broken (relative path)~~ → Normalized with `https://` in frontend + API (2026-03-28)
 - ~~Category filters showing only 2 categories~~ → All 49 categories visible always (2026-03-28)
 - ~~Sphere HUD hover lacks info~~ → Tooltip with full name + progress bar (2026-03-28)
+- ~~Logs not interactive in modal~~ → Professional logs clickable with media viewer + highlight (2026-04-02)
+- ~~No creative logs display below sphere~~ → CreativeLogsBanner holographic ticker (2026-04-02)
+- ~~Broken /admin/logs sidebar link~~ → Removed, dashboard links redirected to /admin/projects (2026-04-02)
 
 ### In Progress 🔄
 - Investigate why GitHub auto-deploy fails on Cloudflare Pages

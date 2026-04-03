@@ -106,6 +106,7 @@ const emptyLog = {
   oneLiner: '',
   challengeAbstract: '',
   mentalNote: '',
+  mediaId: '',
 };
 
 const emptyMedia = {
@@ -211,7 +212,10 @@ export default function AdminProjects() {
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.data) {
-          setExistingLogs(data.data.logs || []);
+          setExistingLogs((data.data.logs || []).map((log, i) => ({
+            ...log,
+            sort_order: log.sort_order ?? i,
+          })));
           // Transform media to local format
           const mediaItems = (data.data.media || []).map(m => ({
             id: m.id,
@@ -280,13 +284,31 @@ export default function AdminProjects() {
   };
 
   const updateLog = (index, field, value) => {
-    setLogs(prev => prev.map((log, i) => 
+    setLogs(prev => prev.map((log, i) =>
       i === index ? { ...log, [field]: value } : log
     ));
   };
 
   const removeLog = (index) => {
     setLogs(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Existing logs reorder handlers
+  const updateExistingLog = (index, field, value) => {
+    setExistingLogs(prev => prev.map((log, i) =>
+      i === index ? { ...log, [field]: value, _dirty: true } : log
+    ));
+  };
+
+  const moveExistingLog = (index, direction) => {
+    setExistingLogs(prev => {
+      const next = [...prev];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= next.length) return prev;
+      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      // Reassign sort_order based on position
+      return next.map((log, i) => ({ ...log, sort_order: i, _dirty: true }));
+    });
   };
 
   // Media handlers
@@ -465,10 +487,33 @@ export default function AdminProjects() {
       
       if (editingProject) {
         // UPDATE existing project
-        // Add new logs only (not existing ones)
-        const newLogs = logs.filter(l => l.oneLiner && l.oneLiner.trim());
+        // Add new logs only (not existing ones), include mediaId
+        const newLogs = logs.filter(l => l.oneLiner && l.oneLiner.trim()).map(l => ({
+          ...l,
+          mediaId: l.mediaId || null,
+          sortOrder: existingLogs.length + logs.indexOf(l),
+        }));
         if (newLogs.length > 0) {
           payload.newLogs = newLogs;
+        }
+
+        // Save existing logs reorder + media_id changes
+        const dirtyLogs = existingLogs.filter(l => l._dirty);
+        if (dirtyLogs.length > 0) {
+          await fetch('/api/admin/dev-logs/reorder', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              items: existingLogs.map(l => ({
+                id: l.id,
+                sort_order: l.sort_order,
+                media_id: l.media_id ?? undefined,
+              })),
+            }),
+          });
         }
 
         response = await fetch(`/api/admin/projects/${editingProject.id}`, {
@@ -907,22 +952,71 @@ export default function AdminProjects() {
                 {/* Logs Tab */}
                 {activeTab === 'logs' && (
                   <div className={styles.logsSection}>
-                    {/* Existing logs (read-only) */}
+                    {/* Existing logs — editable with reorder */}
                     {existingLogs.length > 0 && (
                       <div className={styles.existingLogs}>
-                        <h4 className={styles.subSectionTitle}>Existing Logs</h4>
-                        {existingLogs.map((log) => (
-                          <div key={log.id} className={styles.existingLogCard}>
-                            <span 
-                              className={styles.logType}
-                              style={{ color: getEntryTypeColor(log.entry_type) }}
-                            >
-                              {log.entry_type?.toUpperCase()}
+                        <h4 className={styles.subSectionTitle}>
+                          Existing Logs (drag priority with arrows)
+                        </h4>
+                        {existingLogs.map((log, index) => (
+                          <div key={log.id} className={styles.existingLogCard} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            {/* Reorder arrows */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0 }}>
+                              <button
+                                className={styles.removeBtn}
+                                style={{ padding: '2px 6px', fontSize: '0.7rem', opacity: index === 0 ? 0.3 : 1 }}
+                                onClick={() => moveExistingLog(index, -1)}
+                                disabled={index === 0}
+                                title="Move up"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                className={styles.removeBtn}
+                                style={{ padding: '2px 6px', fontSize: '0.7rem', opacity: index === existingLogs.length - 1 ? 0.3 : 1 }}
+                                onClick={() => moveExistingLog(index, 1)}
+                                disabled={index === existingLogs.length - 1}
+                                title="Move down"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            {/* Priority number */}
+                            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#ffa742', flexShrink: 0, width: '20px', textAlign: 'center' }}>
+                              #{index + 1}
                             </span>
-                            <span className={styles.logOneLiner}>{log.one_liner}</span>
-                            <span className={styles.logDate}>
-                              {new Date(log.created_at).toLocaleDateString()}
-                            </span>
+                            {/* Log info */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
+                                <span
+                                  className={styles.logType}
+                                  style={{ color: getEntryTypeColor(log.entry_type) }}
+                                >
+                                  {log.entry_type?.toUpperCase()}
+                                </span>
+                                <span className={styles.logOneLiner} style={{ flex: 1 }}>{log.one_liner}</span>
+                                <span className={styles.logDate}>
+                                  {new Date(log.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                              {/* Media dropdown */}
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <label style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', flexShrink: 0 }}>Media:</label>
+                                <select
+                                  className={styles.select}
+                                  style={{ fontSize: '0.75rem', padding: '3px 6px', flex: 1 }}
+                                  value={log.media_id || ''}
+                                  onChange={(e) => updateExistingLog(index, 'media_id', e.target.value || null)}
+                                >
+                                  <option value="">— None —</option>
+                                  {media.filter(m => m.existing).map((m, mi) => (
+                                    <option key={m.id} value={m.id}>
+                                      #{mi + 1} {m.mediaType} — {(m.mediaUrl || '').split('/').pop()?.slice(0, 30)}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -936,14 +1030,14 @@ export default function AdminProjects() {
                       <div key={log.id} className={styles.logCard}>
                         <div className={styles.logHeader}>
                           <span className={styles.logNumber}>Log #{index + 1}</span>
-                          <button 
+                          <button
                             className={styles.removeBtn}
                             onClick={() => removeLog(index)}
                           >
                             Remove
                           </button>
                         </div>
-                        
+
                         <div className={styles.logGrid}>
                           <div className={styles.formGroup}>
                             <label className={styles.label}>Type</label>
@@ -989,6 +1083,23 @@ export default function AdminProjects() {
                               onChange={(e) => updateLog(index, 'mentalNote', e.target.value)}
                               placeholder="Personal note..."
                             />
+                          </div>
+
+                          {/* Media link for new logs */}
+                          <div className={styles.formGroupFull}>
+                            <label className={styles.label}>Linked Media</label>
+                            <select
+                              className={styles.select}
+                              value={log.mediaId}
+                              onChange={(e) => updateLog(index, 'mediaId', e.target.value)}
+                            >
+                              <option value="">— None —</option>
+                              {media.filter(m => m.existing).map((m, mi) => (
+                                <option key={m.id} value={m.id}>
+                                  #{mi + 1} {m.mediaType} — {(m.mediaUrl || '').split('/').pop()?.slice(0, 30)}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         </div>
                       </div>

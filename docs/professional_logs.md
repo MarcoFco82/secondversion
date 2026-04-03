@@ -215,6 +215,54 @@ Se alimenta al cierre de cada sesión. No incluye detalles de implementación �
 
 ---
 
+### Session 012 — 2026-04-02
+
+#### Direction & Decision-Making
+- Marco immediately identified that creative logs and professional logs needed differentiation in the modal — they were visually undifferentiated, creating confusion about what each section does. The decision to allocate 2/3 vs 1/3 space was instant and firm. This ratio communicates that creative logs are the primary content, professional logs are supporting context.
+- The priority system request reveals a product-thinking pattern: Marco wants editorial control over what visitors see first. This is curation, not chronology. A portfolio that shows work in manually-curated order is fundamentally different from one that shows newest-first. Marco is thinking like a creative director, not a developer.
+- Chose to link creative logs to existing project_media rather than allowing free URL input. This was a deliberate constraint: media should be managed in one place (the media tab), not scattered across logs with random URLs. Single source of truth over convenience.
+
+#### Technical Strategy
+- Plan-first approach: used formal plan mode before writing any code. The plan covered migration, API, admin UI, frontend, and hook changes across 8 files. This prevented the "fix one thing, break another" cascade that happened in earlier sessions with ad-hoc changes.
+- The reorder API follows the exact pattern of `/api/admin/cv/reorder.js` — `db.batch()` for bulk updates. Consistent patterns across the codebase reduce cognitive load for future sessions.
+- `sort_order ASC, created_at DESC` ordering means: manually prioritized items come first, unprioritized items (sort_order=0) fall back to date order. This is a progressive enhancement — existing data works unchanged, new priorities layer on top.
+- The modal info section changed from `overflow-y: auto` to `overflow: hidden` with `min-height: 0`, letting child flex containers handle their own scrolling. This is the correct CSS flex pattern for nested scroll containers.
+
+#### Creative
+- The 2/3 + 1/3 split with a subtle vertical divider (1px orange at 12% opacity) maintains the HUD aesthetic while clearly separating content types. On mobile, it collapses to vertical stack with a horizontal divider — responsive without losing clarity.
+
+#### Areas of Opportunity
+1. **No commits made this session** — changes deployed but not committed to git. This is a recurring pattern (also noted in session 011). Work could be lost if the local directory is damaged.
+2. **Creative logs currently have no media linked** — the infrastructure is ready but all existing dev_logs have `media_id = NULL`. Marco needs an admin session to assign media to logs for the click-to-view feature to be visible.
+3. **Professional logs section might feel too cramped** at 1/3 width on smaller screens — worth checking at 1024px-1200px range where the modal is narrower.
+4. **No delete capability for existing creative logs** — admin can reorder and link media, but can't delete a log entry. This wasn't requested but may be needed as the portfolio evolves.
+
+---
+
+### Session 011 — 2026-04-02
+
+#### Direction & Decision-Making
+- Marco iterated rapidly on the Activity Log panel — 5 visual/functional pivots in one session. Each pivot was clear and decisive: "this is wrong, fix X". No waffling. This rapid feedback loop is efficient but requires the developer to ship fast and not over-invest in any single iteration.
+- Resolved a long-standing naming confusion between Creative Logs and Professional Logs. The confusion surfaced when a broken admin link forced the question "what is this?". Lesson: **if the creator confuses their own concepts, users will be lost**. Naming matters as much as architecture.
+- Stripped the professional log admin form of 5 fields (category, mood, energy, media type, media URL) in one pass. Marco knows what he doesn't need — aggressive simplification of admin tooling to reduce friction for content entry.
+
+#### Technical Strategy
+- The Activity Log panel evolved from CSS auto-scroll ticker → static scrollable panel with controls. The auto-scroll approach was technically interesting but wrong for the use case: professional logs need to be readable and navigable, not a news ticker. Filter + sort + expand is the right interaction model for curated content.
+- Professional logs repurposed `media_url` field as a link URL. No migration needed — the column already existed. Pragmatic reuse over schema changes.
+- Dual-mode media viewer in ProjectDetailPanel (project media carousel vs log media) is clean state management: one `selectedLogId` state toggles the entire view.
+
+#### Creative
+- Activity Log panel designed to match LAB TERMINAL HUD aesthetic — mono font, scanlines, glow FX, accent colors from admin config. The visual language is consistent across sphere, modal, and activity panel.
+- Project codes in the activity log use text-shadow glow — subtle but reinforces the HUD identity.
+
+#### Areas of Opportunity
+1. **Content is the bottleneck** — the infrastructure (Activity Log, filters, expand, links, glow) is ready but only has 3 professional log entries. Marco needs a dedicated session just for content entry.
+2. **Admin form could auto-detect link in content** — instead of a separate Link URL field, detect URLs in the content textarea and auto-extract. Lower friction for entry.
+3. **7 deploys in one session** — iterative deployment works but is inefficient. Consider local dev preview (`npm run dev`) for visual iteration instead of deploying each change to production.
+4. **No commit for iterations** — only the initial commit was made. 6 subsequent deploys are uncommitted. Need a final commit to preserve all work in git.
+
+---
+
 ## 2026-03-24 | Session 009
 
 ### Deuda tecnica pagada

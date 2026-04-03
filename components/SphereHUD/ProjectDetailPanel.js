@@ -38,6 +38,7 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
   const [professionalLogs, setProfessionalLogs] = useState([]);
   const [closing, setClosing] = useState(false);
   const [selectedLogId, setSelectedLogId] = useState(null);
+  const [selectedCreativeLogId, setSelectedCreativeLogId] = useState(null);
   const closingTimer = useRef(null);
 
   // Reset state when project changes
@@ -46,6 +47,7 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
     setProfessionalLogs([]);
     setClosing(false);
     setSelectedLogId(null);
+    setSelectedCreativeLogId(null);
 
     if (project?.id) {
       fetch(`/api/professional-logs?projectId=${project.id}`)
@@ -105,19 +107,38 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
   const logMediaItem = selectedLogMedia?.media_url
     ? { media_url: selectedLogMedia.media_url, media_type: selectedLogMedia.media_type }
     : null;
-  const logMediaKind = logMediaItem ? getMediaKind(logMediaItem) : null;
+
+  // Find selected creative log's media (linked to project_media via media_id)
+  const selectedCreativeLog = selectedCreativeLogId
+    ? projectLogs.find(l => (l.id || l.logId) === selectedCreativeLogId)
+    : null;
+  const creativeLogMediaItem = selectedCreativeLog?.mediaId
+    ? mediaItems.find(m => m.id === selectedCreativeLog.mediaId) || null
+    : null;
+
+  // Active log media: creative log takes priority, then professional log
+  const activeLogMediaItem = creativeLogMediaItem || logMediaItem;
+  const activeLogMediaKind = activeLogMediaItem ? getMediaKind(activeLogMediaItem) : null;
 
   // Has any displayable media (project or log)?
   const hasProjectMedia = mediaItems.length > 0 && currentMedia;
-  const showingLogMedia = !!logMediaItem;
+  const showingLogMedia = !!activeLogMediaItem;
 
   const handleLogClick = (logId, mediaUrl) => {
     if (!mediaUrl) return;
     setSelectedLogId(selectedLogId === logId ? null : logId);
+    setSelectedCreativeLogId(null);
+  };
+
+  const handleCreativeLogClick = (logId, mediaId) => {
+    if (!mediaId) return;
+    setSelectedCreativeLogId(selectedCreativeLogId === logId ? null : logId);
+    setSelectedLogId(null);
   };
 
   const handleProjectMediaNav = (newIndex) => {
     setSelectedLogId(null);
+    setSelectedCreativeLogId(null);
     setMediaIndex(newIndex);
   };
 
@@ -147,30 +168,30 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
         {/* Media section (left on desktop, top on mobile) */}
         <div className={styles.mediaSection}>
           {showingLogMedia ? (
-            /* Log media mode — single media from selected professional log */
+            /* Log media mode — single media from selected creative or professional log */
             <div className={styles.mediaContainer}>
-              {logMediaKind === 'video' && (
+              {activeLogMediaKind === 'video' && (
                 <video
-                  key={logMediaItem.media_url}
+                  key={activeLogMediaItem.media_url}
                   className={styles.mediaContent}
-                  src={logMediaItem.media_url}
+                  src={activeLogMediaItem.media_url}
                   autoPlay
                   loop
                   muted
                   playsInline
                 />
               )}
-              {(logMediaKind === 'image' || logMediaKind === 'gif') && (
+              {(activeLogMediaKind === 'image' || activeLogMediaKind === 'gif') && (
                 <img
                   className={styles.mediaContent}
-                  src={logMediaItem.media_url}
-                  alt={selectedLogMedia.content || 'Log media'}
+                  src={activeLogMediaItem.media_url}
+                  alt="Log media"
                 />
               )}
-              {(logMediaKind === 'vimeo' || logMediaKind === 'youtube') && (
+              {(activeLogMediaKind === 'vimeo' || activeLogMediaKind === 'youtube') && (
                 <iframe
                   className={styles.mediaEmbed}
-                  src={getEmbedUrl(logMediaItem)}
+                  src={getEmbedUrl(activeLogMediaItem)}
                   allow="autoplay; fullscreen; encrypted-media"
                   allowFullScreen
                   frameBorder="0"
@@ -284,60 +305,77 @@ export default function ProjectDetailPanel({ project, logs, onClose, lang = 'en'
             </div>
           )}
 
-          {/* Scrollable logs area */}
+          {/* Logs area — 2/3 creative + 1/3 professional */}
           <div className={styles.logsArea}>
-            {/* Dev logs */}
-            {projectLogs.length > 0 && (
-              <div className={styles.logGroup}>
-                <div className={styles.logGroupTitle}>
-                  {lang === 'es' ? 'CREATIVE LOGS' : 'CREATIVE LOGS'}
-                </div>
-                {projectLogs.map((log, i) => (
-                  <div key={log.id || i} className={styles.logItem}>
-                    <span className={styles.logDate}>
-                      {formatDate(log.createdAt || log.created_at)}
-                    </span>
-                    <span className={styles.logText}>
-                      {log.oneLiner || log.one_liner}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Professional logs — clickable when they have media */}
-            {professionalLogs.length > 0 && (
-              <div className={styles.logGroup}>
-                <div className={styles.logGroupTitle}>PROFESSIONAL LOGS</div>
-                {professionalLogs.map((log) => (
-                  <div
-                    key={log.id}
-                    className={`${styles.logItem} ${log.media_url ? styles.logClickable : ''} ${selectedLogId === log.id ? styles.logSelected : ''}`}
-                    onClick={() => handleLogClick(log.id, log.media_url)}
-                    style={selectedLogId === log.id ? {
-                      background: `${color}1A`,
-                      borderColor: `${color}66`,
-                    } : undefined}
-                  >
-                    <span className={styles.logDate}>
-                      {formatDate(log.log_date)}
-                    </span>
-                    <span className={styles.logText}>{log.content}</span>
-                    {log.media_url && (
-                      <span className={styles.logMediaIcon} style={{ color }}>
-                        &#9654;
+            <div className={styles.logsSplit}>
+              {/* Creative logs — 2/3 */}
+              <div className={styles.creativeLogs}>
+                <div className={styles.logGroupTitle}>CREATIVE LOGS</div>
+                <div className={styles.logsScroll}>
+                  {projectLogs.map((log, i) => (
+                    <div
+                      key={log.id || i}
+                      className={`${styles.logItem} ${log.mediaId ? styles.logClickable : ''} ${selectedCreativeLogId === (log.id || i) ? styles.logSelected : ''}`}
+                      onClick={() => handleCreativeLogClick(log.id, log.mediaId)}
+                      style={selectedCreativeLogId === log.id ? {
+                        background: `${color}1A`,
+                        borderColor: `${color}66`,
+                      } : undefined}
+                    >
+                      <span className={styles.logDate}>
+                        {formatDate(log.createdAt || log.created_at)}
                       </span>
-                    )}
-                  </div>
-                ))}
+                      <span className={styles.logText}>
+                        {log.oneLiner || log.one_liner}
+                      </span>
+                      {log.mediaId && (
+                        <span className={styles.logMediaIcon} style={{ color }}>
+                          &#9654;
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  {projectLogs.length === 0 && (
+                    <div className={styles.noLogs}>
+                      {lang === 'es' ? 'Sin creative logs' : 'No creative logs'}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
 
-            {projectLogs.length === 0 && professionalLogs.length === 0 && (
-              <div className={styles.noLogs}>
-                {lang === 'es' ? 'Sin registros aun' : 'No logs yet'}
+              {/* Professional logs — 1/3 */}
+              <div className={styles.professionalLogs}>
+                <div className={styles.logGroupTitle}>PROFESSIONAL LOGS</div>
+                <div className={styles.logsScroll}>
+                  {professionalLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      className={`${styles.logItem} ${log.media_url ? styles.logClickable : ''} ${selectedLogId === log.id ? styles.logSelected : ''}`}
+                      onClick={() => handleLogClick(log.id, log.media_url)}
+                      style={selectedLogId === log.id ? {
+                        background: `${color}1A`,
+                        borderColor: `${color}66`,
+                      } : undefined}
+                    >
+                      <span className={styles.logDate}>
+                        {formatDate(log.log_date)}
+                      </span>
+                      <span className={styles.logText}>{log.content}</span>
+                      {log.media_url && (
+                        <span className={styles.logMediaIcon} style={{ color }}>
+                          &#9654;
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  {professionalLogs.length === 0 && (
+                    <div className={styles.noLogs}>
+                      {lang === 'es' ? 'Sin professional logs' : 'No professional logs'}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

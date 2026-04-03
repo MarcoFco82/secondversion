@@ -67,7 +67,7 @@ export default async function handler(req, res) {
         if (projectResult) {
           project = projectResult;
           
-          const logsResult = await db.prepare('SELECT * FROM dev_logs WHERE project_id = ? ORDER BY created_at DESC').bind(id).all();
+          const logsResult = await db.prepare('SELECT * FROM dev_logs WHERE project_id = ? ORDER BY sort_order ASC, created_at DESC').bind(id).all();
           logs = logsResult.results || [];
           
           const mediaResult = await db.prepare('SELECT * FROM project_media WHERE project_id = ? ORDER BY display_order ASC').bind(id).all();
@@ -197,8 +197,8 @@ export default async function handler(req, res) {
             if (log.oneLiner && log.oneLiner.trim()) {
               const logId = generateId('log');
               await db.prepare(`
-                INSERT INTO dev_logs (id, project_id, entry_type, one_liner, challenge_abstract, mental_note, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO dev_logs (id, project_id, entry_type, one_liner, challenge_abstract, mental_note, media_id, sort_order, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
               `).bind(
                 logId,
                 id,
@@ -206,6 +206,8 @@ export default async function handler(req, res) {
                 log.oneLiner,
                 log.challengeAbstract || null,
                 log.mentalNote || null,
+                log.mediaId || null,
+                log.sortOrder ?? 0,
                 now
               ).run();
             }
@@ -293,6 +295,8 @@ export default async function handler(req, res) {
                 one_liner: log.oneLiner,
                 challenge_abstract: log.challengeAbstract || null,
                 mental_note: log.mentalNote || null,
+                media_id: log.mediaId || null,
+                sort_order: log.sortOrder ?? 0,
                 created_at: now,
               });
             }
