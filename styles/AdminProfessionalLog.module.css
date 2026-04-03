@@ -307,6 +307,21 @@
   white-space: pre-wrap;
 }
 
+.entryLink {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #ffa742;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.entryLink:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 /* ===========================================
    RESPONSIVE
    =========================================== */

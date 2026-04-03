@@ -153,7 +153,7 @@ export default function AdminDashboard() {
               <div className={styles.recentSection}>
                 <div className={styles.sectionHeader}>
                   <h2 className={styles.sectionTitle}>Recent Logs</h2>
-                  <Link href="/admin/logs" className={styles.viewAllBtn}>
+                  <Link href="/admin/projects" className={styles.viewAllBtn}>
                     View all
                   </Link>
                 </div>
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
                   <h2 className={styles.sectionTitle}>Quick Actions</h2>
                 </div>
                 <div className={styles.actionsList}>
-                  <Link href="/admin/logs?action=new" className={styles.actionBtn}>
+                  <Link href="/admin/projects?action=new" className={styles.actionBtn}>
                     <span className={styles.actionIcon}>+</span>
                     <span className={styles.actionText}>New Log</span>
                   </Link>

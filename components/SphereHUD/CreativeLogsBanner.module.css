@@ -1,184 +1,308 @@
-/* Holographic banner container */
+/* HUD-integrated professional logs panel */
 .bannerContainer {
   position: relative;
   width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  height: 130px;
   overflow: hidden;
-  background: rgba(10, 12, 18, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(var(--accent-rgb, 56, 189, 248), 0.15);
+  background: rgba(10, 12, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-top: none;
-  border-radius: 0 0 12px 12px;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.3),
-    inset 0 0 30px rgba(var(--accent-rgb, 56, 189, 248), 0.03);
 }
 
-/* Scanline overlay for holographic feel */
+.glowLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  z-index: 3;
+}
+
 .scanlines {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(var(--accent-rgb, 56, 189, 248), 0.015) 2px,
-    rgba(var(--accent-rgb, 56, 189, 248), 0.015) 4px
+    transparent 3px,
+    rgba(255, 255, 255, 0.008) 3px,
+    rgba(255, 255, 255, 0.008) 6px
   );
 }
 
-/* Top/bottom fade for smooth edges */
-.fadeTop,
-.fadeBottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 28px;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.fadeTop {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(10, 12, 18, 0.95), transparent);
-}
-
-.fadeBottom {
-  bottom: 0;
-  background: linear-gradient(to top, rgba(10, 12, 18, 0.95), transparent);
-}
-
-/* Scrolling track */
-.bannerTrack {
-  display: flex;
-  flex-direction: column;
-  animation: scrollUp var(--banner-speed, 18s) linear infinite;
-}
-
-.bannerTrack.paused {
-  animation-play-state: paused;
-}
-
-.bannerTrack.manualMode {
-  animation: none;
-}
-
-@keyframes scrollUp {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-50%);
-  }
-}
-
-/* Individual log row */
-.bannerItem {
+/* Header bar */
+.headerBar {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
-  min-height: 40px;
-  border-bottom: 1px solid rgba(var(--accent-rgb, 56, 189, 248), 0.06);
+  justify-content: space-between;
+  padding: 8px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.bannerLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Filter dropdown */
+.filterSelect {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.filterSelect option {
+  background: #0a0c12;
+  color: #ccc;
+}
+
+/* Sort button */
+.sortBtn {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.bannerItem:hover {
-  background: rgba(var(--accent-rgb, 56, 189, 248), 0.04);
+.sortBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* Project code badge */
-.bannerCode {
+/* Expand panel button */
+.expandPanelBtn {
   font-family: var(--font-mono, monospace);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 60px;
-  opacity: 0.85;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Date */
-.bannerDate {
+.expandPanelBtn:hover {
+  background: rgba(255, 167, 66, 0.1);
+}
+
+/* Scrollable logs — collapsed vs expanded */
+.logsScroll {
+  position: relative;
+  z-index: 2;
+  max-height: 130px;
+  overflow-y: auto;
+  transition: max-height 0.35s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.logsScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logsScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logsScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.logsExpanded {
+  max-height: 60vh;
+}
+
+/* Log entry */
+.logEntry {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+  transition: background 0.2s ease;
+}
+
+.logEntry:hover {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.logRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 20px;
+  min-height: 32px;
+}
+
+/* Project code with glow */
+.projectCode {
   font-family: var(--font-mono, monospace);
   font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  letter-spacing: 1.5px;
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: 65px;
 }
 
-/* Log text */
-.bannerText {
-  font-family: var(--font-body, sans-serif);
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.65);
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.logDate {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.2);
   white-space: nowrap;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.logText {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
   flex: 1;
+  letter-spacing: 0.3px;
+  word-break: break-word;
+}
+
+/* Link button — orange glow */
+.linkBtn {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  background: transparent;
+}
+
+.linkBtn:hover {
+  background: rgba(255, 167, 66, 0.1);
+  box-shadow: 0 0 12px rgba(255, 167, 66, 0.2);
+}
+
+.emptyState {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  padding: 16px;
 }
 
 /* --- Responsive --- */
 
 @media (max-width: 768px) {
-  .bannerContainer {
-    height: 100px;
-    border-radius: 0 0 8px 8px;
+  .logsScroll {
+    max-height: 110px;
   }
 
-  .bannerItem {
-    padding: 8px 14px;
+  .logsExpanded {
+    max-height: 50vh;
+  }
+
+  .logRow {
+    padding: 6px 14px;
     gap: 8px;
-    min-height: 32px;
   }
 
-  .bannerCode {
-    font-size: 0.6rem;
+  .projectCode {
+    font-size: 0.55rem;
     min-width: 50px;
   }
 
-  .bannerText {
-    font-size: 0.75rem;
+  .logText {
+    font-size: 0.6rem;
   }
 
-  .fadeTop,
-  .fadeBottom {
-    height: 20px;
+  .headerBar {
+    padding: 6px 14px;
   }
 }
 
 @media (max-width: 480px) {
-  .bannerContainer {
-    height: 80px;
+  .logsScroll {
+    max-height: 90px;
   }
 
-  .bannerCode {
+  .logsExpanded {
+    max-height: 45vh;
+  }
+
+  .projectCode {
     display: none;
   }
 
-  .bannerItem {
-    padding: 6px 12px;
+  .logRow {
+    padding: 5px 12px;
     gap: 6px;
   }
 
-  .bannerText {
-    font-size: 0.7rem;
+  .logText {
+    font-size: 0.55rem;
   }
 
-  .bannerDate {
+  .logDate {
+    font-size: 0.5rem;
+  }
+
+  .headerBar {
+    padding: 5px 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .filterSelect,
+  .sortBtn {
     font-size: 0.55rem;
+    padding: 2px 6px;
+  }
+
+  .expandPanelBtn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+
+  .linkBtn {
+    font-size: 0.5rem;
+    padding: 2px 5px;
   }
 }
 
 @media (max-width: 320px) {
-  .bannerContainer {
-    height: 70px;
+  .logsScroll {
+    max-height: 80px;
+  }
+
+  .logsExpanded {
+    max-height: 40vh;
   }
 }

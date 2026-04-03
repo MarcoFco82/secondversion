@@ -302,19 +302,6 @@ export default function AdminProfessionalLog() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Category</label>
-                    <select
-                      className={styles.select}
-                      value={form.category}
-                      onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}
-                    >
-                      {CATEGORIES.map(c => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
                     <label className={styles.label}>Project (optional)</label>
                     <select
                       className={styles.select}
@@ -342,59 +329,15 @@ export default function AdminProfessionalLog() {
                   />
                 </div>
 
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Mood</label>
-                    <select
-                      className={styles.select}
-                      value={form.mood}
-                      onChange={(e) => setForm(f => ({ ...f, mood: e.target.value }))}
-                    >
-                      <option value="">Select mood...</option>
-                      {MOODS.map(m => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Energy: {form.energy}/5</label>
-                    <input
-                      type="range"
-                      className={styles.range}
-                      min="1"
-                      max="5"
-                      value={form.energy}
-                      onChange={(e) => setForm(f => ({ ...f, energy: parseInt(e.target.value) }))}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Media URL (optional)</label>
-                    <input
-                      type="text"
-                      className={styles.input}
-                      value={form.media_url}
-                      onChange={(e) => setForm(f => ({ ...f, media_url: e.target.value }))}
-                      placeholder="https://..."
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Media Type</label>
-                    <select
-                      className={styles.select}
-                      value={form.media_type}
-                      onChange={(e) => setForm(f => ({ ...f, media_type: e.target.value }))}
-                    >
-                      <option value="">None</option>
-                      <option value="image">Image</option>
-                      <option value="video">Video</option>
-                      <option value="gif">GIF</option>
-                    </select>
-                  </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Link URL (optional)</label>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={form.media_url}
+                    onChange={(e) => setForm(f => ({ ...f, media_url: e.target.value }))}
+                    placeholder="https://..."
+                  />
                 </div>
 
                 <div className={styles.formActions}>
@@ -466,15 +409,15 @@ export default function AdminProfessionalLog() {
                     <div key={entry.id} className={styles.entryCard}>
                       <div className={styles.entryHeader}>
                         <span className={styles.entryDate}>{entry.log_date}</span>
-                        <span
-                          className={styles.entryCategory}
-                          style={{ color: getCategoryColor(entry.category) }}
-                        >
-                          {(entry.category || 'general').toUpperCase()}
-                        </span>
+                        {entry.project_id && (() => {
+                          const proj = projects.find(p => p.id === entry.project_id);
+                          return proj ? (
+                            <span className={styles.entryCategory} style={{ color: proj.accent_color || '#ffa742' }}>
+                              {proj.code}
+                            </span>
+                          ) : null;
+                        })()}
                         <div className={styles.entryMeta}>
-                          {entry.mood && <span className={styles.entryMood}>{entry.mood}</span>}
-                          {entry.energy && <span className={styles.entryEnergy}>E:{entry.energy}/5</span>}
                         </div>
                         <div className={styles.entryActions}>
                           <button
@@ -492,6 +435,16 @@ export default function AdminProfessionalLog() {
                         </div>
                       </div>
                       <p className={styles.entryContent}>{entry.content}</p>
+                      {entry.media_url && (
+                        <a
+                          href={entry.media_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.entryLink}
+                        >
+                          {entry.media_url} ↗
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>

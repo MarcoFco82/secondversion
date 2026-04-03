@@ -6,7 +6,6 @@ import styles from '../../styles/AdminLayout.module.css';
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: '◈' },
   { href: '/admin/projects', label: 'Projects', icon: '◆' },
-  { href: '/admin/logs', label: 'Creative Logs', icon: '▣' },
   { href: '/admin/media', label: 'Media', icon: '▤' },
   { href: '/admin/social', label: 'Social Generator', icon: '◩' },
   { href: '/admin/professional-log', label: 'Pro Log', icon: '◉' },

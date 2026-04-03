@@ -1,5 +1,19 @@
 # Architecture Decisions
 
+## [2026-04-02] Creative Logs vs Professional Logs — separation of concerns
+- **Context:** Confusion arose about the difference between Creative Logs (`dev_logs`) and Professional Logs (`professional_logs`). The admin sidebar had a broken link to `/admin/logs` that was never implemented.
+- **Decision:** Keep them separate. Creative Logs are project-scoped dev activity (managed inline in `/admin/projects`). Professional Logs are personal/strategic diary entries (managed at `/admin/professional-log`). The broken `/admin/logs` sidebar link was removed since creative logs are already manageable within each project.
+- **Rationale:** Creative logs are lightweight and project-bound. Professional logs are standalone reflections with media, mood, and energy tracking. They serve different purposes and audiences.
+
+## [2026-04-02] Log media interaction — professional logs only
+- **Context:** Marco wanted logs in ProjectDetailPanel to be selectable and show media. Creative logs have no media fields, professional logs have `media_url`/`media_type`.
+- **Decision:** Only professional logs with media are clickable in the modal. Creative logs remain static text. No migration needed.
+- **Trade-off:** Creative logs can't show media. If needed later, migration 0011 would add `media_url`/`media_type` to `dev_logs`.
+
+## [2026-04-02] Creative Logs Banner — visual ticker, not interactive
+- **Context:** Marco wanted creative logs displayed independently below the SphereHUD as a holographic banner.
+- **Decision:** Pure visual component — auto-scrolling, no click interaction. Shows ALL creative logs (all projects, not just sphere-visible). Speed configurable from admin via `sphere_config` JSON blob (no migration needed).
+
 ## [2026-03-28] Category filters — show all vs dynamic
 - **Context:** Category filter buttons only showed categories that existed in current projects. With 4 projects and 2 categories, the filter section looked empty despite having 49 categories defined in code.
 - **Decision:** Show all 49 categories always, even if no projects match. A category with 0 results is better than a hidden category — the portfolio communicates "I do all of this" even before content fills in.

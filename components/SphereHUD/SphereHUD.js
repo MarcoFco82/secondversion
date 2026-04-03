@@ -119,9 +119,8 @@ export default function SphereHUD({ lang = 'en' }) {
           </div>
         </div>
 
-        {/* Creative logs holographic banner */}
+        {/* Professional logs holographic banner — below sphere */}
         <CreativeLogsBanner
-          logs={enrichedLogs}
           sphereConfig={sphereConfig}
           lang={lang}
         />
